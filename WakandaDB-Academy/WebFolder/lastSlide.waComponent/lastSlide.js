@@ -12,11 +12,61 @@ function constructor (id) {
 
 	this.load = function (data) {// @lock
 
+	var
+	    FEEDBACKS_BASE_URL,
+	    widgets,
+	    // widgets
+	    textFieldName,
+	    textFieldMail,
+	    textFieldComment,
+	    // $jQuery nodes
+	    $codeRunner,
+	    $commentList,
+	    $textFieldName,
+	    $textMail,
+	    $textFieldMail,
+	    $buttonSubmit,
+	    $containerNewsletter,
+	    $containerWelcome,
+	    $commentsList;
+
+	FEEDBACKS_BASE_URL = 'http://127.0.0.1:8084/';
+
+	widgets = this.widgets;
+
+	textFieldName = widgets.textFieldName;
+	textFieldComment = widgets.textFieldComment;
+	textFieldMail = widgets.textFieldMail;
+	buttonSubmit = widgets.buttonSubmit;
+
+	$codeRunner = WDB_ACADEMY.$codeRunner;
+	$commentList = widgets.commentsList.$domNode;
+	$textTipMail = widgets.textTipMail.$domNode;
+	$textFieldName = textFieldName.$domNode;	
+	$textFieldMail = textFieldMail.$domNode;
+	$containerNewsletter = widgets.containerNewsletter.$domNode;
+	$containerWelcome = widgets.containerWelcome.$domNode;
+	$commentsList = widgets.commentsList.$domNode;
+
+	buttonSubmit.disable();
+
+	$.ajax({
+        type: 'GET',
+        url: FEEDBACKS_BASE_URL + 'getComments',				
+        //url: FEEDBACKS_BASE_URL + 'rest/User/getAllComments',
+        success: function onGetCommentsSuccess(result) {
+        	$commentsList.html(result);
+        },
+        error: function onGetCommentsError(result) {
+        	console.log('error');
+        }
+	});
+
 	// @region namespaceDeclaration// @startlock
 	var textFieldMail = {};	// @textField
-	var comment = {};	// @textField
-	var buttonSubmit = {};	// @button
-	var image1 = {};	// @image
+	var textFieldComment = {};	// @textField
+	var buttonSubmitComment = {};	// @button
+	var imageTipEmail = {};	// @image
 	var buttonDownload = {};	// @button
 	// @endregion// @endlock
 
@@ -24,85 +74,102 @@ function constructor (id) {
 
 	textFieldMail.keyup = function textFieldMail_keyup (event)// @startlock
 	{// @endlock
-		if ($$('slide6_textFieldMail').getValue() != '') $$('slide6_buttonSubmit').enable();
+		if (textFieldMail.getValue() !== '') {
+			buttonSubmit.enable();
+		}
 
 	};// @lock
 
-	comment.keyup = function comment_keyup (event)// @startlock
+	textFieldComment.keyup = function textFieldComment_keyup (event)// @startlock
 	{// @endlock
-		if ($$('slide6_comment').getValue() != '') $$('slide6_buttonSubmit').enable();
+		if (textFieldComment.getValue() !== '') {
+			buttonSubmit.enable();
+		}
 	};// @lock
 
-	$$('slide6_buttonSubmit').disable();
-
-	buttonSubmit.click = function buttonSubmit_click (event)// @startlock
+	buttonSubmitComment.click = function buttonSubmitComment_click (event)// @startlock
 	{// @endlock
-		var comment = $$('slide6_comment').getValue();
-		var mail = $$('slide6_textFieldMail').getValue();
-		var name = $$('slide6_textFieldName').getValue();
+		var
+		    comment,
+		    mail,
+		    name,
+		    mailIsValid;
 
-		if (comment != '' && name == '') {
-			$('#slide6_textFieldName').css('border', '2px solid red');
+		name = textFieldName.getValue();
+		comment = textFieldComment.getValue();
+		mail = textFieldMail.getValue();
+		mailIsValid = (mail !== '') && validEmail(mail);
+		
+		if (comment !== '' && name === '') {
+			$textFieldName.css('border', '2px solid red');
 		} else {
-			$('#slide6_textFieldName').css('border', '1px solid black');
+			$textFieldName.css('border', '1px solid black');
 		}
 		
-		if (mail != '' && !validEmail(mail)) {
-			$('#slide6_textFieldMail').css('border', '2px solid red');
+		if (mailIsValid) {
+			$textFieldMail.css('border', '2px solid red');
 		} else {
-			$('#slide6_textFieldMail').css('border', '1px solid black');
+			$textFieldMail.css('border', '1px solid black');
 		}
 		
-		if ((comment != '' && name != '') || (mail != '' && validEmail(mail))) {
+		if ((comment !== '' && name !== '') || mailIsValid) {
 
-				if ((mail != '' && validEmail(mail))) {
-		   			$$('slide6_textFieldMail').setValue('');
-		   			$('#slide6_containerNewsletter').fadeOut(500);
-		   			$('#slide6_containerWelcome').fadeIn(500);
-					$.ajax({
-					   url: 'https://community.marketo.com/MarketoArticle?id=kA050000000Kyr7',
-					   data : JSON.stringify({ "userID" : localStorage['userID'], 'mail' : mail, 'name' : name, 'comment' : comment}),	
-					   type : 'GET',			   
-					   success : function(result) { 				   			 
-					   },
-					   error : function(result){ console.log('error'); }			   
-					});					
-				}
-
+			if (mailIsValid) {
+	   			textFieldMail.setValue('');
+	   			$containerNewsletter.fadeOut(500);
+	   			$containerWelcome.fadeIn(500);
 				$.ajax({
-				   url: 'http://127.0.0.1:8084/saveComment/',
-	//			   url: 'http://194.98.194.84:8084/cors/',
-				   data : JSON.stringify({ "userID" : localStorage['userID'], 'mail' : mail, 'name' : name, 'comment' : comment, "geoData" : localStorage['geoData']}),	
-				   type : 'POST',			   
-				   success : function(result){ 
-   				   		if ($$('slide6_comment').getValue() != '') $('#slide6_commentsList').prepend('<b>' + $$('slide6_textFieldName').getValue() + ' :</b> "' + $$('slide6_comment').getValue() +'"<hr/>');
-				   		$$('slide6_comment').setValue('');
-				   },
-				   error : function(result){ console.log('error'); }			   
-				});
+				    type : 'GET',			   
+				    url: 'https://community.marketo.com/MarketoArticle?id=kA050000000Kyr7',
+				    data : JSON.stringify({
+				    	userID: localStorage.userID,
+				    	mail: mail,
+				    	name: name,
+				    	comment: comment
+				    }),	
+				    success: function(result) { 				   			 
+				    },
+				    error: function(result){
+				        console.error('error', result);
+				    }
+				});					
+			}
+
+			$.ajax({
+			    type: 'POST',			   
+			    url: FEEDBACKS_BASE_URL + 'saveComment/',
+                // url: FEEDBACKS_BASE_URL + 'cors/',
+			    data: JSON.stringify({ "userID" : localStorage['userID'], 'mail' : mail, 'name' : name, 'comment' : comment, "geoData" : localStorage['geoData']}),	
+			    success: function onSaveCommentSuccess(result) {
+   				   	if (comment !== '') {
+   				   	    $commentsList.prepend(
+   				   	        '<strong>' + name + ' :</strong> "' + comment + '"<hr/>'
+   				   	    );
+   				   	}
+			   	    textFieldComment.setValue('');
+			    },
+			    error: function onSaveCommentError(result) {
+			        console.error('onSaveCommentError:', result);
+			    }
+			});
 		}
 	};// @lock
 
-	image1.mouseout = function image1_mouseout (event)// @startlock
+	imageTipEmail.mouseout = function imageTipEmail_mouseout (event)// @startlock
 	{// @endlock
-		$('#slide' + lastSlide + '_textMail').fadeOut(500);
+		$textTipMail.fadeOut(500);
 	};// @lock
 
-	image1.mouseover = function image1_mouseover (event)// @startlock
+	imageTipEmail.mouseover = function imageTipEmail_mouseover (event)// @startlock
 	{// @endlock
-		$('#slide' + lastSlide + '_textMail').fadeIn(500);
+		$textTipMail.fadeIn(500);
 	};// @lock
-
-	$.ajax({
-		url: 'http://127.0.0.1:8084/getComments',				
-//	   url: 'http://194.98.194.84:8084/rest/User/getAllComments',
-	   type : 'GET',
-	   success : function(result){ $('#slide' + lastSlide + '_commentsList').html(result); },
-	   error : function(result){ console.log('error'); }
-	});
 
 	buttonDownload.click = function buttonDownload_click (event)// @startlock
 	{// @endlock
+		// TODO
+		// add the download lead to Marketo
+
 		window.location = 'http://www.wakanda.org/downloads'
 //	var OSName="Unknown OS";
 //	if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
@@ -131,10 +198,10 @@ function constructor (id) {
 
 	// @region eventManager// @startlock
 	WAF.addListener(this.id + "_textFieldMail", "keyup", textFieldMail.keyup, "WAF");
-	WAF.addListener(this.id + "_comment", "keyup", comment.keyup, "WAF");
-	WAF.addListener(this.id + "_buttonSubmit", "click", buttonSubmit.click, "WAF");
-	WAF.addListener(this.id + "_image1", "mouseout", image1.mouseout, "WAF");
-	WAF.addListener(this.id + "_image1", "mouseover", image1.mouseover, "WAF");
+	WAF.addListener(this.id + "_textFieldComment", "keyup", textFieldComment.keyup, "WAF");
+	WAF.addListener(this.id + "_buttonSubmitComment", "click", buttonSubmitComment.click, "WAF");
+	WAF.addListener(this.id + "_imageTipEmail", "mouseout", imageTipEmail.mouseout, "WAF");
+	WAF.addListener(this.id + "_imageTipEmail", "mouseover", imageTipEmail.mouseover, "WAF");
 	WAF.addListener(this.id + "_buttonDownload", "click", buttonDownload.click, "WAF");
 	// @endregion// @endlock
 
