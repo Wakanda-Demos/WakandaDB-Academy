@@ -1,0 +1,5 @@
+{    "name": "WakandaDB-Academy",    "description": "A Wakanda Server learning platform with server-side JavaScript execution sandbox",    "version": "0.1",    "author": "Wakanda Team (http://github.com/Wakanda)",    "repository": {        "type": "git",        "url": "https://github.com/Wakanda-Demos/WakandaDB-Academy.git"    },    "keywords": [    	"wakanda",     	"wakandadb",
+    	"academy",    	"ssjs",     	"nosql",     	"learning",     	"javascript",     	"server-side javascript",     	"js"    ],
+    "engines": {
+        "wakanda" : ">=3.124119"
+    },    "license": "MIT"}
