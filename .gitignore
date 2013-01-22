@@ -1,11 +1,20 @@
-# Build and Release Folders
-bin/
-bin-debug/
-bin-release/
-
-# Other files and folders
-.settings/
-
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# OS X
+*.DS_Store
+._*
+# Wakanda preferences
+*.waPreferences
+# Wakanda log
+*.waLog
+*/Logs
+studio_log*
+# Wakanda code symbols
+*.waSym
+*.waSymData
+# Wakanda index
+*.waIndx
+*.Match
+# Wakanda User and Group cache
+*.cacheUAG
+# Wakanda backup
+*.waBackup
+*.breakpoints
