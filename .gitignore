@@ -18,3 +18,4 @@ studio_log*
 # Wakanda backup
 *.waBackup
 *.breakpoints
+*nogit*
