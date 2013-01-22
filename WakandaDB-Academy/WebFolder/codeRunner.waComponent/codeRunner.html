@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html><section data-group="[['tabView1','menuBar1','container1','container2','container3']]" class="default">
+    <meta name="generator" content="Wakanda GUIDesigner"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="Employee" data-scope="local" data-lib="WAF" data-id="{id}employee" data-dataType="string" data-autoLoad="false" content="employee"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="Country" data-scope="local" data-lib="WAF" data-id="{id}country" data-dataType="string" data-autoLoad="false" content="country"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="Company" data-scope="local" data-lib="WAF" data-id="{id}company" data-dataType="string" data-autoLoad="false" content="company"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="{id}country.companies" data-scope="local" data-lib="WAF" data-id="{id}allCompanies" data-dataType="string" data-autoLoad="true" content="allCompanies"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="{id}employee.company" data-scope="local" data-lib="WAF" data-id="{id}employeeCompany" data-dataType="string" data-autoLoad="true" content="employeeCompany"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="{id}company.employees" data-lib="WAF" data-id="{id}employees" data-dataType="string" data-autoLoad="true" content="employees"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="dataClass" data-source="{id}company.country" data-lib="WAF" data-id="{id}country0" data-dataType="string" data-autoLoad="true" content="country0"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="scalar" data-source="{id}ssjsCode" data-scope="local" data-lib="WAF" data-id="{id}ssjsCode" data-dataType="string" data-autoLoad="true" content="ssjsCode"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="scalar" data-source="{id}ssjsResult" data-scope="local" data-lib="WAF" data-id="{id}ssjsResult" data-dataType="string" data-autoLoad="true" content="ssjsResult"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="scalar" data-source="sourceGoogleMap" data-scope="global" data-lib="WAF" data-id="sourceGoogleMap" data-dataType="string" data-autoLoad="true" content="sourceGoogleMap"/>
+    <meta name="WAF.config.datasources" data-type="dataSource" data-source-type="scalar" data-source="limitedResults" data-scope="global" data-lib="WAF" data-id="limitedResults" data-dataType="string" data-autoLoad="true" content="limitedResults"/>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div id="{id}containerSsjsEditor" data-type="container" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-container default inherited             -level-1     waf-container-level-0 waf-level-0 "></div>
+        <button title="(Ctrl-/ or Cmd-/)" id="{id}buttonRunSSJS" data-type="button" data-text="SEND TO SERVER AND RUN" data-target="_blank" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="false" data-action="simple" class="waf-widget waf-button default inherited                                     waf-button-level-0 waf-level-0 "></button>
+	<div id="{id}tabView1" data-type="tabView" data-padding="5" data-menu-position="top left" data-linked-tag="{id}menuBar1,{id}container1,{id}container2,{id}container3" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-tabView default inherited          waf-tabView-level-0 waf-level-0 ">
+	 	<ul id="{id}menuBar1" data-type="menuBar" data-tab-margin="5" data-subMenuShow="hover" data-linked-tag="{id}tabView1" data-lib="WAF" data-level="0" data-display="horizontal" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-menuBar default inherited                                                                         -level-0 waf-level-0 ">
+	 	 	<li id="{id}menuDataModel" data-type="menuItem" data-text="Data Model" data-linked-tag="{id}richText3,{id}container3" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-menuItem default inherited       waf-menuItem-level-0 waf-level-0 ">
+	 	 	 	<div id="{id}richText3" data-type="richText" data-target="_blank" data-plainText="true" data-overflow="Hidden" data-linked-tag="{id}menuItem3" data-lib="WAF" data-label-position="left" data-label="" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-autoWidth="false" class="waf-widget waf-richText default inherited   waf-richText-level-0 waf-level-0">Data Model</div>
+ 	 	 	</li><li id="{id}menuResults" data-type="menuItem" data-text="RESULTS" data-linked-tag="{id}richText1,{id}container1" data-lib="WAF" data-hideonload="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-menuItem default inherited           waf-menuItem-level-0 waf-level-0 ">
+	 	 	 	<div id="{id}richText1" data-type="richText" data-target="_blank" data-plainText="true" data-overflow="Hidden" data-linked-tag="{id}menuItem1" data-lib="WAF" data-label-position="left" data-label="" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-autoWidth="false" class="waf-widget waf-richText default inherited         waf-richText-level-0 waf-level-0 ">RESULTS</div>
+ 	 	 	</li>
+ 	 		<li id="{id}menuJSON" data-type="menuItem" data-text="JSON" data-linked-tag="{id}richText2,{id}container2" data-lib="WAF" data-hideonload="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-menuItem default inherited           waf-menuItem-level-0 waf-level-0 ">
+	 	 	 	<div id="{id}richText2" data-type="richText" data-target="_blank" data-plainText="true" data-overflow="Hidden" data-linked-tag="{id}menuItem2" data-lib="WAF" data-label-position="left" data-label="" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-autoWidth="false" class="waf-widget waf-richText default inherited         waf-richText-level-0 waf-level-0 ">JSON</div>
+ 	 	 	</li>
+ 	 	</ul>
+ 		<div id="{id}container1" data-type="container" data-linked-tag="{id}menuItem1" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                                                                           waf-tabView-container-level-0 waf-container-level-0 waf-level-0 ">
+	 	 	<div id="{id}dataGridEmployee" data-type="dataGrid" data-selection-mode="single" data-readOnly="true" data-lib="WAF" data-label-position="top" data-label="" data-hideonload="true" data-footer-text="item(s)" data-footer-hide="true" data-display-error="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" data-column="[{'sourceAttID':'ID','colID':'ID','width':'70','title':'ID'},{'sourceAttID':'name','colID':'name','width':'150','title':'name'},{'sourceAttID':'revenues','colID':'revenues','width':'90','title':'revenues'},{'sourceAttID':'countryName','colID':'countryName','width':'150','title':'countryName'}]" data-binding="{id}employeeCompany" class="waf-widget waf-dataGrid default inherited                       waf-dataGrid-level-0 waf-level-0 "></div>
+ 	 		<div id="{id}containerCountry" data-type="container" data-lib="WAF" data-hideonload="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                       waf-container-level-1 waf-level-1 ">
+ 		<input type="text" id="{id}textField1" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="ID" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}country.ID" class="waf-widget waf-textField default inherited        waf-textField-level-0 waf-level-0"/>
+ 		<label id="{id}label1" for="{id}textField1" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">ID</label>
+ 		<input type="text" id="{id}textField2" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="name" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}country.name" class="waf-widget waf-textField default inherited             waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label2" for="{id}textField2" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">name</label>
+ 		<input type="text" id="{id}textField3" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="code2Chars" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}country.code2Chars" class="waf-widget waf-textField default inherited             waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label3" for="{id}textField3" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">code2Chars</label>
+ 			<img id="{id}googleMapResult" data-zoom="3" data-type="googleMap" data-marker-color="red" data-mapType="hybrid" data-lib="WAF" data-label-position="left" data-label="" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="sourceGoogleMap" class="waf-widget waf-googleMap default inherited             waf-googleMap-level-0 waf-level-0"/>
+ 	 	 		<div id="{id}dataGridCountryCompanies" data-type="dataGrid" data-selection-mode="single" data-lib="WAF" data-label-position="top" data-label="" data-footer-text="item(s)" data-display-error="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-column="[{'sourceAttID':'name','colID':'name','width':'150','title':'name'},{'sourceAttID':'revenues','colID':'revenues','width':'90','title':'revenues'}]" data-binding="{id}allCompanies" class="waf-widget waf-dataGrid default inherited         waf-dataGrid-level-0 waf-level-0 "></div>
+ 	 	 	</div>
+ 	 		<div id="{id}dataGridCountry" data-type="dataGrid" data-selection-mode="single" data-readOnly="true" data-lib="WAF" data-label-position="top" data-label="" data-hideonload="true" data-footer-text="item(s)" data-footer-hide="true" data-display-error="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" data-column="[{'sourceAttID':'name','colID':'name','width':'252','title':'name'},{'sourceAttID':'code2Chars','colID':'code2Chars','width':'199','title':'code2Chars'}]" data-binding="{id}country" class="waf-widget waf-dataGrid default inherited                   waf-dataGrid-level-0 waf-level-0 "></div>
+ 	 		<div id="{id}containerCompany" data-type="container" data-lib="WAF" data-hideonload="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                        waf-container-level-1 waf-level-1 ">
+ 		<input type="text" id="{id}textField13" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="ID" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}company.ID" class="waf-widget waf-textField default inherited        waf-textField-level-0 waf-level-0"/>
+ 		<label id="{id}label14" for="{id}textField13" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">ID</label>
+ 		<input type="text" id="{id}textField14" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="name" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}company.name" class="waf-widget waf-textField default inherited           waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label15" for="{id}textField14" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">name</label>
+ 		<input type="text" id="{id}textField15" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="revenues" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}company.revenues" class="waf-widget waf-textField default inherited           waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label16" for="{id}textField15" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">revenues</label>
+ 		<div id="{id}autoForm4" data-withoutTable="true" data-type="autoForm" data-resize-optimal-each-widget="true" data-resize-each-widget="true" data-lib="WAF" data-display-error="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="true" data-column-name="ID,name,code2Chars,allCompanies" data-column-attribute="ID,name,code2Chars,allCompanies" data-column="[]" data-binding="{id}country0" class="waf-widget waf-autoForm default inherited                                         waf-autoForm-level-0 waf-level-0 "></div>
+ 		<input type="text" id="{id}textField16" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="countryName" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}company.countryName" class="waf-widget waf-textField default inherited             waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label17" for="{id}textField16" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField       waf-label-level-0 waf-level-0 ">countryName</label>
+ 		<div id="{id}dataGrid1" data-type="dataGrid" data-selection-mode="single" data-readOnly="true" data-lib="WAF" data-label-position="top" data-label="" data-header-hide="false" data-footer-text="item(s)" data-footer-hide="true" data-display-error="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" data-column="[{'sourceAttID':'ID','colID':'ID','width':'70','title':'ID'},{'sourceAttID':'firstName','colID':'firstName','width':'150','title':'firstName'},{'sourceAttID':'lastName','colID':'lastName','width':'150','title':'lastName'},{'sourceAttID':'gender','colID':'gender','width':'150','title':'gender'},{'sourceAttID':'fullName','colID':'fullName','width':'150','title':'fullName'},{'sourceAttID':'salary','colID':'salary','width':'90','title':'salary'},{'sourceAttID':'companyName','colID':'companyName','width':'150','title':'companyName'},{'sourceAttID':'birthDate','colID':'birthDate','width':'100','title':'birthDate'},{'sourceAttID':'age','colID':'age','width':'150','title':'age'}]" data-binding="{id}employees" class="waf-widget waf-dataGrid default inherited      waf-dataGrid-level-0 waf-level-0 "></div>
+ 	 	 	</div>
+ 	 		<div id="{id}containerEmployee" data-type="container" data-lib="WAF" data-hideonload="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                           waf-container-level-1 waf-level-1 ">
+ 		<input type="text" id="{id}textField4" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="ID" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.ID" class="waf-widget waf-textField default inherited           waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label4" for="{id}textField4" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">ID</label>
+ 		<input type="text" id="{id}textField5" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="firstName" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.firstName" class="waf-widget waf-textField default inherited              waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label5" for="{id}textField5" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">firstName</label>
+ 		<input type="text" id="{id}textField6" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="lastName" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.lastName" class="waf-widget waf-textField default inherited                waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label6" for="{id}textField6" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">lastName</label>
+ 		<input type="text" id="{id}textField7" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="gender" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.gender" class="waf-widget waf-textField default inherited              waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label7" for="{id}textField7" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">gender</label>
+ 		<input type="text" id="{id}textField8" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="fullName" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.fullName" class="waf-widget waf-textField default inherited           waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label8" for="{id}textField8" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField   waf-label-level-0 waf-level-0 ">fullName</label>
+ 		<input type="text" id="{id}textField9" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="salary" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.salary" class="waf-widget waf-textField default inherited            waf-textField-level-0 waf-level-0"/>
+ 		<label id="{id}label9" for="{id}textField9" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">salary</label>
+ 		<input type="text" id="{id}textField10" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="companyName" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.companyName" class="waf-widget waf-textField default inherited               waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label10" for="{id}textField10" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">companyName</label>
+ 		<input type="text" id="{id}textField11" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="birthDate" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.birthDate" class="waf-widget waf-textField default inherited               waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label11" for="{id}textField11" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">birthDate</label>
+ 		<input type="text" id="{id}textField12" data-type="textField" data-password="false" data-multiline="false" data-lib="WAF" data-label-position="left" data-label="age" data-datapicker-on="true" data-datapicker-icon-only="false" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.age" class="waf-widget waf-textField default inherited               waf-textField-level-0 waf-level-0 "/>
+ 		<label id="{id}label12" for="{id}textField12" data-valign="middle" data-type="label" data-margin="5" data-lib="WAF" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-label default inherited                                                                                                                     waf-label-textField     waf-label-level-0 waf-level-0 ">age</label>
+ 		<div id="{id}image1" data-type="image" data-target="_blank" data-lib="WAF" data-label-position="left" data-label="" data-fit="0" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="{id}employee.photo" class="waf-widget waf-image default inherited                  waf-image-level-0 waf-level-0 "></div>
+ 			<div id="{id}autoFormEmployeeCompany" data-withoutTable="true" data-type="autoForm" data-resize-optimal-each-widget="true" data-resize-each-widget="true" data-resizable="true" data-lib="WAF" data-display-error="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-column-name="ID,name,revenues,employees,country,countryName" data-column-attribute="ID,name,revenues,employees,country,countryName" data-column="[{'title':'ID','sourceAttID':'ID'},{'title':'name','sourceAttID':'name'},{'title':'revenues','sourceAttID':'revenues'},{'title':'employees','sourceAttID':'employees'},{'title':'country','sourceAttID':'country'},{'title':'countryName','sourceAttID':'countryName'}]" data-binding="{id}employeeCompany" class="waf-widget waf-autoForm default inherited                           waf-autoForm-level-0 waf-level-0 "></div>
+ 	 	 	</div>
+ 	 		<div id="{id}dataGridCompany" data-type="dataGrid" data-selection-mode="single" data-readOnly="true" data-lib="WAF" data-label-position="top" data-label="" data-hideonload="true" data-footer-text="item(s)" data-footer-hide="true" data-display-error="true" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" data-column="[{'sourceAttID':'name','colID':'name','width':'150','title':'name'},{'sourceAttID':'revenues','colID':'revenues','width':'90','title':'revenues'},{'sourceAttID':'countryName','colID':'countryName','width':'150','title':'countryName'}]" data-binding="{id}company" class="waf-widget waf-dataGrid default inherited      waf-dataGrid-level-0 waf-level-0 "></div>
+ 	 		<div id="{id}richTextResult" data-type="richText" data-target="_blank" data-plainText="true" data-overflow="Hidden" data-lib="WAF" data-label-position="left" data-label="" data-hideonload="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-autoWidth="false" class="waf-widget waf-richText default inherited    ace_editor ace-github ace_constant "></div>
+ 	 		<div id="{id}imageResult" data-type="image" data-target="_blank" data-lib="WAF" data-label-position="left" data-label="" data-hideonload="true" data-fit="0" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-image default inherited         waf-image-level-0 waf-level-0 "></div>
+ 	 		<div id="{id}errorDivResult" data-type="errorDiv" data-lib="WAF" data-hideonload="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-errorDiv default inherited    ace_editor ace-github ace_constant "></div>
+ 	 		<div id="{id}containerResultDate" data-type="container" data-lib="WAF" data-hideonload="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-container default inherited         waf-container-level-1 waf-level-1 ">
+ 	 	 		<div id="{id}calendarResult" data-type="calendar" data-save="true" data-lib="WAF" data-label-position="left" data-label="" data-format="dd/mm/yy" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-calendar default inherited                         waf-calendar-level-0 waf-level-0 "></div>
+ 	 	 		</div>
+ 	 	</div>
+ 		<div id="{id}container2" data-type="container" data-linked-tag="{id}menuItem2" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                                                                           waf-tabView-container-level-0 waf-container-level-0 waf-level-0 ">
+	 	 	<div id="{id}containerJsonResult" data-type="container" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                           waf-container-level-1 waf-level-1 ">
+ 	</div>
+ 	 		<div id="{id}richTextLimitedResults" data-type="richText" data-target="_blank" data-plainText="true" data-overflow="Hidden" data-lib="WAF" data-label-position="left" data-label="" data-hideonload="true" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" data-binding="limitedResults" data-autoWidth="true" class="waf-widget waf-richText default inherited                                                                                                          waf-richText-level-0 waf-level-0 "></div>
+ 	 	</div>
+ 			<div id="{id}container3" data-type="container" data-linked-tag="{id}menuItem3" data-lib="WAF" data-constraint-top="true" data-constraint-right="true" data-constraint-left="true" data-constraint-bottom="true" class="waf-widget waf-container default inherited                                                                   waf-container-level-0 waf-level-0 waf-tabView-container-level-0 ">
+	 	 	<div id="{id}image2" data-type="image" data-target="_blank" data-src="/images/model.png" data-lib="WAF" data-label-position="left" data-label="" data-fit="0" data-constraint-top="true" data-constraint-right="false" data-constraint-left="true" data-constraint-bottom="false" class="waf-widget waf-image default inherited                                                                            waf-image-level-0 waf-level-0 "></div>
+ 	 	</div>
+ 	</div>
+	
+	</section>
