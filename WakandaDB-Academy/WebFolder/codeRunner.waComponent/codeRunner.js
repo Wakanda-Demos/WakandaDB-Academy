@@ -202,6 +202,7 @@ function constructor (id) {
 				    collection,
 				    source;
 
+				debugger;
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
                 richTextJsonComment.setTextColor('black');
@@ -392,6 +393,7 @@ function constructor (id) {
 				    mainErrorMessage,
 				    jsonResult;
 
+				debugger;
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
 
