@@ -19,13 +19,13 @@ function constructor (id) {
 	    textFieldName,
 	    textFieldMail,
 	    textFieldComment,
+	    buttonSubmitComment,
 	    // $jQuery nodes
 	    $codeRunner,
 	    $commentList,
 	    $textFieldName,
 	    $textMail,
 	    $textFieldMail,
-	    $buttonSubmit,
 	    $containerNewsletter,
 	    $containerWelcome,
 	    $commentsList;
@@ -37,7 +37,7 @@ function constructor (id) {
 	textFieldName = widgets.textFieldName;
 	textFieldComment = widgets.textFieldComment;
 	textFieldMail = widgets.textFieldMail;
-	buttonSubmit = widgets.buttonSubmit;
+	buttonSubmitComment = widgets.buttonSubmitComment;
 
 	$codeRunner = WDB_ACADEMY.$codeRunner;
 	$commentList = widgets.commentsList.$domNode;
@@ -48,7 +48,7 @@ function constructor (id) {
 	$containerWelcome = widgets.containerWelcome.$domNode;
 	$commentsList = widgets.commentsList.$domNode;
 
-	buttonSubmit.disable();
+	buttonSubmitComment.disable();
 
 	$.ajax({
         type: 'GET',
@@ -75,7 +75,7 @@ function constructor (id) {
 	textFieldMail.keyup = function textFieldMail_keyup (event)// @startlock
 	{// @endlock
 		if (textFieldMail.getValue() !== '') {
-			buttonSubmit.enable();
+			buttonSubmitComment.enable();
 		}
 
 	};// @lock
@@ -83,7 +83,7 @@ function constructor (id) {
 	textFieldComment.keyup = function textFieldComment_keyup (event)// @startlock
 	{// @endlock
 		if (textFieldComment.getValue() !== '') {
-			buttonSubmit.enable();
+			buttonSubmitComment.enable();
 		}
 	};// @lock
 

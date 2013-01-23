@@ -14,33 +14,34 @@ function constructor (id) {
 
     var
         widgets,
-        sample3,
-        sample4;
+        sample1Code,
+        sample2Code;
 
 	// @region namespaceDeclaration// @startlock
-	var imageSample4 = {};	// @image
-	var imageSample3 = {};	// @image
+	var imageSample2 = {};	// @image
+	var imageSample1 = {};	// @image
 	// @endregion// @endlock
 
 	widgets = this.widgets;
-	sample3 = widgets.sample3.getValue();
-	sample4 = widgets.sample4.getValue();
+
+	sample1Code = widgets.sample1.getValue();
+	sample2Code = widgets.sample2.getValue();
 
 	// eventHandlers// @lock
 
-	imageSample4.click = function imageSample4_click (event)// @startlock
+	imageSample2.click = function imageSample2_click (event)// @startlock
 	{// @endlock
-		WDB_ACADEMY.ssjsEditor.setValue(sample4);
+		WDB_ACADEMY.setCode(sample2Code);
 	};// @lock
 
-	imageSample3.click = function imageSample3_click (event)// @startlock
+	imageSample1.click = function imageSample1_click (event)// @startlock
 	{// @endlock
-		WDB_ACADEMY.ssjsEditor.setValue(sample3);
+		WDB_ACADEMY.setCode(sample1Code);
 	};// @lock
 	
 	// @region eventManager// @startlock
-	WAF.addListener(this.id + "_imageSample4", "click", imageSample4.click, "WAF");
-	WAF.addListener(this.id + "_imageSample3", "click", imageSample3.click, "WAF");
+	WAF.addListener(this.id + "_imageSample2", "click", imageSample2.click, "WAF");
+	WAF.addListener(this.id + "_imageSample1", "click", imageSample1.click, "WAF");
 	// @endregion// @endlock
 
 	};// @lock

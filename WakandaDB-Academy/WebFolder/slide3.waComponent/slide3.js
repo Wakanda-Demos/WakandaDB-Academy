@@ -14,8 +14,8 @@ function constructor (id) {
 
     var
         widgets,
-        sample1,
-        sample2;
+        sample1Code,
+        sample2Code;
 
 	// @region namespaceDeclaration// @startlock
 	var imageSample2 = {};	// @image
@@ -23,19 +23,20 @@ function constructor (id) {
 	// @endregion// @endlock
 
     widgets = this.widgets;
-	sample1 = widgets.sample1.getValue();
-	sample2 = widgets.sample2.getValue();
+
+	sample1Code = widgets.sample1.getValue();
+	sample2Code = widgets.sample2.getValue();
 
 	// eventHandlers// @lock
 
 	imageSample2.click = function imageSample2_click (event)// @startlock
 	{// @endlock
- 		WDB_ACADEMY.ssjsEditor.setValue(sample2);
+ 		WDB_ACADEMY.setCode(sample2Code);
 	};// @lock
 
 	imageSample1.click = function imageSample1_click (event)// @startlock
 	{// @endlock
- 		WDB_ACADEMY.ssjsEditor.setValue(sample1);
+ 		WDB_ACADEMY.setCode(sample1Code);
 	};// @lock
 	
 	// @region eventManager// @startlock

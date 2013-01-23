@@ -14,53 +14,52 @@ function constructor (id) {
 
     var
         widgets,
-        sample5,
-        sample6,
-        sample7,
-        sample8;
+        sample1Code,
+        sample2Code,
+        sample3Code,
+        sample4Code;
 
 	// @region namespaceDeclaration// @startlock
-	var imageSample5 = {};	// @image
-	var imageSample8 = {};	// @image
-	var imageSample7 = {};	// @image
-	var imageSample6 = {};	// @image
+	var imageSample1 = {};	// @image
+	var imageSample4 = {};	// @image
+	var imageSample3 = {};	// @image
+	var imageSample2 = {};	// @image
 	// @endregion// @endlock
 
 	widgets = this.widgets;
 
-    sample5 = widgets.sample5.getValue();
-    sample6 = widgets.sample6.getValue();
-    sample7 = widgets.sample7.getValue();
-    sample8 = widgets.sample8.getValue();
+    sample1Code = widgets.sample1.getValue();
+    sample2Code = widgets.sample2.getValue();
+    sample3Code = widgets.sample3.getValue();
+    sample4Code = widgets.sample4.getValue();
 
 	// eventHandlers// @lock
 
-	imageSample5.click = function imageSample5_click (event)// @startlock
+	imageSample1.click = function imageSample1_click (event)// @startlock
 	{// @endlock
-		ace.edit("codeRunner_containerSsjsEditor").setValue($comp.widgets.sample1.getValue() + '\n' + 'MrDupond');
-
+		WDB_ACADEMY.setCode(sample1Code + '\n' + 'MrDupond;');
 	};// @lock
 
-	imageSample8.click = function imageSample8_click (event)// @startlock
+	imageSample4.click = function imageSample4_click (event)// @startlock
 	{// @endlock
-		WDB_ACADEMY.ssjsEditor.setValue(sample5 + '\n' + sample8);
+		WDB_ACADEMY.setCode(sample1Code + '\n' + sample4Code);
 	};// @lock
 
-	imageSample7.click = function imageSample7_click (event)// @startlock
+	imageSample3.click = function imageSample3_click (event)// @startlock
 	{// @endlock
-		WDB_ACADEMY.ssjsEditor.setValue(sample5 + '\n' + sample7);
+		WDB_ACADEMY.setCode(sample1Code + '\n' + sample3Code);
 	};// @lock
 
-	imageSample6.click = function imageSample6_click (event)// @startlock
+	imageSample2.click = function imageSample2_click (event)// @startlock
 	{// @endlock
-		WDB_ACADEMY.ssjsEditor.setValue(sample5 + '\n' + sample6);
+		WDB_ACADEMY.setCode(sample1Code + '\n' + sample2Code);
 	};// @lock
 	
 	// @region eventManager// @startlock
-	WAF.addListener(this.id + "_imageSample5", "click", imageSample5.click, "WAF");
-	WAF.addListener(this.id + "_imageSample8", "click", imageSample8.click, "WAF");
-	WAF.addListener(this.id + "_imageSample7", "click", imageSample7.click, "WAF");
-	WAF.addListener(this.id + "_imageSample6", "click", imageSample6.click, "WAF");
+	WAF.addListener(this.id + "_imageSample1", "click", imageSample1.click, "WAF");
+	WAF.addListener(this.id + "_imageSample4", "click", imageSample4.click, "WAF");
+	WAF.addListener(this.id + "_imageSample3", "click", imageSample3.click, "WAF");
+	WAF.addListener(this.id + "_imageSample2", "click", imageSample2.click, "WAF");
 	// @endregion// @endlock
 
 	};// @lock

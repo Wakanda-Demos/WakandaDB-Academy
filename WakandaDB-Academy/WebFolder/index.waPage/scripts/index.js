@@ -1,10 +1,10 @@
-var currentSlide = 1;
-var lastSlide;
+var
+    WDB_ACADEMY;
 
-function copyCode(index){
-	var code = document.getElementById('code' + index).innerText;
-	ace.edit('codeRunner_containerSsjsEditor').setValue(code);
-}
+// WDB_ACADEMY application namespace
+WDB_ACADEMY = {
+	currentSlideIndex: 1
+};
 
 WAF.onAfterInit = function onAfterInit() {// @lock
 
@@ -14,84 +14,176 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	var buttonNext = {};	// @button
 // @endregion// @endlock
 
+    var
+        //jsCode,
+        lastSlideIndex,
+        // sources
+        localSources,
+        sourceJsonComment,
+        sourceCountryLocation,
+        // widgets
+        widgets,
+        codeRunner,
+        // wakanda widgets jQuery references
+        $codeRunner,
+        $buttonNext,
+        $buttonPrevious,
+        $componentLoading,
+        // ace
+        //jsonView,
+        ssjsEditor;
+
+    // index of the last slide
+    lastSlideIndex = $('[data-type=component]').length - 2;
+
+    // sources
+	localSources = WAF.sources;
+
+    // widgets
+	widgets = WAF.widgets;
+	codeRunner = widgets.codeRunner;
+	
+	// widgets jQuery reference 
+	$codeRunner = codeRunner.$domNode;
+	$buttonNext = widgets.buttonNext.$domNode;
+	$buttonPrevious = widgets.buttonPrevious.$domNode;
+	$componentLoading = widgets.componentLoading.$domNode;
+
+	// publish references and values to components via WDB_ACADEMY namespace
+	WDB_ACADEMY.$codeRunner = $codeRunner;
+	WDB_ACADEMY.$buttonNext = $buttonNext;
+	WDB_ACADEMY.$buttonPrevious = $buttonPrevious;
+    WDB_ACADEMY.lastSlideIndex = lastSlideIndex;
+
+    // Initialization
+	$buttonNext.fadeIn(500);
+
 // eventHandlers// @lock
 
 	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
 	{// @endlock
 
-	  $('#componentLoading').fadeOut(500);
-	  $('#buttonNext').fadeIn(500);
+        var
+            key,
+            api,
+            domain,
+            version,
+            url;
 
-	  var key = 'fc3906b9efb2b865519ce99f6612f07a8d101d4870869b8718462aab9e51e788';
-	  var api =  "ip-city";
-	  var domain = 'api.ipinfodb.com';
-	  var version = 'v3';
-	  var url = "http://" + domain + "/" + version + "/" + api + "/?key=" + key + "&format=json" + "&callback=?";
+        $componentLoading.fadeOut(500);
 
-      $.getJSON(url,function(data){
-        if (data['statusCode'] == 'OK') localStorage['geoData'] = JSON.stringify(data);
-      });
+        key = 'fc3906b9efb2b865519ce99f6612f07a8d101d4870869b8718462aab9e51e788';
+	    api =  "ip-city";
+	    domain = 'api.ipinfodb.com';
+	    version = 'v3';
+	    url = "http://" + domain + "/" + version + "/" + api + "/?key=" + key + "&format=json" + "&callback=?";
 
-		if (!localStorage['userID'] || localStorage['userID'] == '') localStorage['userID'] = GUID();
+        $.getJSON(
+            url,
+            function geoDataReceived(data) {
+                if (data.statusCode === 'OK') {
+                	localStorage.geoData = JSON.stringify(data);
+                }
+            }
+        );
+
+		if (!localStorage.userID || localStorage.userID === '') {
+			localStorage.userID = GUID();
+		}
 	};// @lock
-	
-	lastSlide = $('[data-type=component]').length-2;
 
 	buttonPrevious.click = function buttonPrevious_click (event)// @startlock
 	{// @endlock
-		$('#slide' + currentSlide).fadeOut(1000);
-		if (currentSlide == lastSlide) $('#buttonNext').fadeIn(1000);
+        var
+		    slideIndex,
+		    currentSlide,
+		    sample1,
+		    jsCode,
+		    codeRunnerTop;
 
-		currentSlide = (currentSlide >1) ? currentSlide-1 : lastSlide;
- 		if ($$('slide' + currentSlide +'_sample1')) {
-			ace.edit('codeRunner_containerSsjsEditor').setValue($$('slide' + currentSlide +'_sample1').getValue());
-		} else {
-			ace.edit('codeRunner_containerSsjsEditor').setValue('');
+		slideIndex = WDB_ACADEMY.currentSlideIndex;
+		currentSlide = widgets['slide' + slideIndex];
+
+		currentSlide.$domNode.fadeOut(1000);
+
+		if (slideIndex === lastSlideIndex) {
+			$buttonNext.fadeIn(1000);
 		}
-		$$('codeRunner_tabView1').selectTab(1);
- 		if (currentSlide == 1 || currentSlide == lastSlide) {
-			$('#codeRunner').fadeOut(1000);
+
+		// Changing the current slide to the new one
+
+		slideIndex = (slideIndex > 1) ? (slideIndex - 1) : lastSlideIndex;
+		WDB_ACADEMY.currentSlideIndex = slideIndex;
+		currentSlide = widgets['slide' + slideIndex];
+ 
+        if (slideIndex === 1) {
+        	$buttonPrevious.fadeOut(1000);
+        }
+
+        sample1 = currentSlide.widgets.sample1;
+        // Must we really remove the potential user custom code?
+        jsCode = sample1 ? sample1.getValue() : '';
+        WDB_ACADEMY.setCode(jsCode);
+
+ 		if (slideIndex === 1 || slideIndex === lastSlideIndex) {
+			$codeRunner.fadeOut(1000);
 		} else {
-			$('#codeRunner').fadeIn(1000);
+			$codeRunner.fadeIn(1000);
 		}
 		
-		if (currentSlide >= lastSlide-1 ) {
-			$('#codeRunner').css('top', '506px');
-		} else {
-			$('#codeRunner').css('top', '152px');
-		}
+		codeRunnerTop = (slideIndex >= lastSlideIndex) ? '506px' : '152px';
+		$codeRunner.css('top', codeRunnerTop);
 		
-		$('#slide' + currentSlide).fadeIn(1000);	
-		
+		currentSlide.$domNode.fadeIn(1000);
+
+
 	};// @lock
 
 	buttonNext.click = function buttonNext_click (event)// @startlock
 	{// @endlock
- 
-		$('#slide' + currentSlide).fadeOut(1000);
-		if (currentSlide == 1) $('#buttonPrevious').fadeIn(1000);
-		if (currentSlide == lastSlide-1) $('#buttonNext').fadeOut(1000);
+         var
+            slideIndex,
+            currentSlide,
+            sample1,
+            jsCode,
+            codeRunnerTop;
 
-		currentSlide = (currentSlide <lastSlide) ? currentSlide+1 : 1;
-		if ($$('slide' + currentSlide +'_sample1')) {
-			ace.edit('codeRunner_containerSsjsEditor').setValue($$('slide' + currentSlide +'_sample1').getValue());
-		} else {
-			ace.edit('codeRunner_containerSsjsEditor').setValue('');
-		}
-		$$('codeRunner_tabView1').selectTab(1);
-		if (currentSlide == 1 || currentSlide == lastSlide) {
-			$('#codeRunner').fadeOut(1000);
-		} else {
-			$('#codeRunner').fadeIn(1000);
+		slideIndex = WDB_ACADEMY.currentSlideIndex;
+		currentSlide = widgets['slide' + slideIndex];
+
+		currentSlide.$domNode.fadeOut(1000);
+
+		if (slideIndex === 1) {
+			$buttonPrevious.fadeIn(1000);
 		}
 
-		if (currentSlide >= lastSlide-1 ) {
-			$('#codeRunner').css('top', '506px');
+		if (slideIndex === (lastSlideIndex - 1)) {
+	        $buttonNext.fadeOut(1000);
+	    }
+
+		// Changing the current slide to the new one
+
+		slideIndex = (slideIndex < lastSlideIndex) ? (slideIndex + 1) : 1;
+		WDB_ACADEMY.currentSlideIndex = slideIndex;
+		currentSlide = widgets['slide' + slideIndex];
+
+        sample1 = currentSlide.widgets.sample1;
+        // TODO: Must we really remove the potential user custom code?
+        //jsCode = sample1 ? sample1.getValue() : '';
+        //WDB_ACADEMY.setCode(jsCode);
+        //WDB_ACADEMY.selectTab(1);
+
+		if (slideIndex === 1 || slideIndex === lastSlideIndex) {
+			$codeRunner.fadeOut(1000);
 		} else {
-			$('#codeRunner').css('top', '152px');
+			$codeRunner.fadeIn(1000);
 		}
-		
-		$('#slide' + currentSlide).fadeIn(1000);	
+
+		codeRunnerTop = (slideIndex >= (lastSlideIndex - 1)) ? '506px' : '152px';
+		$codeRunner.css('top', codeRunnerTop);
+
+		currentSlide.$domNode.fadeIn(1000);
+
 	};// @lock
 
 // @region eventManager// @startlock

@@ -12,17 +12,34 @@ function constructor (id) {
 
 	this.load = function (data) {// @lock
 
+	var
+	    lastSlideIndex,
+	    slideCodes,
+	    $containerCodes;
+
 	// @region namespaceDeclaration// @startlock
 	// @endregion// @endlock
+
+    slideCodesIndex = $('[data-type=component]').length - 3;
+    slideCodes = WAF.widgets['slide' + slideCodesIndex];
+    $containerCodes = slideCodes.widgets.containerCodes.$domNode;
 
 	// eventHandlers// @lock
 
 	$.ajax({
+	    type : 'GET',
  		url: 'http://127.0.0.1:8084/getCodes',				
 //        url: 'http://194.98.194.84:8084/getCodes',
-	   type : 'GET',
-	   success : function(result){ $('#slide' + (lastSlide-1) + '_containerCodes').html(result); },
-	   error : function(result){ console.log('error'); }
+	    success: function onGetCodesSuccess(result){
+
+	    	$containerCodes.html(result);	
+
+	    },
+	    error: function onGetCodesError(result){
+
+	    	console.log('onGetCodesError:', result);
+
+	    }
 	});
 
 
