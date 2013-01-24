@@ -267,7 +267,7 @@ function constructor (id) {
 					    	//WAF.widgets.richTextDateResult.setValue(result.getHours() + ':' + result.getMinutes())
 							currentGraphicView = calendarDateResult;
 							currentGraphicView.setValue(result);
-							currentGraphicView = widgets.containerDate;
+							currentGraphicView = widgets.containerResultDate;
 					    } else {
 					    	// String
     					    jsonComment = 'The result is a string.';
