@@ -1,6 +1,8 @@
 
 (function Component (id) {// @lock
 
+"use strict";
+
 // Add the code that needs to be shared between components here
 
 function constructor (id) {
@@ -25,6 +27,7 @@ function constructor (id) {
         menuItemJsonView,
         currentGraphicView,
         richTextScalarResult,
+        calendarDateResult,
         errorDivServerException,
         // ace
         ssjsEditor,
@@ -49,7 +52,6 @@ function constructor (id) {
 	}
 	
 	function showJsonResult(jsonResult) {
-		debugger;
 		if (sourceJsonComment) {
             sourceJsonComment.sync();
         }
@@ -71,7 +73,7 @@ function constructor (id) {
 
 	// default comment and valid country location
 	jsonComment = 'Ready for Server-Side JavaScript execution';
-	countryLocation = 'USA';
+	googleMapCountry = 'USA';
 
     // sources
 	globalSources = WAF.sources;
@@ -198,11 +200,12 @@ function constructor (id) {
 				    xhr,
 				    originalLength,
 				    isISODate,
+				    isNonNullObject,
 				    dataclass,
 				    collection,
 				    source;
 
-				debugger;
+				//debugger;
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
                 richTextJsonComment.setTextColor('black');
@@ -386,6 +389,7 @@ function constructor (id) {
 			},
 
 			onError: function handleSsjsError(response) {
+
 				var
 				    xhr,
 				    error,
@@ -393,7 +397,9 @@ function constructor (id) {
 				    mainErrorMessage,
 				    jsonResult;
 
-				debugger;
+				//debugger;
+				jsonResult = '"no response received"';
+
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
 
@@ -401,7 +407,10 @@ function constructor (id) {
 				xhr = response.XHR;
 				originalContentType = xhr.getResponseHeader('X-Original-Content-Type');
 
-				switch (originalContentType) {
+                if (xhr.status === 0) {
+					jsonComment = 'Connection to the server failed... Please retry Later';
+	                sourceJsonComment.sync();
+                } else switch (originalContentType) {
 
 			    case null:
 
@@ -409,7 +418,7 @@ function constructor (id) {
 
     				jsonComment = 'An Exception were thrown on the server!';
                     richTextJsonComment.setTextColor('red');
-
+                    
 			    	error = JSON.parse(xhr.responseText).__ERROR;
 			    	mainErrorMessage = error[0].message;
 

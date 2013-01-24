@@ -7,6 +7,8 @@ WDB_ACADEMY = {
 };
 
 WAF.onAfterInit = function onAfterInit() {// @lock
+	
+	"use strict";
 
 // @region namespaceDeclaration// @startlock
 	var documentEvent = {};	// @document
@@ -90,6 +92,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		if (!localStorage.userID || localStorage.userID === '') {
 			localStorage.userID = GUID();
 		}
+		buttonNext.click();
 	};// @lock
 
 	buttonPrevious.click = function buttonPrevious_click (event)// @startlock
