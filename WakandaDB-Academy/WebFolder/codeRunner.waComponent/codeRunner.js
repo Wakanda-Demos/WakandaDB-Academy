@@ -14,6 +14,8 @@ function constructor (id) {
 
 	var
 		jsCode,
+		scalarResultHandler,
+		isISODate,
         // sources
         globalSources,
         localSources,
@@ -29,6 +31,8 @@ function constructor (id) {
         richTextScalarResult,
         calendarDateResult,
         errorDivServerException,
+        // jQuery Node widget reference
+        $richTextScalarResult,
         // ace
         ssjsEditor,
         jsonView,
@@ -60,6 +64,68 @@ function constructor (id) {
 		jsonView.navigateTo(0, 0);
 		ssjsEditor.focus();	
 	}
+	
+	function updateRichTextAceSyntaxClass(type) {
+		$richTextScalarResult.removeClass('ace_null ace_undefined ace_boolean ace_numeric ace_string');
+		$richTextScalarResult.addClass('ace_' + type);
+	}
+	
+	function prepareUndefinedResult(result) {
+		jsonComment = 'The result is undefined';
+		updateRichTextAceSyntaxClass('undefined');
+		return result;
+	}
+	
+	function prepareNullResult(result) {
+		jsonComment = 'The result is null';
+		updateRichTextAceSyntaxClass('null');
+		return result;
+	}
+	
+	function prepareBooleanResult(result) {
+		jsonComment = 'The result is a boolean.';
+		updateRichTextAceSyntaxClass('boolean');
+		return result;
+	}
+	
+	function prepareNumberResult(result) {
+		jsonComment = 'The result is a number.';
+		updateRichTextAceSyntaxClass('number');
+		return result;
+	}
+	
+	function prepareStringOrDateResult(result) {
+		isISODate = ISO_DATE_REGEXP.exec(result);
+	    if (isISODate !== null) {
+	    	// Date
+	    	result = showDateResult(result)
+	    } else {
+	    	// String
+	    	result = showStringResult(result)
+		}
+        return result;
+	}
+	
+	function prepareStringResult(result) {
+	    jsonComment = 'The result is a string.';
+	    updateRichTextAceSyntaxClass('string');
+	    result = '"' + result.replace('"', '\"') + '"';
+        return result;
+	}
+	
+	function prepareDateResult(result) {
+        jsonComment = 'The result is a Date object.';
+	    result = new Date(Date.UTC(+isISODate[1], +isISODate[2] - 1, +isISODate[3], +isISODate[4], +isISODate[5], +isISODate[6]));
+	    //richTextDateResult.setValue(result.getHours() + ':' + result.getMinutes())
+		calendarDateResult.setValue(result);
+		currentGraphicView = widgets.containerResultDate;
+		return result;
+	}
+	
+	function prepareFunctionResult(result) {
+        jsonComment = 'Unexpected result';
+		return result;
+	}
 
     function selectTab(index) {
     	tabViewResults.selectTab(index);
@@ -70,6 +136,15 @@ function constructor (id) {
 
     // First proposed Server-Side JavaScript Code
 	jsCode = '';
+	
+	scalarResultHandler = {
+		'undefined': {prepare: prepareUndefinedResult},
+		'object': {prepare: prepareNullResult},
+		'boolean': {prepare: prepareBooleanResult},
+		'number': {prepare: prepareNumberResult},
+		'string': {prepare: prepareStringOrDateResult},
+		'function': {prepare: prepareFunctionResult}
+	}
 
 	// default comment and valid country location
 	jsonComment = 'Ready for Server-Side JavaScript execution';
@@ -96,6 +171,8 @@ function constructor (id) {
 	tabViewResults = widgets.tabViewResults;
 	menuItemGraphicView = widgets.menuItemGraphicView;
 	menuItemJsonView = widgets.menuItemJsonView;
+	
+	$richTextScalarResult = richTextScalarResult.$domNode;
 
 	// ace objects accessible by components via WDB_ACADEMY namespace
 	ssjsEditor = ace.edit(widgets.containerSsjsEditor.id);
@@ -200,7 +277,6 @@ function constructor (id) {
 				    xhr,
 				    originalLength,
 				    isISODate,
-				    isNonNullObject,
 				    dataclass,
 				    collection,
 				    source;
@@ -210,72 +286,32 @@ function constructor (id) {
                 sourceJsonComment.sync();
                 richTextJsonComment.setTextColor('black');
 
+				isISODate = null;
 			    xhr = response.XHR;
 
-				rawResult = JSON.parse(xhr.responseText);
-				rawResult = ((typeof rawResult === 'object') && rawResult && rawResult.hasOwnProperty('result')) ? rawResult.result : rawResult;
-				
-				result = response.result;
-				resultType = typeof result;
-				isNonNullObject = (resultType === 'object' && result !== null);
-				
-				if (isNonNullObject) {
-					// Array specific handling
-					if (result.hasOwnProperty('HTTPStream')) {
-						result = result.HTTPStream;
-						rawResult = result;
-				    } if (result.hasOwnProperty('result')) {
-					    result = result.result;
-				    }
-				}
+				debugger;
+				rawResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
+				originalLength = xhr.getResponseHeader('X-Original-Array-Length');
 
-				isISODate = null;
+				if (originalLength) {
+					result = result.HTTPStream;
+					rawResult = result;
+				} else if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(rawResult) > -1) {
+					result = rawResult;
+					rawResult = eval(rawResult); // eval() only used if rawResult is NaN, Infinity, or undefined
+				} else {
+				    rawResult = JSON.parse(xhr.responseText);
+    				rawResult = ((typeof rawResult === 'object') && rawResult && rawResult.hasOwnProperty('result')) ? rawResult.result : rawResult;
+    				result = response.result;
+				}
+				
+				resultType = typeof result;
 
 				if (result === null || resultType !== 'object') {
 					
 					currentGraphicView = widgets.richTextScalarResult;
-					currentGraphicView.removeClass('ace_null');
-					currentGraphicView.removeClass('ace_undefined');
-					currentGraphicView.removeClass('ace_boolean');
-					currentGraphicView.removeClass('ace_numeric');
-					currentGraphicView.removeClass('ace_string');
-					
 					// Handle scalar, null and Date values
-					switch (resultType) {
-					case 'object':
-					    // null	value
-					    jsonComment = 'The result is null';
-					    currentGraphicView.addClass('ace_null');
-					    break;
-					case 'boolean':
-					    // boolean
-					    jsonComment = 'The result is a boolean.';
-					    currentGraphicView.addClass('ace_boolean');
-					    break;
-					case 'number':
-					    // number
-					    jsonComment = 'The result is a number.';
-					    currentGraphicView.addClass('ace_numeric');
-					    break;
-					case 'string':
-					    // string or Date
-					    isISODate = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(result);
-					    if (isISODate !== null) {
-					    	// Date
-    					    jsonComment = 'The result is a Date object.';
-					    	result = new Date(Date.UTC(+isISODate[1], +isISODate[2] - 1, +isISODate[3], +isISODate[4], +isISODate[5], +isISODate[6]));
-					    	//WAF.widgets.richTextDateResult.setValue(result.getHours() + ':' + result.getMinutes())
-							currentGraphicView = calendarDateResult;
-							currentGraphicView.setValue(result);
-							currentGraphicView = widgets.containerResultDate;
-					    } else {
-					    	// String
-    					    jsonComment = 'The result is a string.';
-					    	currentGraphicView.addClass('ace_string');
-					    	result = '"' + result.replace('"', '\"') + '"';
-						}
-					    break;
-					}
+					result = scalarResultHandler[resultType].prepare(result);
 					
 					if (isISODate === null) {
 						currentGraphicView.setValue(String(result));
@@ -400,6 +436,7 @@ function constructor (id) {
 				//debugger;
 				jsonResult = '"no response received"';
 
+				debugger;
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
 
@@ -416,7 +453,7 @@ function constructor (id) {
 
                     // An exception occured on the server
 
-    				jsonComment = 'An Exception were thrown on the server!';
+    				jsonComment = 'An Exception has been thrown on the server!';
                     richTextJsonComment.setTextColor('red');
                     
 			    	error = JSON.parse(xhr.responseText).__ERROR;
@@ -432,6 +469,35 @@ function constructor (id) {
 
 			    	// Show the JSON result
 					jsonResult = toPrettyJSON(error);
+					break;
+
+			    case 'application/json':
+
+					// Result is an an unsupported JSON value
+					jsonResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
+					if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
+						jsonComment = 'The result is in an unknown format.';
+	                    richTextJsonComment.setTextColor('red');
+
+	                    // No Graphic view, force JSON view
+			            selectTab(2); 
+			            menuItemGraphicView.disable();
+						break;
+					}
+
+				    currentGraphicView = widgets.richTextScalarResult;
+
+				    if (jsonResult === 'undefined') {
+				        jsonComment = 'The result is "undefined".';
+				    } else {
+				        //jsonResult = Number(jsonResult);
+				        jsonComment = 'The result is a number.';
+				    }
+
+					// show the result
+					currentGraphicView.setValue(jsonResult);
+					currentGraphicView.show();
+					menuItemGraphicView.enable();
 					break;
 
 			    case 'image/jpeg':
