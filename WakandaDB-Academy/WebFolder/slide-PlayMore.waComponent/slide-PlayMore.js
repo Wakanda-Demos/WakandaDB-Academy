@@ -13,14 +13,14 @@ function constructor (id) {
 	this.load = function (data) {// @lock
 
 	var
-	    lastSlideIndex,
+	    slideCodesIndex,
 	    slideCodes,
 	    $containerCodes;
 
 	// @region namespaceDeclaration// @startlock
 	// @endregion// @endlock
 
-    slideCodesIndex = $('[data-type=component]').length - 3;
+    slideCodesIndex = $('[data-type=component]').length - 4;
     slideCodes = WAF.widgets['slide' + slideCodesIndex];
     $containerCodes = slideCodes.widgets.containerCodes.$domNode;
 

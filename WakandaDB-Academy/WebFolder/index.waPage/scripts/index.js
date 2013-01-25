@@ -36,7 +36,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         ssjsEditor;
 
     // index of the last slide
-    lastSlideIndex = $('[data-type=component]').length - 2;
+    lastSlideIndex = $('[data-type=component]').length - 3;
 
     // sources
 	localSources = WAF.sources;
@@ -134,7 +134,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 			$codeRunner.fadeIn(1000);
 		}
 		
-		codeRunnerTop = (slideIndex >= lastSlideIndex) ? '506px' : '152px';
+		codeRunnerTop = (slideIndex >= lastSlideIndex - 1) ? '506px' : '152px';
 		$codeRunner.css('top', codeRunnerTop);
 		
 		currentSlide.$domNode.fadeIn(1000);
@@ -170,20 +170,19 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		WDB_ACADEMY.currentSlideIndex = slideIndex;
 		currentSlide = widgets['slide' + slideIndex];
 
-        sample1 = currentSlide.widgets.sample1;
-        // TODO: Must we really remove the potential user custom code?
-        //jsCode = sample1 ? sample1.getValue() : '';
-        //WDB_ACADEMY.setCode(jsCode);
-        //WDB_ACADEMY.selectTab(1);
-
 		if (slideIndex === 1 || slideIndex === lastSlideIndex) {
 			$codeRunner.fadeOut(1000);
 		} else {
+			sample1 = currentSlide.widgets.sample1;
+	        // TODO: Must we really remove the potential user custom code?
+	        jsCode = sample1 ? sample1.getValue() : '';
+	        WDB_ACADEMY.setCode(jsCode);
+	        WDB_ACADEMY.selectTab(1);
+
+            codeRunnerTop = (slideIndex >= (lastSlideIndex - 1)) ? '506px' : '152px';
+		    $codeRunner.css('top', codeRunnerTop);
 			$codeRunner.fadeIn(1000);
 		}
-
-		codeRunnerTop = (slideIndex >= (lastSlideIndex - 1)) ? '506px' : '152px';
-		$codeRunner.css('top', codeRunnerTop);
 
 		currentSlide.$domNode.fadeIn(1000);
 
