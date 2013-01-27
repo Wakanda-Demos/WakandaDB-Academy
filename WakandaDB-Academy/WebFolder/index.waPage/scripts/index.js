@@ -3,7 +3,7 @@ var
 
 // WDB_ACADEMY application namespace
 WDB_ACADEMY = {
-	currentSlideIndex: 1
+	currentSlideIndex: 3
 };
 
 WAF.onAfterInit = function onAfterInit() {// @lock
@@ -58,7 +58,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     WDB_ACADEMY.lastSlideIndex = lastSlideIndex;
 
     // Initialization
-	$buttonNext.fadeIn(500);
+	//$buttonNext.fadeIn(500);
 
 // eventHandlers// @lock
 
@@ -92,7 +92,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		if (!localStorage.userID || localStorage.userID === '') {
 			localStorage.userID = GUID();
 		}
-		buttonNext.click();
+		//buttonNext.click();
 	};// @lock
 
 	buttonPrevious.click = function buttonPrevious_click (event)// @startlock
