@@ -1,0 +1,192 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1248" measuredH="864" mockupW="1248" mockupH="821">
+  <controls>
+    <control controlID="36" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="159" y="43" w="816" h="699" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>js%20Server%20Side%20-%20Play%20-%20Wakanda%0Ahttp%3A//play.wakanda.org</text>
+      </controlProperties>
+    </control>
+    <control controlID="38" controlTypeID="com.balsamiq.mockups::TabBar" x="649" y="384" w="308" h="240" measuredW="329" measuredH="100" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <size>11</size>
+        <tabVPosition>bottom</tabVPosition>
+        <text>Basic%20Examples%2C%20A%20step%20further%2C%20From%20Community</text>
+      </controlProperties>
+    </control>
+    <control controlID="39" controlTypeID="com.balsamiq.mockups::TabBar" x="174" y="390" w="469" h="235" measuredW="371" measuredH="100" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <tabVPosition>top</tabVPosition>
+        <text>Our%20Data%20Model%2C%20Results%3A%20JSON%2C%20Results%3A%20Graphic</text>
+      </controlProperties>
+    </control>
+    <control controlID="40" controlTypeID="com.balsamiq.mockups::Canvas" x="174" y="262" w="469" h="81" measuredW="100" measuredH="70" zOrder="5" locked="false" isInGroup="-1"/>
+    <control controlID="41" controlTypeID="com.balsamiq.mockups::Button" x="535" y="347" w="-1" h="-1" measuredW="108" measuredH="27" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Run%20on%20Server</text>
+      </controlProperties>
+    </control>
+    <control controlID="42" controlTypeID="com.balsamiq.mockups::Label" x="176" y="122" w="-1" h="-1" measuredW="401" measuredH="21" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Try%20Some%20JS%20Code%20on%20Wakanda%20Server%20-%20from%20a%20database%20company</text>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::VCurly" x="975" y="382" w="180" h="219" measuredW="180" measuredH="140" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <direction>left</direction>
+        <text>Each%20of%20these%20lines%20of%20text%20will%20have%20a%20copy%20icon%20%28with%20arrow%3F%29.%0A*%20When%20hovered%20will%20display%20the%20details%20of%20what%20it%20does.%0A*%20When%20clicked%20it%20will%20copy%20that%20line%20to%20the%20%22command%22%20field</text>
+      </controlProperties>
+    </control>
+    <control controlID="45" controlTypeID="com.balsamiq.mockups::TextInput" x="904" y="802" w="200" h="-1" measuredW="145" measuredH="26" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>12</size>
+        <text>email%20address%20%28optional%29</text>
+      </controlProperties>
+    </control>
+    <control controlID="47" controlTypeID="com.balsamiq.mockups::Button" x="1132" y="801" w="65" h="27" measuredW="51" measuredH="27" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>12</size>
+        <text>Send</text>
+      </controlProperties>
+    </control>
+    <control controlID="49" controlTypeID="com.balsamiq.mockups::TextArea" x="904" y="733" w="293" h="69" measuredW="200" measuredH="140" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>what%20do%20you%20think%3F</text>
+      </controlProperties>
+    </control>
+    <control controlID="51" controlTypeID="com.balsamiq.mockups::VerticalScrollBar" x="625" y="418" w="-1" h="200" measuredW="16" measuredH="100" zOrder="12" locked="false" isInGroup="-1"/>
+    <control controlID="52" controlTypeID="com.balsamiq.mockups::VerticalScrollBar" x="627" y="262" w="-1" h="79" measuredW="16" measuredH="100" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <value>100</value>
+      </controlProperties>
+    </control>
+    <control controlID="53" controlTypeID="com.balsamiq.mockups::Arrow" x="440" y="396" w="137" h="388" measuredW="150" measuredH="100" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>1</backgroundAlpha>
+        <curvature>-1</curvature>
+        <direction>bottom</direction>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="55" controlTypeID="com.balsamiq.mockups::Paragraph" x="308" y="784" w="-1" h="-1" measuredW="200" measuredH="80" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Hover%20over%20should%3A%0A*%20Display%20%27shift%20+%20enter%27%20%0A*%20to%20denote%20keyboard%20shortcut%20alternative</text>
+      </controlProperties>
+    </control>
+    <control controlID="56" controlTypeID="com.balsamiq.mockups::TextInput" x="904" y="709" w="293" h="-1" measuredW="72" measuredH="26" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>12</size>
+        <text>your%20name</text>
+      </controlProperties>
+    </control>
+    <control controlID="57" controlTypeID="com.balsamiq.mockups::Paragraph" x="184" y="647" w="459" h="53" measuredW="200" measuredH="80" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>*We%20would%20love%20your%20input.*%0AAs%20we%20develope%20this%20opensource%20JavaScript%20database/webserver%20we%20would%20love%20to%20get%20feedback.%20Please%20take%20a%20minute%20to...%20</text>
+      </controlProperties>
+    </control>
+    <control controlID="58" controlTypeID="com.balsamiq.mockups::Button" x="655" y="647" w="-1" h="-1" measuredW="150" measuredH="27" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Tell%20us%20what%20you%20think%21</text>
+      </controlProperties>
+    </control>
+    <control controlID="60" controlTypeID="com.balsamiq.mockups::Icon" x="883" y="120" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="18" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>FacebookIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="61" controlTypeID="com.balsamiq.mockups::Icon" x="919" y="120" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>TwitterIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="62" controlTypeID="com.balsamiq.mockups::Icon" x="850" y="120" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>GoogleIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="63" controlTypeID="com.balsamiq.mockups::HRule" x="174" y="143" w="786" h="-1" measuredW="100" measuredH="10" zOrder="21" locked="false" isInGroup="-1"/>
+    <control controlID="65" controlTypeID="com.balsamiq.mockups::VCurly" x="975" y="112" w="-1" h="-1" measuredW="180" measuredH="140" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Window%20locked%20-%20%0A%20%20lets%20keep%20this%20at%20the%20top%20even%20when%20scrolled</text>
+      </controlProperties>
+    </control>
+    <control controlID="66" controlTypeID="com.balsamiq.mockups::Canvas" x="889" y="700" w="323" h="159" measuredW="100" measuredH="70" zOrder="2" locked="false" isInGroup="-1"/>
+    <control controlID="67" controlTypeID="com.balsamiq.mockups::Paragraph" x="174" y="168" w="768" h="84" measuredW="200" measuredH="80" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <align>center</align>
+        <text>*Wakanda%20Server%20-%20Data%20Driven%21*%0ASend%20some%20JavaScript%20to%20the%20Wakanda%20Server%2C%20it%20will%20spawn%20a%20thread%20initiating%20a%20JavaScript%20context.%0AIn%20that%20js%20context%20a%20global%20variable%20%22ds%22%20is%20created%20to%20interact%20with%20the%20database.%0ASo%2C%20as%20a%20developer%2C%20you%20write%20JavaScript%20-%20using%20collections%20and%20entities%20of%20js%20objects%2C%20which%20is%20the%20datastructure.%0AYes%2C%20you%20cantrol%20the%20indexes.%20Yes%2C%20transactional%20and%20yes%2C%20js%20defined%20object%20relationships.</text>
+      </controlProperties>
+    </control>
+    <control controlID="68" controlTypeID="com.balsamiq.mockups::Paragraph" x="184" y="424" w="280" h="20" measuredW="200" measuredH="80" zOrder="24" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>*We%20already%20created%20the%20data%20model*</text>
+      </controlProperties>
+    </control>
+    <control controlID="70" controlTypeID="com.balsamiq.mockups::Label" x="567" y="689" w="-1" h="-1" measuredW="255" measuredH="21" zOrder="25" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>%20%20A%20click%20should%20create%20a%20page%20overlay%20with...</text>
+      </controlProperties>
+    </control>
+    <control controlID="71" controlTypeID="com.balsamiq.mockups::Arrow" x="775" y="674" w="114" h="37" measuredW="150" measuredH="100" zOrder="26" locked="false" isInGroup="-1">
+      <controlProperties>
+        <direction>top</direction>
+        <text/>
+      </controlProperties>
+    </control>
+    <control controlID="72" controlTypeID="com.balsamiq.mockups::Tooltip" x="900" y="316" w="348" h="89" measuredW="335" measuredH="216" zOrder="31" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>a%20tooltip%20describing%20the%20feature%20provided%20by%20the%20code%20example%20on%20mouse%20over%20on%20each%20code%20example.%0Athis%20tip%20can%20be%20used%20as%20is%20or%20in%20a%20longer%20version%20in%20the%20Tip%20Area</text>
+        <tooltipDirection>SW</tooltipDirection>
+      </controlProperties>
+    </control>
+    <control controlID="74" controlTypeID="com.balsamiq.mockups::TextArea" x="649" y="260" w="308" h="114" measuredW="200" measuredH="140" zOrder="27" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>This%20tip%20area%20give%20more%20information%20about%20the%20code%20example%20curently%20pasted%20in%20the%20code%20editor</text>
+      </controlProperties>
+    </control>
+    <control controlID="75" controlTypeID="com.balsamiq.mockups::Button" x="466" y="347" w="-1" h="-1" measuredW="57" measuredH="27" zOrder="28" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Share</text>
+      </controlProperties>
+    </control>
+    <control controlID="76" controlTypeID="com.balsamiq.mockups::Button" x="820" y="647" w="122" h="27" measuredW="100" measuredH="27" zOrder="29" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Try%20Wakanda</text>
+      </controlProperties>
+    </control>
+    <control controlID="77" controlTypeID="com.balsamiq.mockups::DataGrid" x="649" y="384" w="308" h="217" measuredW="446" measuredH="197" zOrder="30" locked="false" isInGroup="-1">
+      <controlProperties>
+        <hasHeader>false</hasHeader>
+        <rowHeight>24</rowHeight>
+        <size>10</size>
+        <text>ds.Employee.all%28%29%3B%20%0Ads.Employee.query%28%27age%20%3E%2030%20and%20salary%20%3C%20100000%27%29%3B%0Ads.Employee.query%28%27company.name%20%3D%20%3A1%27%5C%2C%20%27Big-Brother%27%29%3B%0Ads.Employee.query%28%27company.revenues%20%3E%20%3A1%20and%20company.country.name%20%3D%20%3A2%27%5C%2C%20200000%5C%2C%20%27France%27%29%3B%0AMrDupond%20%3D%20ds.Employee.find%28%27lastName%20%3D%20%3A1%27%5C%2C%20%27Dupond%27%29%3B%0AMrDupond.company.employees%0AMrDupond.manager.manager%0AMrDupond.company.employees.query%28%27country.ID%20%3D%20%3A1%27%5C%2C%20MrDupond.country.ID%29.count%28%29%3B</text>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="78" controlTypeID="com.balsamiq.mockups::Canvas" x="0" y="211" w="323" h="159" measuredW="100" measuredH="70" zOrder="32" locked="false" isInGroup="-1"/>
+    <control controlID="80" controlTypeID="com.balsamiq.mockups::Button" x="251" y="337" w="65" h="27" measuredW="54" measuredH="27" zOrder="34" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>12</size>
+        <text>Share</text>
+      </controlProperties>
+    </control>
+    <control controlID="83" controlTypeID="com.balsamiq.mockups::TabBar" x="7" y="220" w="301" h="134" measuredW="247" measuredH="100" zOrder="33" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>0</selectedIndex>
+        <tabVPosition>bottom</tabVPosition>
+        <text>Gist%2C%20Tweet%2C%20G+%2C%20LinkedIn%2C%20Mail</text>
+      </controlProperties>
+    </control>
+    <control controlID="84" controlTypeID="com.balsamiq.mockups::Arrow" x="329" y="316" w="135" h="35" measuredW="150" measuredH="100" zOrder="35" locked="false" isInGroup="-1"/>
+    <control controlID="85" controlTypeID="com.balsamiq.mockups::TextArea" x="22" y="232" w="275" h="43" measuredW="200" measuredH="140" zOrder="36" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Code%20Example</text>
+      </controlProperties>
+    </control>
+    <control controlID="86" controlTypeID="com.balsamiq.mockups::TextArea" x="22" y="276" w="275" h="43" measuredW="200" measuredH="140" zOrder="37" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Comment</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
