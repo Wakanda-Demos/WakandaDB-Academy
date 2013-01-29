@@ -23,6 +23,7 @@ function constructor (id) {
         sourceGoogleMapCountry,
         // widgets
         widgets,
+        widgetButtonRunSSJS,
         richTextJsonComment,
         tabViewResults,
         menuItemGraphicView,
@@ -98,10 +99,10 @@ function constructor (id) {
 		isISODate = ISO_DATE_REGEXP.exec(result);
 	    if (isISODate !== null) {
 	    	// Date
-	    	result = showDateResult(result)
+	    	result = prepareDateResult(result)
 	    } else {
 	    	// String
-	    	result = showStringResult(result)
+	    	result = prepareStringResult(result)
 		}
         return result;
 	}
@@ -160,6 +161,7 @@ function constructor (id) {
 
     // widgets
 	widgets = this.widgets;
+	widgetButtonRunSSJS = widgets.buttonRunSSJS;
 	richTextJsonComment = widgets.richTextJsonComment;
 	tabViewResults = widgets.tabViewResults;
 	menuItemGraphicView = widgets.menuItemGraphicView;
@@ -237,13 +239,13 @@ function constructor (id) {
 
 	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)// @startlock
 	{// @endlock
-		setCode('ds.Company(' + localSources.employeeStaff.ID + ');');
+		setCode('ds.Employee(' + localSources.employeeStaff.ID + ');');
 		buttonRunSSJS.click();
 	};// @lock
 
 	dataGridCompanyEmployees.onRowDblClick = function dataGridCompanyEmployees_onRowDblClick (event)// @startlock
 	{// @endlock
-		setCode('ds.Company(' + localSources.companyEmployees.ID + ');');
+		setCode('ds.Employee(' + localSources.companyEmployees.ID + ');');
 		buttonRunSSJS.click();
 	};// @lock
 
@@ -255,7 +257,14 @@ function constructor (id) {
 
 	buttonRunSSJS.click = function buttonRunSSJS_click (event)// @startlock
 	{// @endlock
+        var
+            runningMethod,
+            clientTimeout,
+            timer;
+
+        widgetButtonRunSSJS.disable();
         jsonComment = 'Executing JavaScript on the server...';
+		clientTimeout = 4000;
 		sourceJsonComment.sync()
 		showJsonResult('');
 		currentGraphicView.hide();
@@ -267,7 +276,9 @@ function constructor (id) {
 		
 	    menuItemGraphicView.enable();
 	
-		ds.Proxy.callMethod({
+		
+		//debugger;
+		runningMethod = ds.Proxy.callMethod({
 			method: 'runOnServer',
 			onSuccess: function handleSsjsSuccess(response) {
 				var
@@ -282,6 +293,7 @@ function constructor (id) {
 				    source;
 
 				//debugger;
+				clearTimeout(timer);
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
                 richTextJsonComment.setTextColor('black');
@@ -289,7 +301,7 @@ function constructor (id) {
 				isISODate = null;
 			    xhr = response.XHR;
 
-				debugger;
+				//debugger;
 				rawResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
 				originalLength = xhr.getResponseHeader('X-Original-Array-Length');
 
@@ -422,6 +434,7 @@ function constructor (id) {
 				
                 // show JSON result
                 showJsonResult(toPrettyJSON(rawResult));
+                widgetButtonRunSSJS.enable();
 			},
 
 			onError: function handleSsjsError(response) {
@@ -434,9 +447,10 @@ function constructor (id) {
 				    jsonResult;
 
 				//debugger;
+				clearTimeout(timer);
 				jsonResult = '"no response received"';
 
-				debugger;
+				//debugger;
 				jsonComment = 'Analizing the server result...';
                 sourceJsonComment.sync();
 
@@ -518,8 +532,8 @@ function constructor (id) {
 				default:
 
 					// Result is in an unknown format
-    				jsonComment = 'The result is in an unknown format.';
-                    richTextJsonComment.setTextColor('red');
+	    				jsonComment = 'The result is in an unknown format.';
+	                    richTextJsonComment.setTextColor('red');
 
                     // No Graphic view, force JSON view
 		            selectTab(2); 
@@ -529,8 +543,32 @@ function constructor (id) {
 			    
                 // show JSON result
                 showJsonResult(jsonResult);
+                widgetButtonRunSSJS.enable();
 			}
 		}, ssjsEditor.getValue());
+		
+		timer = setTimeout(function requestTimoutExpired() {
+
+            // Response Timeout expired
+    		jsonComment = 'Response Timeout expired.';
+    		widgetButtonRunSSJS.enable();
+    		//debugger;
+			//runningMethod.xhr.abort();
+
+            richTextJsonComment.setTextColor('red');
+                    
+			jsonResult = 'Request aborted';
+			showJsonResult(jsonResult);
+
+			// show message in Display Error widget
+			currentGraphicView = widgets.errorDivServerException;
+			// setValue() doesn't work on the Display error widget
+			// currentWidget.setValue(mainErrorMessage);
+			currentGraphicView.$domNode.text(jsonResult);
+			currentGraphicView.show();
+			menuItemGraphicView.enable();
+
+		}, clientTimeout);
 		
 			
 	};// @lock
