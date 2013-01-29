@@ -1,1 +1,0 @@
-﻿//ds.Employee.all().getDataClass().query.toString()Object.getOwnPropertyNames(ds.Employee.all().first().photo)

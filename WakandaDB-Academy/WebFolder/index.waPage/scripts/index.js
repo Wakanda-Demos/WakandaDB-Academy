@@ -11,6 +11,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	"use strict";
 
 // @region namespaceDeclaration// @startlock
+	var buttonGithubConnect = {};	// @button
 	var documentEvent = {};	// @document
 	var buttonPrevious = {};	// @button
 	var buttonNext = {};	// @button
@@ -61,6 +62,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	//$buttonNext.fadeIn(500);
 
 // eventHandlers// @lock
+
+	buttonGithubConnect.click = function buttonGithubConnect_click (event)// @startlock
+	{// @endlock
+		widgets.componentGithubConnect.authorize(['gists']);
+	};// @lock
 
 	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
 	{// @endlock
@@ -189,6 +195,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("buttonGithubConnect", "click", buttonGithubConnect.click, "WAF");
 	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
 	WAF.addListener("buttonPrevious", "click", buttonPrevious.click, "WAF");
 	WAF.addListener("buttonNext", "click", buttonNext.click, "WAF");

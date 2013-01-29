@@ -14,7 +14,7 @@ studio_log*
 *.waIndx
 *.Match
 # Wakanda data
-.waData
+*.waData
 # Wakanda User and Group cache
 *.cacheUAG
 # Wakanda backup
