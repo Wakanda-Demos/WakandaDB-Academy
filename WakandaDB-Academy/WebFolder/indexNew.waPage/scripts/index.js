@@ -336,15 +336,17 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					
 					// Result is an Array
 					
-					originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
+					//originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
 
 					jsonComment = 'The result is an Array. ';
 					
+					/*
 					if (originalLength > 40) {
 						jsonComment += "Showing the 40 first elements from the " + originalLength + " found.";
 					} else {
 						jsonComment += "Showing the " + originalLength + " found elements.";
 					}
+					*/
 
 		            // No Graphic view, force JSON view
 		            selectTab(2);
@@ -417,28 +419,47 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 			    case 'application/json':
 
-					// Result is an an unsupported JSON value
-					jsonResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
-					if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
-						jsonComment = 'The result is in an unknown format.';
-	                    richTextJsonComment.setTextColor('red');
-
-	                    // No Graphic view, force JSON view
-			            selectTab(2); 
-			            menuItemGraphicView.disable();
-						break;
-					}
+					// Result is an an unsupported JSON value or a too big Array
 
 				    currentGraphicView = widgets.richTextScalarResult;
+				    
+				    jsonResult = xhr.getResponseHeader('X-Limited-Array-Value');
+					if (jsonResult) {
+						originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
+						jsonComment = 'The result is an Array. ';
+						
+						if (originalLength > 40) {
+							jsonComment += "Showing the 40 first elements from the " + originalLength + " found.";
+						} else {
+							jsonComment += "Showing the " + originalLength + " found elements.";
+						}
 
-				    if (jsonResult === 'undefined') {
-				        jsonComment = 'The result is "undefined".';
+			            // No Graphic view, force JSON view
+			            selectTab(2);
+			            menuItemGraphicView.disable();
+
+					    jsonResult = toPrettyJSON(error);
+
 				    } else {
-				        //jsonResult = Number(jsonResult);
-				        jsonComment = 'The result is a number.';
+
+				    	jsonResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
+
+				    	if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
+				    		// unexpected value
+							jsonComment = 'The result is in an unknown format.';
+		                    richTextJsonComment.setTextColor('red');
+		                    jsonResult = '';
+						} else if (jsonResult === 'undefined') {
+							// undefined
+					        jsonComment = 'The result is "undefined".';
+					    } else {
+					        // NaN, Infinity, or -Infinity
+					        jsonComment = 'The result is a number.';
+					    }
+
 				    }
 
-					// show the result
+					// update the graphic view
 					currentGraphicView.setValue(jsonResult);
 					currentGraphicView.show();
 					menuItemGraphicView.enable();
