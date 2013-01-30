@@ -37,20 +37,25 @@ onmessage = function on(message) {
 	);
 
     response = {};
+
     result = sandbox.run(ssjs, 3000);
 	//console.log('sandboxed result', result);
 	
-    //debugger;
     if (typeof result === 'object') {
     	nativeResult = sandboxModule.getNativeObject(result);
-        resulType = Object.prototype.toString.call(nativeResult);
-        if (resulType === '[object Entity]') {
-	    	response.entityID = result.ID;
-	    	response.dataClass = result.getDataClass();
+        response.dirty = (nativeResult !== undefined);
+        if (response.dirty) {
+            resultType = Object.prototype.toString.call(nativeResult);
+            if (resultType === '[object Entity]') {
+	    	    response.entityID = result.ID;
+	    	    response.dataClass = result.getDataClass().getName();
+	        }
+	    } else {
+	    	response.result = result;
 	    }
     }
-    
-    response.result = nativeResult || result;
 
+    //debugger;
+    //console.log('returned message', response);
     postMessage(response);
 }
