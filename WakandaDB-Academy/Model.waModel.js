@@ -110,6 +110,11 @@ guidedModel =// @startlock
 					// ENTITY
 					result = ds[data.dataClass](data.entityID);
 
+				} else if (data.image) {
+					
+					// IMAGE
+					result = loadImage(data.image);
+
 				} else if (data.dirty) {
 
                     // COLLECTION

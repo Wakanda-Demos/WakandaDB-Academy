@@ -28,15 +28,17 @@ self.onmessage = function onCallToExecute(message) {
 	
     response = {};
 
-    if (typeof result === 'object') {
+    if (result !== null && typeof result === 'object') {
         nativeResult = sandboxModule.getNativeObject(result);
         response.dirty = (nativeResult !== undefined);
+        resultType = Object.prototype.toString.call(nativeResult);
         if (response.dirty) {
 	        response.dataClass = result.getDataClass().getName();
-            resultType = Object.prototype.toString.call(nativeResult);
             if (resultType === '[object Entity]') {
 	            response.entityID = result.ID;
 	        }
+	    } else if (resultType === '[object Undefined]') {
+	        response.image = result.getPath();
 	    } else {
 	        response.result = result;
 	    }
