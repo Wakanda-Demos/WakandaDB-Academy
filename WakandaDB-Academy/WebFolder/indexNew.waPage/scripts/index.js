@@ -12,7 +12,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         CLIENT_TIMEOUT,
         // sources
         localSources,
-        sourceJsonComment,
+        sourceStatusText,
         sourceCountryLocation,
         // widgets
         widgets,
@@ -37,8 +37,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	}
 	
 	function showJsonResult(jsonResult) {
-		if (sourceJsonComment) {
-            sourceJsonComment.sync();
+		if (sourceStatusText) {
+            sourceStatusText.sync();
         }
         jsonView.setValue(jsonResult, 0);
 		jsonView.clearSelection();
@@ -52,25 +52,25 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	}
 	
 	function prepareUndefinedResult(result) {
-		jsonComment = 'The result is undefined';
+		statusText = 'The result is undefined';
 		updateRichTextAceSyntaxClass('undefined');
 		return result;
 	}
 	
 	function prepareNullResult(result) {
-		jsonComment = 'The result is null';
+		statusText = 'The result is null';
 		updateRichTextAceSyntaxClass('null');
 		return result;
 	}
 	
 	function prepareBooleanResult(result) {
-		jsonComment = 'The result is a boolean.';
+		statusText = 'The result is a boolean.';
 		updateRichTextAceSyntaxClass('boolean');
 		return result;
 	}
 	
 	function prepareNumberResult(result) {
-		jsonComment = 'The result is a number.';
+		statusText = 'The result is a number.';
 		updateRichTextAceSyntaxClass('number');
 		return result;
 	}
@@ -88,14 +88,14 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	}
 	
 	function prepareStringResult(result) {
-	    jsonComment = 'The result is a string.';
+	    statusText = 'The result is a string.';
 	    updateRichTextAceSyntaxClass('string');
 	    result = '"' + result.replace('"', '\"') + '"';
         return result;
 	}
 	
 	function prepareDateResult(result) {
-        jsonComment = 'The result is a Date object.';
+        statusText = 'The result is a Date object.';
 	    result = new Date(Date.UTC(+isISODate[1], +isISODate[2] - 1, +isISODate[3], +isISODate[4], +isISODate[5], +isISODate[6]));
 	    //richTextDateResult.setValue(result.getHours() + ':' + result.getMinutes())
 		calendarDateResult.setValue(result);
@@ -104,7 +104,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	}
 	
 	function prepareFunctionResult(result) {
-        jsonComment = 'Unexpected result';
+        statusText = 'Unexpected result';
 		return result;
 	}
 
@@ -129,23 +129,33 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	}
 
 	// default comment and valid country location
-	jsonComment = 'Ready for server-side JavaScript ecxecution';
+	statusText = 'Ready for server-side JavaScript execution';
 	countryLocation = 'USA';
 
 	examplesList = [
+        {icon: "", code: "ds.Employee.count()"},
         {icon: "", code: "ds.Employee.all()"},
+        {icon: "", code: "ds.Employee.age"},
+        {icon: "", code: "ds.Employee.all()[0]"},
+        {icon: "", code: "ds.Employee.all().first()"},
         {icon: "", code: "ds.Employee.first()"},
-        {icon: "", code: "ds.Employee.first().company"},
-        {icon: "", code: "ds.Employee.first().company.country"},
-        {icon: "", code: "ds.Employee.first().company.manager"},
+        {icon: "", code: "ds.Employee.first().next()"},
+        {icon: "", code: "ds.Employee(5)"},
+        {icon: "", code: "ds.Employee(5).company"},
+        {icon: "", code: "ds.Employee(5).company.country"},
+        {icon: "", code: "ds.Employee(5).company.country.name"},
+        {icon: "", code: "ds.Employee(5).company.countryName"},
+        {icon: "", code: "ds.Employee(5).company.country.companies.length"},
+        {icon: "", code: "ds.Employee(5).company.manager"},
         {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
-        {icon: "", code: "ds.Company(3).employees"}
+        {icon: "", code: "ds.Company(3).employees"},
+        {icon: "", code: "ds.Company.all().manager"}
     ];
     
        // sources
 	localSources = WAF.sources;
-    sourceJsonComment = WAF.sources.jsonComment;
-	sourceJsonComment.sync();
+    sourceStatusText = WAF.sources.statusText;
+	sourceStatusText.sync();
     sourceCountryLocation = WAF.sources.countryLocation;
 	sourceCountryLocation.sync();
     sources.examplesList.sync();
@@ -153,7 +163,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     // widgets
 	widgets = WAF.widgets;
 	widgetButtonRunSSJS = widgets.buttonRunSSJS;
-	richTextJsonComment = widgets.richTextJsonComment;
+	richTextStatusText = widgets.richTextStatusText;
 	tabViewResults = widgets.tabViewResults;
 	menuItemGraphicView = widgets.menuItemGraphicView;
 	menuItemJsonView = widgets.menuItemJsonView;
@@ -197,8 +207,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             runningMethod,
             timer;
 
-        jsonComment = 'Executing JavaScript on the server...';
-		sourceJsonComment.sync()
+        statusText = 'Executing JavaScript on the server...';
+		sourceStatusText.sync()
 		jsonView.setValue('');
 		currentGraphicView.hide();
 
@@ -224,9 +234,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 				//debugger;
 				clearTimeout(timer);
-				jsonComment = 'Analizing the server result...';
-                sourceJsonComment.sync();
-                richTextJsonComment.setTextColor('black');
+				statusText = 'Analizing the server result...';
+                sourceStatusText.sync();
+                richTextStatusText.setTextColor('black');
 
 				isISODate = null;
 			    xhr = response.XHR;
@@ -266,7 +276,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					
 					// Result is undefined
 
-					jsonComment = 'The result is undefined.';
+					statusText = 'The result is undefined.';
 					currentGraphicView.addClass('ace_undefined');
 					result = 'undefined';
 					rawResult = result;
@@ -278,12 +288,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					dataclass = result.getDataClass().getName();
 					source = localSources[dataclass.toLowerCase()];
 
-					jsonComment = 'The result is an ' + dataclass + ' Entity Collection. ';
+					statusText = 'The result is an ' + dataclass + ' Entity Collection. ';
 
 					if (rawResult.__COUNT > rawResult.__SENT) {
-						jsonComment += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
+						statusText += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
 					} else {
-						jsonComment += "Showing the " + rawResult.__COUNT + " found entities.";
+						statusText += "Showing the " + rawResult.__COUNT + " found entities.";
 					}
 
 					//collection = ds[dataclass].newCollection();
@@ -307,7 +317,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 			    	dataclass = result.getDataClass().getName();
 			    	source = localSources[dataclass.toLowerCase()];
 
-					jsonComment = 'The result is an ' + dataclass + ' Entity.';
+					statusText = 'The result is an ' + dataclass + ' Entity.';
 			    	
 			    	collection = ds[dataclass].newCollection();
 				    collection.add(response.result);
@@ -338,13 +348,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					
 					//originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
 
-					jsonComment = 'The result is an Array. ';
+					statusText = 'The result is an Array. ';
 					
 					/*
 					if (originalLength > 40) {
-						jsonComment += "Showing the 40 first elements from the " + originalLength + " found.";
+						statusText += "Showing the 40 first elements from the " + originalLength + " found.";
 					} else {
-						jsonComment += "Showing the " + originalLength + " found elements.";
+						statusText += "Showing the " + originalLength + " found elements.";
 					}
 					*/
 
@@ -356,7 +366,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 					// Result is another object type
 
-					jsonComment = 'The result is an Object.';
+					statusText = 'The result is an Object.';
 
 					// No Graphic view, force JSON view
 		            selectTab(2); 
@@ -383,24 +393,24 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				jsonResult = '"no response received"';
 
 				//debugger;
-				jsonComment = 'Analizing the server result...';
-                sourceJsonComment.sync();
+				statusText = 'Analizing the server result...';
+                sourceStatusText.sync();
 
 				// Binary Data are not yet natively supported by the dataprovider but can be handled via onError
 				xhr = response.XHR;
 				originalContentType = xhr.getResponseHeader('X-Original-Content-Type');
 
                 if (xhr.status === 0) {
-					jsonComment = 'Connection to the server failed... Please retry Later';
-	                sourceJsonComment.sync();
+					statusText = 'Connection to the server failed... Please retry Later';
+	                sourceStatusText.sync();
                 } else switch (originalContentType) {
 
 			    case null:
 
                     // An exception occured on the server
 
-    				jsonComment = 'An Exception has been thrown on the server!';
-                    richTextJsonComment.setTextColor('red');
+    				statusText = 'An Exception has been thrown on the server!';
+                    richTextStatusText.setTextColor('red');
                     
 			    	error = JSON.parse(xhr.responseText).__ERROR;
 			    	mainErrorMessage = error[0].message;
@@ -426,12 +436,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				    jsonResult = xhr.getResponseHeader('X-Limited-Array-Value');
 					if (jsonResult) {
 						originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
-						jsonComment = 'The result is an Array. ';
+						statusText = 'The result is an Array. ';
 						
 						if (originalLength > 40) {
-							jsonComment += "Showing the 40 first elements from the " + originalLength + " found.";
+							statusText += "Showing the 40 first elements from the " + originalLength + " found.";
 						} else {
-							jsonComment += "Showing the " + originalLength + " found elements.";
+							statusText += "Showing the " + originalLength + " found elements.";
 						}
 
 			            // No Graphic view, force JSON view
@@ -446,15 +456,15 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 				    	if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
 				    		// unexpected value
-							jsonComment = 'The result is in an unknown format.';
-		                    richTextJsonComment.setTextColor('red');
+							statusText = 'The result is in an unknown format.';
+		                    richTextStatusText.setTextColor('red');
 		                    jsonResult = '';
 						} else if (jsonResult === 'undefined') {
 							// undefined
-					        jsonComment = 'The result is "undefined".';
+					        statusText = 'The result is "undefined".';
 					    } else {
 					        // NaN, Infinity, or -Infinity
-					        jsonComment = 'The result is a number.';
+					        statusText = 'The result is a number.';
 					    }
 
 				    }
@@ -468,7 +478,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 			    case 'image/jpeg':
 
 					// Result is an Image
-    				jsonComment = 'The result is an Image.';
+    				statusText = 'The result is an Image.';
 					
 					// show the image
 					currentGraphicView = widgets.imageResult;
@@ -483,8 +493,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				default:
 
 					// Result is in an unknown format
-	    				jsonComment = 'The result is in an unknown format.';
-	                    richTextJsonComment.setTextColor('red');
+	    				statusText = 'The result is in an unknown format.';
+	                    richTextStatusText.setTextColor('red');
 
                     // No Graphic view, force JSON view
 		            selectTab(2); 
@@ -501,12 +511,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		timer = setTimeout(function requestTimoutExpired() {
 
             // Response Timeout expired
-    		jsonComment = 'Response Timeout expired.';
+    		statusText = 'Response Timeout expired.';
     		widgetButtonRunSSJS.enable();
     		//debugger;
 			//runningMethod.xhr.abort();
 
-            richTextJsonComment.setTextColor('red');
+            richTextStatusText.setTextColor('red');
                     
 			jsonResult = 'Request aborted';
 			showJsonResult(jsonResult);

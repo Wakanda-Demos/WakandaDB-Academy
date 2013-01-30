@@ -1,5 +1,8 @@
-﻿    
-//"use strict";
+﻿/*jslint es5: true, todo: true, node: true, indent: 4 */
+
+/*global os, process, application, solution, ds*/
+
+"use strict";
 
 
 var
@@ -93,13 +96,13 @@ function SandboxedEntity(sandboxedDataclass, entity) {
         properties,
         entityCacheIndex;
 
-    if (entity == null) {
+    if (entity === null || entity === undefined) {
         return null;
     }
 
     entityCacheIndex = nativeObjects.indexOf(entity);
     if (entityCacheIndex > -1) {
-    	return sandboxedObjects[entityCacheIndex];
+        return sandboxedObjects[entityCacheIndex];
     }
 
     // cache object
@@ -114,7 +117,7 @@ function SandboxedEntity(sandboxedDataclass, entity) {
         function (attributeName) {
             properties[attributeName] = {
                 get: function getter_attributeValue() {
-                    return entity[attributeName]
+                    return entity[attributeName];
                 },
                 enumerable: true
             };
@@ -203,13 +206,23 @@ function SandboxedCollection(sandboxedDataclass, collection) {
         index,
         max;
 
+    function addArrayIndexedPropertyToSandboxedCollection(localIndex) {
+        // properties object accessed from closure scope
+        properties[localIndex] = {
+            get: function getter_Entity() {
+                return new SandboxedEntity(collection[localIndex]);
+            },
+            enumerable: true
+        };
+    }
+
     if (!collection || !(typeof collection === "object") || !collection.distinctValues) {
         return null;
     }
 
     collectionCacheIndex = nativeObjects.indexOf(collection);
     if (collectionCacheIndex > -1) {
-    	return sandboxedObjects[collectionCacheIndex];
+        return sandboxedObjects[collectionCacheIndex];
     }
 
     // cache object
@@ -239,15 +252,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
     // access to entities by index
     max = Math.min(collection.length, MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS);
     for (index = 0; index < max; index += 1) {
-        (function(localIndex) {
-            properties[localIndex] = {
-                get: function getter_Entity() {
-                	//debugger;
-                    return new SandboxedEntity(collection[localIndex]);
-                },
-                enumerable: true
-            };
-        }(index));
+        addArrayIndexedPropertyToSandboxedCollection(index);
     }
 
     // collection of attribute values
@@ -255,14 +260,14 @@ function SandboxedCollection(sandboxedDataclass, collection) {
         function (attributeName) {
             properties[attributeName] = {
                 get: function getter() {
-                        var
+                    var
                         result;
 
                     result = collection[attributeName];
                     if (result && (typeof result === "object") && result.distinctValues) {
                         result = new SandboxedCollection(sandboxedDataclass, result);
                     } else {
-                        result = null;    
+                        result = null;
                     }
                     return result;
                 },
@@ -314,7 +319,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
 
         args = Array.prototype.slice.call(arguments);
         if (args.some(checkJS)) {
-                throw new Error('Option forbidden');
+            throw new Error('Option forbidden');
         }
 
         return new SandboxedCollection(
@@ -328,9 +333,9 @@ function SandboxedCollection(sandboxedDataclass, collection) {
             args;
 
         args = Array.prototype.slice.call(arguments);
-            if (args.some(checkJS)) {
+        if (args.some(checkJS)) {
             throw new Error('Option forbidden');
-            }
+        }
 
         return new SandboxedEntity(
             sandboxedDataclass,
@@ -345,12 +350,12 @@ function SandboxedCollection(sandboxedDataclass, collection) {
         );
     };
 
-    this.forEach = function forEach(callbackFn) {
+    this.forEach = function forEach(callback) {
         collection.forEach(
             function collectionForEachCallback(thisArg, iterator) {
                 // beware of the automatic save
                 // only readonly mode restrict it for now
-                    callbackFn(
+                callback(
                     new SandboxedEntity(
                         sandboxedDataclass,
                         thisArg
@@ -358,7 +363,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
                     iterator
                 );
             }
-            );
+        );
     };
 
     this.getDataClass = function getDataClass() {
@@ -441,25 +446,20 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
     var
         dataclassName,
-        sandboxedDataclass,
         attributes,
         cachedAttributes,
         properties;
-    
-    /*
-    function sandboxedDataclass(entityId) {
-        return new SandboxedEntity(dataclass(entityId));
-    }*/
+
+    // The returned dataclass has to be a function
+    function sandboxedDataclass(id) {
+        return new SandboxedEntity(sandboxedDataclass, dataclass(id));
+    }
 
     dataclassName = dataclass.getName();
 
     if (sandoxedDataClasses.hasOwnProperty(dataclassName)) {
         return sandoxedDataClasses[dataclassName];
     }
-
-    //sandboxedDataclass = {};
-    // should be the bellow function but there is a conflict between the attribute 'name' and the function name property
-    sandboxedDataclass = function (id) { return new SandboxedEntity(sandboxedDataclass, dataclass(id)); };
 
     sandoxedDataClasses[dataclassName] = sandboxedDataclass;
 
@@ -471,44 +471,48 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
         function (attributeName) {
             properties[attributeName] = {
                 get: function () {
-                	if (!cachedAttributes.hasOwnPropertyName(attributeName)) {
-                		cachedAttributes[attributeName] = new SandboxedAttribute(sandboxedDataclass, dataclass.attributes[attributeName]);
-                	}
+                    if (!cachedAttributes.hasOwnPropertyName(attributeName)) {
+                        cachedAttributes[attributeName] = new SandboxedAttribute(sandboxedDataclass, dataclass.attributes[attributeName]);
+                    }
                     return cachedAttributes[attributeName];
                 },
                 enumerable: true
             };
         }
     );
-    
+
     attributes = {};
     Object.defineProperties(attributes, properties);
-    delete properties.name;
-    Object.defineProperties(sandboxedDataclass, properties);
-    
     Object.defineProperty(
         sandboxedDataclass,
         'attributes',
         {
-        	value: attributes,
-        	configurable: true,
-        	writable: false,
-        	enumerable: false
+            value: attributes,
+            configurable: true,
+            writable: false,
+            enumerable: false
         }
     );
 
-/*
+    // WARNING: name attribute can not be set as the name property of a function is not writable in ECMAScript 5
+    // The sandbox still let it accessible via the 'attributes' dataclass property 
+    delete properties.name;
+    Object.defineProperties(sandboxedDataclass, properties);
+
+    // TODO: test is length is accepted while sandoxedDataClasses is a function
+    /*
     Object.defineProperty(
         sandboxedDataclass,
         'length',
         {
-        	get: function getter_length() {
-        		return dataclass.length;
-        	}//,
-        	//enumerable: false
+            get: function getter_length() {
+                return dataclass.length;
+            }//,
+            //enumerable: false
         }
     );
-*/
+    */
+
 
     // METHODS
 
@@ -668,7 +672,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     sandboxedDataclass.toString = function toString() {
         return dataclass.toString();
     };
-    
+
     return sandboxedDataclass;
 
 }
@@ -756,7 +760,7 @@ function createSandboxedOs() {
  */
 function createSandboxedSolution() {
     return {
-        name: solution.name    
+        name: solution.name
     };
 }
 
@@ -804,7 +808,7 @@ Sandbox = require('jsSandbox/index').Sandbox;
  * @method run
  * @params {string} jsCode
  */
- Object.defineProperty(
+Object.defineProperty(
     WakandaSandbox.prototype,
     'run',
     {
@@ -814,29 +818,33 @@ Sandbox = require('jsSandbox/index').Sandbox;
         enumerable: true
     }
 );
+
+// TODO: to simplify the sandbox module API
+// - make index.js the one that will call the worker 
+// - embed the worker in the module package
 /*
 WakandaSandbox.prototype.run = function(jsCode, timeout) {
-	var
-	    result,
-	    waiting;
+    var
+        result,
+        waiting;
 
-	function callback(sandboxResult) {
-		debugger;
-		result = sandboxResult;
-		waiting = false;
-		exitWait();
-	}
+    function callback(sandboxResult) {
+        debugger;
+        result = sandboxResult;
+        waiting = false;
+        exitWait();
+    }
 
-	waiting = true;
-	debugger;
-	Sandbox.prototype.run(jsCode, timeout, callback);
-	
-	wait(timeout);
+    waiting = true;
     debugger;
-	if (waiting) {
-		throw new Error('Timeout expired after ' + timeout + ' ms while executing this code:', jsCode);
-	} 
-	return result;
+    Sandbox.prototype.run(jsCode, timeout, callback);
+
+    wait(timeout);
+    debugger;
+    if (waiting) {
+        throw new Error('Timeout expired after ' + timeout + ' ms while executing this code:', jsCode);
+    }
+    return result;
 };
 */
 
@@ -845,9 +853,9 @@ WakandaSandbox.prototype.run = function(jsCode, timeout) {
 /**
  * MODULE PUBLIC API
  **/
- 
- 
- 
+
+
+
 /**
  * Get the original object from a sandboxed object returned by the sandbox run method
  *
