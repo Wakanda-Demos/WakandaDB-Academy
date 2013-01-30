@@ -1,61 +1,51 @@
-﻿
-onmessage = function on(message) {
-	
+﻿/*jslint es5: true, indent: 4 */
+
+/*global self:true */
+
+self.onmessage = function onCallToExecute(message) {
+
+	'use strict';
+
 	var
+	    data,
+	    sandboxModule,
+	    sandbox,
 	    result,
 	    nativeResult,
-	    ssjs,
-	    resulType,
-	    dirty,
+	    resultType,
 	    response;
 
 	//debugger;
 	console.log(message);
-	ssjs = message.data;
+	data = message.data;
 	sandboxModule = require('wakandaSandbox/index');
-    sandbox = new sandboxModule.WakandaSandbox(
-		//application,
-		{
-			// HTML5 properties
-			'name': true,
-			'Blob': true,
-			'sessionStorage': true,
-			// node.js properties
-			'Buffer': true,
-			// Wakanda specific properties
-			'administrator': true,
-			'dateToIso': true,
-			'ds': true,
-			'generateUUID': true,
-			'getURLQuery': true,
-			'isoToDate': true,
-			'os': true,
-			'pattern': true,
-			'process': true,
-			'wildchar': true
-		}
-	);
 
-    response = {};
+    sandbox = new sandboxModule.WakandaSandbox(data.allowedProperties);
 
-    result = sandbox.run(ssjs, 3000);
+    //debugger;
+    result = sandbox.run(data.jsCode, data.timeout);
 	//console.log('sandboxed result', result);
 	
+    response = {};
+
     if (typeof result === 'object') {
-    	nativeResult = sandboxModule.getNativeObject(result);
+        nativeResult = sandboxModule.getNativeObject(result);
         response.dirty = (nativeResult !== undefined);
         if (response.dirty) {
+	        response.dataClass = result.getDataClass().getName();
             resultType = Object.prototype.toString.call(nativeResult);
             if (resultType === '[object Entity]') {
-	    	    response.entityID = result.ID;
-	    	    response.dataClass = result.getDataClass().getName();
+	            response.entityID = result.ID;
 	        }
 	    } else {
-	    	response.result = result;
+	        response.result = result;
 	    }
+    } else {
+    	response.result = result;
     }
 
     //debugger;
     //console.log('returned message', response);
-    postMessage(response);
-}
+    self.postMessage(response);
+    //self.close();
+};

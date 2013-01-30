@@ -181,6 +181,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	errorDivServerException = widgets.errorDivServerException;
 	calendarDateResult = widgets.calendarDateResult;
 
+    // jQuery objects
+    $richTextScalarResult = richTextScalarResult.$domNode;
+
 	menuItemGraphicView.disable();
     menuItemJsonView.disable(); 
 

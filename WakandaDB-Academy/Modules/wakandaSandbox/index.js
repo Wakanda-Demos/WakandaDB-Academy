@@ -114,7 +114,7 @@ function SandboxedEntity(sandboxedDataclass, entity) {
     properties = {};
 
     Object.keys(entity).forEach(
-        function (attributeName) {
+        function sandboxedEntityAttibuteAccess(attributeName) {
             properties[attributeName] = {
                 get: function getter_attributeValue() {
                     return entity[attributeName];
@@ -464,6 +464,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     sandoxedDataClasses[dataclassName] = sandboxedDataclass;
 
     properties = {};
+    cachedAttributes = {};
 
     // PROPERTIES
 
@@ -471,7 +472,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
         function (attributeName) {
             properties[attributeName] = {
                 get: function () {
-                    if (!cachedAttributes.hasOwnPropertyName(attributeName)) {
+                    if (!cachedAttributes.hasOwnProperty(attributeName)) {
                         cachedAttributes[attributeName] = new SandboxedAttribute(sandboxedDataclass, dataclass.attributes[attributeName]);
                     }
                     return cachedAttributes[attributeName];
@@ -499,7 +500,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     delete properties.name;
     Object.defineProperties(sandboxedDataclass, properties);
 
-    // TODO: test is length is accepted while sandoxedDataClasses is a function
+    // WARNING: the length property of a function can unfortunately not be changed
     /*
     Object.defineProperty(
         sandboxedDataclass,
@@ -512,6 +513,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
         }
     );
     */
+    // sandboxedDataclass.length = dataclass.length; 
 
 
     // METHODS
@@ -800,6 +802,7 @@ sandoxedDataClasses = [];
 nativeObjects = [];
 sandboxedObjects = [];
 Sandbox = require('jsSandbox/index').Sandbox;
+
 
 /**
  * Run

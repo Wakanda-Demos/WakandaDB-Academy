@@ -1,4 +1,7 @@
-﻿
+﻿/*jslint es5: true, todo: true, white: true, node: true, indent: 4 */
+
+/*global Worker, wait, exitWait*/
+
 guidedModel =// @startlock
 {
 	Proxy :
@@ -10,8 +13,10 @@ guidedModel =// @startlock
 				"use strict";
 
                 var
+					// consts
+					TIMEOUT,
+					ALLOWED_PROPERTIES,
 					sandboxWorker,
-					timeout,
 					waiting,
 					data,
 					sandboxModule,
@@ -40,6 +45,28 @@ guidedModel =// @startlock
 		            return val;
 		        }
 
+				TIMEOUT = 400000;
+				ALLOWED_PROPERTIES = {
+					// HTML5 properties
+					'name': true,
+					'Blob': true,
+					'sessionStorage': true,
+					// node.js properties
+					'Buffer': true,
+					// Wakanda specific properties
+					'administrator': true,
+					'dateToIso': true,
+					'ds': true,
+					'generateUUID': true,
+					'getURLQuery': true,
+					//'guidedModel': true,
+					'isoToDate': true,
+					'os': true,
+					'pattern': true,
+					'process': true,
+					'wildchar': true
+				};
+
 				if (!ssjs) {
 				    return 'code empty';
 				    //throw new Error('code empty');	
@@ -47,10 +74,11 @@ guidedModel =// @startlock
 
 				toString = Object.prototype.toString;
 				seen = [];
-				timeout = 3000;
-
-				sandboxWorker = new Worker('Workers/sandbox-worker.js');
 				waiting = true;
+
+				//debugger;
+				sandboxWorker = new Worker("Workers/sandbox-worker.js");
+
 				sandboxWorker.onmessage = function onSandboxWorkerRunMessage(message) {
 					waiting = false;
 					sandboxWorker.terminate();
@@ -58,15 +86,24 @@ guidedModel =// @startlock
 					// WARNING: message can't yet transport entities or collections
 
 					data = message.data;
+					//debugger;
 					result = data.result;
 					exitWait();
-				}
-				sandboxWorker.postMessage(ssjs);
-				wait(timeout);
+				};
+
+				sandboxWorker.postMessage({
+					jsCode: ssjs, 
+					timeout: (TIMEOUT - 100), 
+					allowedProperties: ALLOWED_PROPERTIES
+				});
+
+				wait(TIMEOUT);
+
 
 				if (waiting) {
 
-					throw new Error('Timeout after ' + timeout + 'ms while executing this code: \n' + ssjs);
+					//sandboxWorker.terminate(); // TODO: call it with a force parameter once implemented
+					throw new Error('Timeout after ' + TIMEOUT + 'ms while executing this code: \n' + ssjs);
 
 				} else if (data.entityID && data.dataClass) {
 					
@@ -78,35 +115,12 @@ guidedModel =// @startlock
                     // COLLECTION
                     // as the execution time was acceptable re-execute in the main thread
 					sandboxModule = require('wakandaSandbox/index');
-				    sandbox = new sandboxModule.WakandaSandbox(
-						//application,
-						{
-							// HTML5 properties
-							'name': true,
-							'Blob': true,
-							'sessionStorage': true,
-							// node.js properties
-							'Buffer': true,
-							// Wakanda specific properties
-							'administrator': true,
-							'dateToIso': true,
-							'ds': true,
-							'generateUUID': true,
-							'getURLQuery': true,
-							'isoToDate': true,
-							'os': true,
-							'pattern': true,
-							'process': true,
-							'wildchar': true
-						}
-					);
-
+				    sandbox = new sandboxModule.WakandaSandbox(ALLOWED_PROPERTIES);
 				    result = sandboxModule.getNativeObject(sandbox.run(ssjs));
 				}
 				
 			    response = result;
-			    //debugger;
-
+			    
 			    switch (toString.apply(result)) {
 
 			    case '[object Entity]':
@@ -144,19 +158,29 @@ guidedModel =// @startlock
 		                for (index = 0; index < 40; index += 1) {
 		                    limitedResult.push(result[index]);
 		                }
+                        // specific hanfling for values not supported by JSON
+                        // the HTTPStream value has to be an image or a stream to specify HTTP headers
+                        forceHTTPStream = TextStream(getFolder().path + 'forceHTTPStream');
 		                response = {
-				            HTTPStream: JSON.parse(JSON.stringify(limitedResult, safeStringify)),
+			                // prevent exception from recursive references
+				            HTTPStream: forceHTTPStream,
 				            headers: {
-				                'Content-Type': 'application/json',
-	                            'X-Original-Array-Length': result.length
+			                   'Content-Type': 'text/plain; charset=x-user-defined',
+                                'X-Original-Content-Type': 'application/json',
+	                            'X-Original-Array-Length': result.length,
+	                            // prevent exception from recursive references
+                                'X-Limited-Array-Value': JSON.parse(JSON.stringify(limitedResult, safeStringify))
                             }
                         };
                     } else {
+                    	// Short Array
+    			        // prevent exception from recursive references
                         response.result = JSON.parse(JSON.stringify(result, safeStringify));
                     }
                     break;
 
 			    case '[object Object]':
+			        // prevent exception from recursive references
 		            response = JSON.parse(JSON.stringify(result, safeStringify));
                     break;
 
