@@ -2,14 +2,17 @@
 WAF.onAfterInit = function onAfterInit() {// @lock
 
 // @region namespaceDeclaration// @startlock
+	var imageDownload = {};	// @image
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
 	var dataGridExamples = {};	// @dataGrid
 // @endregion// @endlock
 
     var
+        // constants
         ISO_DATE_REGEXP,
         CLIENT_TIMEOUT,
+        DOWNLOAD_BASE_URL,
         // sources
         localSources,
         sourceStatusText,
@@ -115,6 +118,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     // const
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
 	CLIENT_TIMEOUT = 30000;
+    DOWNLOAD_BASE_URL = 'http://www.wakanda.org/blog/please-welcome-our-new-developer-advocate-lyle-troxell';
+
 
     // First proposed Server-Side JavaScript Code
 	jsCode = '';
@@ -133,23 +138,27 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	countryLocation = 'USA';
 
 	examplesList = [
-        {icon: "", code: "ds.Employee.count()"},
-        {icon: "", code: "ds.Employee.all()"},
-        {icon: "", code: "ds.Employee.age"},
-        {icon: "", code: "ds.Employee.all()[0]"},
+        {icon: "", code: "ds.Employee.count()", tip:"Get the number of entities related to a dataclass"},
+        {icon: "", code: "ds.Employee.all()", tip:"Get all the entities related to a dataclass"},
+        {icon: "", code: "ds.Employee.query('age < :1', 25)", tip:"Get the employees who are older than 20"},
+        //{icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
+        //{icon: "", code: "ds.Employee.age"},
+        //{icon: "", code: "ds.Employee.all()[0]"},
         {icon: "", code: "ds.Employee.all().first()"},
         {icon: "", code: "ds.Employee.first()"},
         {icon: "", code: "ds.Employee.first().next()"},
         {icon: "", code: "ds.Employee(5)"},
         {icon: "", code: "ds.Employee(5).company"},
         {icon: "", code: "ds.Employee(5).company.country"},
-        {icon: "", code: "ds.Employee(5).company.country.name"},
-        {icon: "", code: "ds.Employee(5).company.countryName"},
-        {icon: "", code: "ds.Employee(5).company.country.companies.length"},
+        //{icon: "", code: "ds.Employee(5).company.country.name"},
+        //{icon: "", code: "ds.Employee(5).company.countryName"},
+        //{icon: "", code: "ds.Employee(5).company.country.companies.length"},
         {icon: "", code: "ds.Employee(5).company.manager"},
         {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
-        {icon: "", code: "ds.Company(3).employees"},
-        {icon: "", code: "ds.Company.all().manager"}
+        //{icon: "", code: "ds.Company(3).employees"},
+        //{icon: "", code: "ds.Company.all().manager"},
+        //{icon: "", code: "ds.Country(2).companies.employees"}
+        {}
     ];
     
        // sources
@@ -192,9 +201,16 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	jsonView.setTheme("ace/theme/github");
 	jsonView.getSession().setMode("ace/mode/json");
 	jsonView.setReadOnly(true);
+	
+	widgets.containerLoading.hide();
 
 
 // eventHandlers// @lock
+
+	imageDownload.click = function imageDownload_click (event)// @startlock
+	{// @endlock
+		location = DOWNLOAD_BASE_URL + location.search;
+	};// @lock
 
 	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
 	{// @endlock
@@ -532,9 +548,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		}, CLIENT_TIMEOUT);
 	};// @lock
 
-	dataGridExamples.onCellClick = function dataGridExamples_onCellClick (event)// @startlock
+	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)// @startlock
 	{// @endlock
-		//console.log('ok', event, this);
+		// Add your code here
 	};// @lock
 
 	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
@@ -551,7 +567,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
-	WAF.addListener("dataGridExamples", "onCellClick", dataGridExamples.onCellClick, "WAF");
+	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
+	WAF.addListener("imageDownload", "click", imageDownload.click, "WAF");
 	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
 	WAF.addListener("buttonRunSSJS", "click", buttonRunSSJS.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDblClick", dataGridExamples.onRowDblClick, "WAF");
