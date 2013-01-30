@@ -45,7 +45,7 @@ guidedModel =// @startlock
 		            return val;
 		        }
 
-				TIMEOUT = 400000;
+				TIMEOUT = 8000;
 				ALLOWED_PROPERTIES = {
 					// HTML5 properties
 					'name': true,

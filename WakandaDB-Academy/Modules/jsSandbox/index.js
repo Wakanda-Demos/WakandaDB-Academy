@@ -174,16 +174,18 @@ Object.defineProperty(
 	"run",
 	{
 		value: function runSandboxed() {
+            var
+                timer;
 
 			if (arguments.length > 1) {
-				setTimeout(function securedTimeout(timeout, jsCode){
+				timer = setTimeout(function securedTimeout(timeout, jsCode){
 					throw new Error('Timeout expired after ' + timeout + ' ms' + 'while executing:\n' + jsCode);
 				}, arguments[1], arguments[1], arguments[0]);
 			}
 
             // no variable used to prevent local scope pollution
 			// handle specific case when try executing an empty string
-			return (arguments.length === 0 || arguments[0] === '') ? undefined : eval('with (this) {\n' + arguments[0] + '\n}');
+			return (arguments.length === 0 || arguments[0] === '') ? undefined : (clearInterval(timer) || true) && eval('with (this) {\n' + arguments[0] + '\n}');
 
 		},
 		writable: false,

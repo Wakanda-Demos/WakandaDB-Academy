@@ -15,7 +15,6 @@ self.onmessage = function onCallToExecute(message) {
 	    resultType,
 	    response;
 
-	//debugger;
 	console.log(message);
 	data = message.data;
 	sandboxModule = require('wakandaSandbox/index');
@@ -37,7 +36,7 @@ self.onmessage = function onCallToExecute(message) {
             if (resultType === '[object Entity]') {
 	            response.entityID = result.ID;
 	        }
-	    } else if (resultType === '[object Undefined]') {
+	    } else if (resultType === '[object Undefined]' || resultType === '[object Image]') {
 	        response.image = result.getPath();
 	    } else {
 	        response.result = result;
