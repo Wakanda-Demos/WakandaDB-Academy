@@ -1,8 +1,23 @@
-﻿
+﻿/*jslint es5: true, nomen: true, todo: false, vars: true, white: true, browser: true, indent: 4 */
+
+var
+    WAF,
+    ds,
+    sources,
+    ace,
+    encode64,
+    // local sources
+    statusText, 
+    countryLocation, 
+    jsCode,
+    examplesList;
+
 WAF.onAfterInit = function onAfterInit() {// @lock
 
+    "use strict";
+
 // @region namespaceDeclaration// @startlock
-	var imageLearnMore = {};	// @image
+	var iconLearnMore = {};	// @icon
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
 	var dataGridExamples = {};	// @dataGrid
@@ -17,11 +32,27 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         localSources,
         sourceStatusText,
         sourceCountryLocation,
+        sourceGoogleMapCountry,
         // widgets
         widgets,
+        tabViewResults,
+        menuItemGraphicView,
+        menuItemJsonView,
+        currentGraphicView,
+        richTextStatusText,
         widgetButtonRunSSJS,
+        richTextScalarResult,
+        errorDivServerException,
+        calendarDateResult,
+        googleMapCountry,
+        // ACE objects
         ssjsEditor,
-        jsonView;
+        jsonView,
+        // jQuery objects
+        $richTextScalarResult,
+        // other
+        isISODate,
+        scalarResultHandler;
 
     function prettifyJSON(json, indent) {
 		indent = indent || 4;
@@ -78,18 +109,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		return result;
 	}
 	
-	function prepareStringOrDateResult(result) {
-		isISODate = ISO_DATE_REGEXP.exec(result);
-	    if (isISODate !== null) {
-	    	// Date
-	    	result = prepareDateResult(result)
-	    } else {
-	    	// String
-	    	result = prepareStringResult(result)
-		}
-        return result;
-	}
-	
 	function prepareStringResult(result) {
 	    statusText = 'The result is a string.';
 	    updateRichTextAceSyntaxClass('string');
@@ -104,6 +123,18 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		calendarDateResult.setValue(result);
 		currentGraphicView = widgets.containerResultDate;
 		return result;
+	}
+	
+	function prepareStringOrDateResult(result) {
+		isISODate = ISO_DATE_REGEXP.exec(result);
+	    if (isISODate !== null) {
+	    	// Date
+	    	result = prepareDateResult(result);
+	    } else {
+	    	// String
+	    	result = prepareStringResult(result);
+		}
+        return result;
 	}
 	
 	function prepareFunctionResult(result) {
@@ -133,7 +164,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		'number': {prepare: prepareNumberResult},
 		'string': {prepare: prepareStringOrDateResult},
 		'function': {prepare: prepareFunctionResult}
-	}
+	};
 
 	// default comment and valid country location
 	statusText = 'Ready for server-side JavaScript execution';
@@ -214,7 +245,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 // eventHandlers// @lock
 
-	imageLearnMore.click = function imageLearnMore_click (event)// @startlock
+	iconLearnMore.click = function iconLearnMore_click (event)// @startlock
 	{// @endlock
 		location = LEARN_MORE_URL + location.search;
 	};// @lock
@@ -228,12 +259,14 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	{// @endlock
 		var
             runningMethod,
-            timer;
+            timer,
+            result,
+            originalLength;
 
         //event.preventDefault();
         
         statusText = 'Executing JavaScript on the server...';
-		sourceStatusText.sync()
+		sourceStatusText.sync();
 		jsonView.setValue('');
 		currentGraphicView.hide();
 
@@ -543,14 +576,14 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
             richTextStatusText.setTextColor('red');
                     
-			jsonResult = 'Request aborted';
-			showJsonResult(jsonResult);
+			result = 'Request aborted';
+			showJsonResult(result);
 
 			// show message in Display Error widget
 			currentGraphicView = widgets.errorDivServerException;
 			// setValue() doesn't work on the Display error widget
 			// currentWidget.setValue(mainErrorMessage);
-			currentGraphicView.$domNode.text(jsonResult);
+			currentGraphicView.$domNode.text(result);
 			currentGraphicView.show();
 			menuItemGraphicView.enable();
 
@@ -564,20 +597,21 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
 	{// @endlock
-		//console.log('ok', event, this);
-		setCode(this.source.code);
-		buttonRunSSJS.click();
+        buttonRunSSJS.click();
 	};// @lock
 
 	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
 	{// @endlock
-		//console.log('ok', event, this);
-		setCode(this.source.code);
+		if (!widgetButtonRunSSJS.enabled) {
+			setCode(this.source.code);
+		} else {
+			alert('A request is currently running. Please wait until the result is received');
+		}
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("iconLearnMore", "click", iconLearnMore.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
-	WAF.addListener("imageLearnMore", "click", imageLearnMore.click, "WAF");
 	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
 	WAF.addListener("buttonRunSSJS", "click", buttonRunSSJS.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDblClick", dataGridExamples.onRowDblClick, "WAF");

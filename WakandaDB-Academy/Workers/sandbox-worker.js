@@ -36,7 +36,7 @@ self.onmessage = function onCallToExecute(message) {
             if (resultType === '[object Entity]') {
 	            response.entityID = result.ID;
 	        }
-	    } else if (resultType === '[object Undefined]' || resultType === '[object Image]') {
+	    } else if ((resultType === '[object Undefined]' || resultType === '[object Image]') && result.getPath) {
 	        response.image = result.getPath();
 	    } else {
 	        response.result = result;
