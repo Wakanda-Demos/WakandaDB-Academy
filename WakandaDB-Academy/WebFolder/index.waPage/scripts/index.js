@@ -1,203 +1,580 @@
-var
-    WDB_ACADEMY;
-
-// WDB_ACADEMY application namespace
-WDB_ACADEMY = {
-	currentSlideIndex: 3
-};
-
+﻿
 WAF.onAfterInit = function onAfterInit() {// @lock
-	
-	"use strict";
 
 // @region namespaceDeclaration// @startlock
-	var buttonGithubConnect = {};	// @button
-	var documentEvent = {};	// @document
-	var buttonPrevious = {};	// @button
-	var buttonNext = {};	// @button
+	var imageDownload = {};	// @image
+	var examplesListEvent = {};	// @dataSource
+	var buttonRunSSJS = {};	// @image
+	var dataGridExamples = {};	// @dataGrid
 // @endregion// @endlock
 
     var
-        //jsCode,
-        lastSlideIndex,
+        // constants
+        ISO_DATE_REGEXP,
+        CLIENT_TIMEOUT,
+        DOWNLOAD_BASE_URL,
         // sources
         localSources,
-        sourceJsonComment,
+        sourceStatusText,
         sourceCountryLocation,
         // widgets
         widgets,
-        codeRunner,
-        // wakanda widgets jQuery references
-        $codeRunner,
-        $buttonNext,
-        $buttonPrevious,
-        $componentLoading,
-        // ace
-        //jsonView,
-        ssjsEditor;
+        widgetButtonRunSSJS,
+        ssjsEditor,
+        jsonView;
 
-    // index of the last slide
-    lastSlideIndex = $('[data-type=component]').length - 3;
+    function prettifyJSON(json, indent) {
+		indent = indent || 4;
+		return JSON.stringify(JSON.parse(json), null, indent);
+	}
+	
+	function toPrettyJSON(value, indent) {
+		indent = indent || 4;
+		return JSON.stringify(value, null, indent);
+	}
 
-    // sources
+	function setCode(jsCode) {
+        ssjsEditor.setValue(jsCode, 0);
+		ssjsEditor.clearSelection();
+		ssjsEditor.focus();	
+	}
+	
+	function showJsonResult(jsonResult) {
+		if (sourceStatusText) {
+            sourceStatusText.sync();
+        }
+        jsonView.setValue(jsonResult, 0);
+		jsonView.clearSelection();
+		jsonView.navigateTo(0, 0);
+		ssjsEditor.focus();	
+	}
+	
+	function updateRichTextAceSyntaxClass(type) {
+		$richTextScalarResult.removeClass('ace_null ace_undefined ace_boolean ace_numeric ace_string');
+		$richTextScalarResult.addClass('ace_' + type);
+	}
+	
+	function prepareUndefinedResult(result) {
+		statusText = 'The result is undefined';
+		updateRichTextAceSyntaxClass('undefined');
+		return result;
+	}
+	
+	function prepareNullResult(result) {
+		statusText = 'The result is null';
+		updateRichTextAceSyntaxClass('null');
+		return result;
+	}
+	
+	function prepareBooleanResult(result) {
+		statusText = 'The result is a boolean.';
+		updateRichTextAceSyntaxClass('boolean');
+		return result;
+	}
+	
+	function prepareNumberResult(result) {
+		statusText = 'The result is a number.';
+		updateRichTextAceSyntaxClass('number');
+		return result;
+	}
+	
+	function prepareStringOrDateResult(result) {
+		isISODate = ISO_DATE_REGEXP.exec(result);
+	    if (isISODate !== null) {
+	    	// Date
+	    	result = prepareDateResult(result)
+	    } else {
+	    	// String
+	    	result = prepareStringResult(result)
+		}
+        return result;
+	}
+	
+	function prepareStringResult(result) {
+	    statusText = 'The result is a string.';
+	    updateRichTextAceSyntaxClass('string');
+	    result = '"' + result.replace('"', '\"') + '"';
+        return result;
+	}
+	
+	function prepareDateResult(result) {
+        statusText = 'The result is a Date object.';
+	    result = new Date(Date.UTC(+isISODate[1], +isISODate[2] - 1, +isISODate[3], +isISODate[4], +isISODate[5], +isISODate[6]));
+	    //richTextDateResult.setValue(result.getHours() + ':' + result.getMinutes())
+		calendarDateResult.setValue(result);
+		currentGraphicView = widgets.containerResultDate;
+		return result;
+	}
+	
+	function prepareFunctionResult(result) {
+        statusText = 'Unexpected result';
+		return result;
+	}
+
+    function selectTab(index) {
+    	tabViewResults.selectTab(index);
+    }
+
+    // const
+	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
+	CLIENT_TIMEOUT = 30000;
+    DOWNLOAD_BASE_URL = 'http://www.wakanda.org/blog/please-welcome-our-new-developer-advocate-lyle-troxell';
+
+
+    // First proposed Server-Side JavaScript Code
+	jsCode = '';
+	
+	scalarResultHandler = {
+		'undefined': {prepare: prepareUndefinedResult},
+		'object': {prepare: prepareNullResult},
+		'boolean': {prepare: prepareBooleanResult},
+		'number': {prepare: prepareNumberResult},
+		'string': {prepare: prepareStringOrDateResult},
+		'function': {prepare: prepareFunctionResult}
+	}
+
+	// default comment and valid country location
+	statusText = 'Ready for server-side JavaScript execution';
+	countryLocation = 'USA';
+
+	examplesList = [
+        {icon: "", code: "ds.Employee.count()", tip:"Get the number of entities related to a dataclass"},
+        {icon: "", code: "ds.Employee.all()", tip:"Get all the entities related to a dataclass"},
+        {icon: "", code: "ds.Employee.query('age < :1', 25)", tip:"Get the employees who are older than 20"},
+        //{icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
+        //{icon: "", code: "ds.Employee.age"},
+        //{icon: "", code: "ds.Employee.all()[0]"},
+        {icon: "", code: "ds.Employee.all().first()"},
+        {icon: "", code: "ds.Employee.first()"},
+        {icon: "", code: "ds.Employee.first().next()"},
+        {icon: "", code: "ds.Employee(5)"},
+        {icon: "", code: "ds.Employee(5).company"},
+        {icon: "", code: "ds.Employee(5).company.country"},
+        //{icon: "", code: "ds.Employee(5).company.country.name"},
+        //{icon: "", code: "ds.Employee(5).company.countryName"},
+        //{icon: "", code: "ds.Employee(5).company.country.companies.length"},
+        {icon: "", code: "ds.Employee(5).company.manager"},
+        {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
+        //{icon: "", code: "ds.Company(3).employees"},
+        //{icon: "", code: "ds.Company.all().manager"},
+        //{icon: "", code: "ds.Country(2).companies.employees"}
+        {}
+    ];
+    
+       // sources
 	localSources = WAF.sources;
+    sourceStatusText = WAF.sources.statusText;
+	sourceStatusText.sync();
+    sourceCountryLocation = WAF.sources.countryLocation;
+	sourceCountryLocation.sync();
+    sources.examplesList.sync();
 
     // widgets
 	widgets = WAF.widgets;
-	codeRunner = widgets.codeRunner;
+	widgetButtonRunSSJS = widgets.buttonRunSSJS;
+	richTextStatusText = widgets.richTextStatusText;
+	tabViewResults = widgets.tabViewResults;
+	menuItemGraphicView = widgets.menuItemGraphicView;
+	menuItemJsonView = widgets.menuItemJsonView;
+	currentGraphicView = widgets.dataGridEmployee;
+	richTextScalarResult = widgets.richTextScalarResult;
+	errorDivServerException = widgets.errorDivServerException;
+	calendarDateResult = widgets.calendarDateResult;
+
+    // jQuery objects
+    $richTextScalarResult = richTextScalarResult.$domNode;
+
+	menuItemGraphicView.disable();
+    menuItemJsonView.disable(); 
+
+	// ace objects accessible by components via WDB_ACADEMY namespace
+	ssjsEditor = ace.edit(widgets.containerSsjsEditor.id);
+	jsonView = ace.edit(widgets.containerJsonView.id);
+
+    // Editor initialisation
+	ssjsEditor.setTheme("ace/theme/github");
+	ssjsEditor.getSession().setMode("ace/mode/javascript");
+	ssjsEditor.commands.addCommand({
+	    name: 'myCommand',
+	    bindKey: {win: 'Shift-Enter',  mac: 'Shift-Enter'},
+	    exec: buttonRunSSJS.click
+	});
+	 	    
+    // JSON View initialisation
+	jsonView.setTheme("ace/theme/github");
+	jsonView.getSession().setMode("ace/mode/json");
+	jsonView.setReadOnly(true);
 	
-	// widgets jQuery reference 
-	$codeRunner = codeRunner.$domNode;
-	$buttonNext = widgets.buttonNext.$domNode;
-	$buttonPrevious = widgets.buttonPrevious.$domNode;
-	$componentLoading = widgets.componentLoading.$domNode;
+	widgets.containerLoading.hide();
 
-	// publish references and values to components via WDB_ACADEMY namespace
-	WDB_ACADEMY.$codeRunner = $codeRunner;
-	WDB_ACADEMY.$buttonNext = $buttonNext;
-	WDB_ACADEMY.$buttonPrevious = $buttonPrevious;
-    WDB_ACADEMY.lastSlideIndex = lastSlideIndex;
-
-    // Initialization
-	//$buttonNext.fadeIn(500);
 
 // eventHandlers// @lock
 
-	buttonGithubConnect.click = function buttonGithubConnect_click (event)// @startlock
+	imageDownload.click = function imageDownload_click (event)// @startlock
 	{// @endlock
-		widgets.componentGithubConnect.authorize(['gists']);
+		location = DOWNLOAD_BASE_URL + location.search;
 	};// @lock
 
-	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
+	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
 	{// @endlock
-
-        var
-            key,
-            api,
-            domain,
-            version,
-            url;
-
-        $componentLoading.fadeOut(500);
-
-        key = 'fc3906b9efb2b865519ce99f6612f07a8d101d4870869b8718462aab9e51e788';
-	    api =  "ip-city";
-	    domain = 'api.ipinfodb.com';
-	    version = 'v3';
-	    url = "http://" + domain + "/" + version + "/" + api + "/?key=" + key + "&format=json" + "&callback=?";
-
-        $.getJSON(
-            url,
-            function geoDataReceived(data) {
-                if (data.statusCode === 'OK') {
-                	localStorage.geoData = JSON.stringify(data);
-                }
-            }
-        );
-
-		if (!localStorage.userID || localStorage.userID === '') {
-			localStorage.userID = GUID();
-		}
-		//buttonNext.click();
+		ssjsEditor.setValue(this.code);
 	};// @lock
 
-	buttonPrevious.click = function buttonPrevious_click (event)// @startlock
+	buttonRunSSJS.click = function buttonRunSSJS_click (event)// @startlock
 	{// @endlock
-        var
-		    slideIndex,
-		    currentSlide,
-		    sample1,
-		    jsCode,
-		    codeRunnerTop;
+		var
+            runningMethod,
+            timer;
 
-		slideIndex = WDB_ACADEMY.currentSlideIndex;
-		currentSlide = widgets['slide' + slideIndex];
+        statusText = 'Executing JavaScript on the server...';
+		sourceStatusText.sync()
+		jsonView.setValue('');
+		currentGraphicView.hide();
 
-		currentSlide.$domNode.fadeOut(1000);
-
-		if (slideIndex === lastSlideIndex) {
-			$buttonNext.fadeIn(1000);
-		}
-
-		// Changing the current slide to the new one
-
-		slideIndex = (slideIndex > 1) ? (slideIndex - 1) : lastSlideIndex;
-		WDB_ACADEMY.currentSlideIndex = slideIndex;
-		currentSlide = widgets['slide' + slideIndex];
- 
-        if (slideIndex === 1) {
-        	$buttonPrevious.fadeOut(1000);
+        menuItemJsonView.enable();
+        if (tabViewResults.getSelectedTab().index === 1) {
+        	// tab JSON view
+            tabViewResults.selectTab(2);
         }
 
-        sample1 = currentSlide.widgets.sample1;
-        // Must we really remove the potential user custom code?
-        jsCode = sample1 ? sample1.getValue() : '';
-        WDB_ACADEMY.setCode(jsCode);
+		runningMethod = ds.Proxy.callMethod({
+			method: 'runOnServer',
+			onSuccess: function handleSsjsSuccess(response) {
+				var
+				    rawResult,
+				    result,
+				    resultType,
+				    xhr,
+				    originalLength,
+				    isISODate,
+				    dataclass,
+				    collection,
+				    source;
 
- 		if (slideIndex === 1 || slideIndex === lastSlideIndex) {
-			$codeRunner.fadeOut(1000);
-		} else {
-			$codeRunner.fadeIn(1000);
-		}
+				//debugger;
+				clearTimeout(timer);
+				statusText = 'Analizing the server result...';
+                sourceStatusText.sync();
+                richTextStatusText.setTextColor('black');
+
+				isISODate = null;
+			    xhr = response.XHR;
+
+				//debugger;
+				rawResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
+				originalLength = xhr.getResponseHeader('X-Original-Array-Length');
+
+				if (originalLength) {
+					result = result.HTTPStream;
+					rawResult = result;
+				} else if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(rawResult) > -1) {
+					result = rawResult;
+					rawResult = eval(rawResult); // eval() only used if rawResult is NaN, Infinity, or undefined
+				} else {
+				    rawResult = JSON.parse(xhr.responseText);
+    				rawResult = ((typeof rawResult === 'object') && rawResult && rawResult.hasOwnProperty('result')) ? rawResult.result : rawResult;
+    				result = response.result;
+				}
+				
+				resultType = typeof result;
+
+				if (result === null || resultType !== 'object') {
+					
+					currentGraphicView = widgets.richTextScalarResult;
+					// Handle scalar, null and Date values
+					result = scalarResultHandler[resultType].prepare(result);
+					
+					if (isISODate === null) {
+						currentGraphicView.setValue(String(result));
+					}
+					
+					currentGraphicView.show();
+					menuItemGraphicView.enable();
+			    	
+			    } else if (result.hasOwnProperty('undefined') && result['undefined'] === 'undefined') {
+					
+					// Result is undefined
+
+					statusText = 'The result is undefined.';
+					currentGraphicView.addClass('ace_undefined');
+					result = 'undefined';
+					rawResult = result;
+
+				} else if (result instanceof WAF.EntityCollection) {
+
+					// Result is an EntityCollection
+
+					dataclass = result.getDataClass().getName();
+					source = localSources[dataclass.toLowerCase()];
+
+					statusText = 'The result is an ' + dataclass + ' Entity Collection. ';
+
+					if (rawResult.__COUNT > rawResult.__SENT) {
+						statusText += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
+					} else {
+						statusText += "Showing the " + rawResult.__COUNT + " found entities.";
+					}
+
+					//collection = ds[dataclass].newCollection();
+					//source.setEntityCollection(collection);
+
+                    // show the widget
+			    	currentGraphicView = widgets['dataGrid' + dataclass];
+					currentGraphicView.show();
+					
+					//setTimeout(function() {
+						source.setEntityCollection(response.result);
+					//}, 100);
+
+                    currentGraphicView.onResize();
+					menuItemGraphicView.enable();
+
+			    } else if (result instanceof WAF.Entity) {
+
+					// Result is an Entity
+
+			    	dataclass = result.getDataClass().getName();
+			    	source = localSources[dataclass.toLowerCase()];
+
+					statusText = 'The result is an ' + dataclass + ' Entity.';
+			    	
+			    	collection = ds[dataclass].newCollection();
+				    collection.add(response.result);
+				    source.setEntityCollection(collection);
+
+					if (dataclass === 'Country') {
+						googleMapCountry = result.name.getValue();
+						sourceGoogleMapCountry.sync();
+				    } else if (dataclass === 'Company') {
+						googleMapCountry = result.countryName.getValue();
+						sourceGoogleMapCountry.sync();
+				    }
+
+					currentGraphicView = widgets['container' + dataclass];
+				    currentGraphicView.show();
+					menuItemGraphicView.enable();
+					
+					var relatedDataGrids = {
+						Employee: 'dataGridEmployeeStaff',
+						Company: 'dataGridCompanyEmployees',
+						Country: 'dataGridCountryCompanies'
+					};
+					widgets[relatedDataGrids[dataclass]].onResize();
+
+				} else if (result instanceof Array) {
+					
+					// Result is an Array
+					
+					//originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
+
+					statusText = 'The result is an Array. ';
+					
+					/*
+					if (originalLength > 40) {
+						statusText += "Showing the 40 first elements from the " + originalLength + " found.";
+					} else {
+						statusText += "Showing the " + originalLength + " found elements.";
+					}
+					*/
+
+		            // No Graphic view, force JSON view
+		            selectTab(2);
+		            menuItemGraphicView.disable();
+
+				} else {
+
+					// Result is another object type
+
+					statusText = 'The result is an Object.';
+
+					// No Graphic view, force JSON view
+		            selectTab(2); 
+		            menuItemGraphicView.disable();
+					
+				}
+				
+                // show JSON result
+                showJsonResult(toPrettyJSON(rawResult));
+                widgetButtonRunSSJS.enable();
+			},
+
+			onError: function handleSsjsError(response) {
+
+				var
+				    xhr,
+				    error,
+				    originalContentType,
+				    mainErrorMessage,
+				    jsonResult;
+
+				//debugger;
+				clearTimeout(timer);
+				jsonResult = '"no response received"';
+
+				//debugger;
+				statusText = 'Analizing the server result...';
+                sourceStatusText.sync();
+
+				// Binary Data are not yet natively supported by the dataprovider but can be handled via onError
+				xhr = response.XHR;
+				originalContentType = xhr.getResponseHeader('X-Original-Content-Type');
+
+                if (xhr.status === 0) {
+					statusText = 'Connection to the server failed... Please retry Later';
+	                sourceStatusText.sync();
+                } else switch (originalContentType) {
+
+			    case null:
+
+                    // An exception occured on the server
+
+    				statusText = 'An Exception has been thrown on the server!';
+                    richTextStatusText.setTextColor('red');
+                    
+			    	error = JSON.parse(xhr.responseText).__ERROR;
+			    	mainErrorMessage = error[0].message;
+
+			    	// show message in Display Error widget
+					currentGraphicView = widgets.errorDivServerException;
+					// setValue() doesn't work on the Display error widget
+					// currentWidget.setValue(mainErrorMessage);
+					currentGraphicView.$domNode.text(mainErrorMessage);
+					currentGraphicView.show();
+					menuItemGraphicView.enable();
+
+			    	// Show the JSON result
+					jsonResult = toPrettyJSON(error);
+					break;
+
+			    case 'application/json':
+
+					// Result is an an unsupported JSON value or a too big Array
+
+				    currentGraphicView = widgets.richTextScalarResult;
+				    
+				    jsonResult = xhr.getResponseHeader('X-Limited-Array-Value');
+					if (jsonResult) {
+						originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
+						statusText = 'The result is an Array. ';
+						
+						if (originalLength > 40) {
+							statusText += "Showing the 40 first elements from the " + originalLength + " found.";
+						} else {
+							statusText += "Showing the " + originalLength + " found elements.";
+						}
+
+			            // No Graphic view, force JSON view
+			            selectTab(2);
+			            menuItemGraphicView.disable();
+
+					    jsonResult = toPrettyJSON(error);
+
+				    } else {
+
+				    	jsonResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
+
+				    	if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
+				    		// unexpected value
+							statusText = 'The result is in an unknown format.';
+		                    richTextStatusText.setTextColor('red');
+		                    jsonResult = '';
+						} else if (jsonResult === 'undefined') {
+							// undefined
+					        statusText = 'The result is "undefined".';
+					    } else {
+					        // NaN, Infinity, or -Infinity
+					        statusText = 'The result is a number.';
+					    }
+
+				    }
+
+					// update the graphic view
+					currentGraphicView.setValue(jsonResult);
+					currentGraphicView.show();
+					menuItemGraphicView.enable();
+					break;
+
+			    case 'image/jpeg':
+
+					// Result is an Image
+    				statusText = 'The result is an Image.';
+					
+					// show the image
+					currentGraphicView = widgets.imageResult;
+					currentGraphicView.setValue('data:image/jpeg;base64,' + encode64(xhr.responseText));
+					currentGraphicView.show();
+					menuItemGraphicView.enable();
+
+					// Show the JSON Result
+					jsonResult = prettifyJSON(xhr.getResponseHeader('X-Image-Data'));
+					break;
+
+				default:
+
+					// Result is in an unknown format
+	    				statusText = 'The result is in an unknown format.';
+	                    richTextStatusText.setTextColor('red');
+
+                    // No Graphic view, force JSON view
+		            selectTab(2); 
+		            menuItemGraphicView.disable();
+
+			    }
+			    
+                // show JSON result
+                showJsonResult(jsonResult);
+                widgetButtonRunSSJS.enable();
+			}
+		}, ssjsEditor.getValue());
 		
-		codeRunnerTop = (slideIndex >= lastSlideIndex - 1) ? '506px' : '152px';
-		$codeRunner.css('top', codeRunnerTop);
-		
-		currentSlide.$domNode.fadeIn(1000);
+		timer = setTimeout(function requestTimoutExpired() {
 
+            // Response Timeout expired
+    		statusText = 'Response Timeout expired.';
+    		widgetButtonRunSSJS.enable();
+    		//debugger;
+			//runningMethod.xhr.abort();
 
+            richTextStatusText.setTextColor('red');
+                    
+			jsonResult = 'Request aborted';
+			showJsonResult(jsonResult);
+
+			// show message in Display Error widget
+			currentGraphicView = widgets.errorDivServerException;
+			// setValue() doesn't work on the Display error widget
+			// currentWidget.setValue(mainErrorMessage);
+			currentGraphicView.$domNode.text(jsonResult);
+			currentGraphicView.show();
+			menuItemGraphicView.enable();
+
+		}, CLIENT_TIMEOUT);
 	};// @lock
 
-	buttonNext.click = function buttonNext_click (event)// @startlock
+	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)// @startlock
 	{// @endlock
-         var
-            slideIndex,
-            currentSlide,
-            sample1,
-            jsCode,
-            codeRunnerTop;
+		// Add your code here
+	};// @lock
 
-		slideIndex = WDB_ACADEMY.currentSlideIndex;
-		currentSlide = widgets['slide' + slideIndex];
+	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
+	{// @endlock
+		//console.log('ok', event, this);
+		ssjsEditor.setValue(this.source.code);
+		buttonRunSSJS.click();
+	};// @lock
 
-		currentSlide.$domNode.fadeOut(1000);
-
-		if (slideIndex === 1) {
-			$buttonPrevious.fadeIn(1000);
-		}
-
-		if (slideIndex === (lastSlideIndex - 1)) {
-	        $buttonNext.fadeOut(1000);
-	    }
-
-		// Changing the current slide to the new one
-
-		slideIndex = (slideIndex < lastSlideIndex) ? (slideIndex + 1) : 1;
-		WDB_ACADEMY.currentSlideIndex = slideIndex;
-		currentSlide = widgets['slide' + slideIndex];
-
-		if (slideIndex === 1 || slideIndex === lastSlideIndex) {
-			$codeRunner.fadeOut(1000);
-		} else {
-			sample1 = currentSlide.widgets.sample1;
-	        // TODO: Must we really remove the potential user custom code?
-	        jsCode = sample1 ? sample1.getValue() : '';
-	        WDB_ACADEMY.setCode(jsCode);
-	        WDB_ACADEMY.selectTab(1);
-
-            codeRunnerTop = (slideIndex >= (lastSlideIndex - 1)) ? '506px' : '152px';
-		    $codeRunner.css('top', codeRunnerTop);
-			$codeRunner.fadeIn(1000);
-		}
-
-		currentSlide.$domNode.fadeIn(1000);
-
+	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
+	{// @endlock
+		//console.log('ok', event, this);
+		ssjsEditor.setValue(this.source.code);
 	};// @lock
 
 // @region eventManager// @startlock
-	WAF.addListener("buttonGithubConnect", "click", buttonGithubConnect.click, "WAF");
-	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
-	WAF.addListener("buttonPrevious", "click", buttonPrevious.click, "WAF");
-	WAF.addListener("buttonNext", "click", buttonNext.click, "WAF");
+	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
+	WAF.addListener("imageDownload", "click", imageDownload.click, "WAF");
+	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
+	WAF.addListener("buttonRunSSJS", "click", buttonRunSSJS.click, "WAF");
+	WAF.addListener("dataGridExamples", "onRowDblClick", dataGridExamples.onRowDblClick, "WAF");
+	WAF.addListener("dataGridExamples", "onRowClick", dataGridExamples.onRowClick, "WAF");
 // @endregion
 };// @endlock
