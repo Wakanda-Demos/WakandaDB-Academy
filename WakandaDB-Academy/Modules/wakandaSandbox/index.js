@@ -21,7 +21,7 @@ var
 
 
 function accessRestricted() {
-    return "access restricted";
+    throw new Error("access restricted to property or method by the sandbox");
 }
 
 function checkJS(item) {

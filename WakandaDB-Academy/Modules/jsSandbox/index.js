@@ -55,7 +55,7 @@ Sandbox = (function SandBoxScope() {
 	    ECMASCRIPT_PROPERTIES;
 
 	function accessRestricted() {
-	    return new Error('Access Restricted');
+        throw new Error("access restricted to property or method by the sandbox");
 	}
 
 	// a instance must be created to have "this" not bound to the global object
