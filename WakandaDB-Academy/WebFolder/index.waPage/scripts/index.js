@@ -2,7 +2,7 @@
 WAF.onAfterInit = function onAfterInit() {// @lock
 
 // @region namespaceDeclaration// @startlock
-	var imageDownload = {};	// @image
+	var imageLearnMore = {};	// @image
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
 	var dataGridExamples = {};	// @dataGrid
@@ -12,7 +12,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         // constants
         ISO_DATE_REGEXP,
         CLIENT_TIMEOUT,
-        DOWNLOAD_BASE_URL,
+        LEARN_MORE_URL,
         // sources
         localSources,
         sourceStatusText,
@@ -118,11 +118,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     // const
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
 	CLIENT_TIMEOUT = 30000;
-    DOWNLOAD_BASE_URL = 'http://www.wakanda.org/blog/please-welcome-our-new-developer-advocate-lyle-troxell';
+    LEARN_MORE_URL = 'http://www.wakanda.org/blog/please-welcome-our-new-developer-advocate-lyle-troxell';
 
 
     // First proposed Server-Side JavaScript Code
-	jsCode = '';
+	jsCode = '// Write your own SSJS code using the WakandaDB API';
+	jsCode += '\n// Or use one of the proposed examples in the list';
+	jsCode += '\n';
 	
 	scalarResultHandler = {
 		'undefined': {prepare: prepareUndefinedResult},
@@ -141,17 +143,17 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Employee.count()", tip:"Get the number of entities related to a dataclass"},
         {icon: "", code: "ds.Employee.all()", tip:"Get all the entities related to a dataclass"},
         {icon: "", code: "ds.Employee.query('age < :1', 25)", tip:"Get the employees who are older than 20"},
-        //{icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
-        //{icon: "", code: "ds.Employee.age"},
-        //{icon: "", code: "ds.Employee.all()[0]"},
+        {icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
+        {icon: "", code: "ds.Employee.age"},
+        {icon: "", code: "ds.Employee.all()[0]"},
         {icon: "", code: "ds.Employee.all().first()"},
         {icon: "", code: "ds.Employee.first()"},
         {icon: "", code: "ds.Employee.first().next()"},
         {icon: "", code: "ds.Employee(5)"},
         {icon: "", code: "ds.Employee(5).company"},
         {icon: "", code: "ds.Employee(5).company.country"},
-        //{icon: "", code: "ds.Employee(5).company.country.name"},
-        //{icon: "", code: "ds.Employee(5).company.countryName"},
+        {icon: "", code: "ds.Employee(5).company.country.name"},
+        {icon: "", code: "ds.Employee(5).company.countryName"},
         //{icon: "", code: "ds.Employee(5).company.country.companies.length"},
         {icon: "", code: "ds.Employee(5).company.manager"},
         {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
@@ -205,19 +207,21 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	jsonView.getSession().setMode("ace/mode/json");
 	jsonView.setReadOnly(true);
 	
+	setCode(jsCode);
+
 	widgets.containerLoading.hide();
 
 
 // eventHandlers// @lock
 
-	imageDownload.click = function imageDownload_click (event)// @startlock
+	imageLearnMore.click = function imageLearnMore_click (event)// @startlock
 	{// @endlock
-		location = DOWNLOAD_BASE_URL + location.search;
+		location = LEARN_MORE_URL + location.search;
 	};// @lock
 
 	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
 	{// @endlock
-		ssjsEditor.setValue(this.code);
+		//setCode(this.code);
 	};// @lock
 
 	buttonRunSSJS.click = function buttonRunSSJS_click (event)// @startlock
@@ -226,6 +230,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             runningMethod,
             timer;
 
+        //event.preventDefault();
+        
         statusText = 'Executing JavaScript on the server...';
 		sourceStatusText.sync()
 		jsonView.setValue('');
@@ -312,7 +318,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					if (rawResult.__COUNT > rawResult.__SENT) {
 						statusText += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
 					} else {
-						statusText += "Showing the " + rawResult.__COUNT + " found entities.";
+						statusText += "\nShowing the " + rawResult.__COUNT + " found entities.";
 					}
 
 					//collection = ds[dataclass].newCollection();
@@ -460,7 +466,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 						if (originalLength > 40) {
 							statusText += "Showing the 40 first elements from the " + originalLength + " found.";
 						} else {
-							statusText += "Showing the " + originalLength + " found elements.";
+							statusText += "\nShowing the " + originalLength + " found elements.";
 						}
 
 			            // No Graphic view, force JSON view
@@ -559,19 +565,19 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
 	{// @endlock
 		//console.log('ok', event, this);
-		ssjsEditor.setValue(this.source.code);
+		setCode(this.source.code);
 		buttonRunSSJS.click();
 	};// @lock
 
 	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
 	{// @endlock
 		//console.log('ok', event, this);
-		ssjsEditor.setValue(this.source.code);
+		setCode(this.source.code);
 	};// @lock
 
 // @region eventManager// @startlock
 	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
-	WAF.addListener("imageDownload", "click", imageDownload.click, "WAF");
+	WAF.addListener("imageLearnMore", "click", imageLearnMore.click, "WAF");
 	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
 	WAF.addListener("buttonRunSSJS", "click", buttonRunSSJS.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDblClick", dataGridExamples.onRowDblClick, "WAF");
