@@ -152,13 +152,14 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     // const
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
 	CLIENT_TIMEOUT = 30000;
-    LEARN_MORE_URL = 'http://www.wakanda.org/blog/please-welcome-our-new-developer-advocate-lyle-troxell';
+    LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-command-line-introduction';
 
 
     // First proposed Server-Side JavaScript Code
-	jsCode = '// Write your own SSJS code using the WakandaDB API';
-	jsCode += '\n// Or use one of the proposed examples in the list';
+	jsCode = '// Discover WakandaDB your with the proposed examples\n';
 	jsCode += '\n';
+	jsCode += '// Or write your own code using the server-side JS API\n';
+	jsCode += '// Documentation: http://doc.wakanda.org/ssjs-query';
 	
 	scalarResultHandler = {
 		'undefined': {prepare: prepareUndefinedResult},
@@ -375,16 +376,14 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 						statusText += "\nShowing the " + rawResult.__COUNT + " found entities.";
 					}
 
-					//collection = ds[dataclass].newCollection();
-					//source.setEntityCollection(collection);
+					collection = ds[dataclass].newCollection();
+					source.setEntityCollection(collection);
 
                     // show the widget
 			    	currentGraphicView = widgets['dataGrid' + dataclass];
 					currentGraphicView.show();
 					
-					//setTimeout(function() {
-						source.setEntityCollection(response.result);
-					//}, 100);
+					source.setEntityCollection(response.result);
 
                     currentGraphicView.onResize();
 					menuItemGraphicView.enable();
@@ -438,7 +437,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					*/
 
 		            // No Graphic view, force JSON view
-		            selectTab(2);
+		            selectTab(3);
 		            menuItemGraphicView.disable();
 
 				} else {
@@ -448,7 +447,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					statusText = 'The result is an Object.';
 
 					// No Graphic view, force JSON view
-		            selectTab(2); 
+		            selectTab(3); 
 		            menuItemGraphicView.disable();
 					
 				}

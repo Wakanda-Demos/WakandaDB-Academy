@@ -2,6 +2,25 @@
 
 /*global self:true */
 
+var
+    seen = [];
+
+function safeStringify(key, val) {
+
+    if (typeof val === "object" && val !== null) {
+        if (seen.indexOf(val) !== -1) {
+            return "recursive reference";
+        }
+        seen.push(val);
+    } else if (typeof val === "function") {
+        if (seen.indexOf(val) !== -1) {
+            return "recursive reference";
+        }
+        seen.push("function () {}");
+    }
+    return val;
+}
+
 self.onmessage = function onCallToExecute(message) {
 
 	'use strict';
@@ -39,7 +58,7 @@ self.onmessage = function onCallToExecute(message) {
 	    } else if ((resultType === '[object Undefined]' || resultType === '[object Image]') && result.getPath) {
 	        response.image = result.getPath();
 	    } else {
-	        response.result = result;
+	        response.result = JSON.parse(JSON.stringify(result, safeStringify));
 	    }
     } else {
     	response.result = result;
