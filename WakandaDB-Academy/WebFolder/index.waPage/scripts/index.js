@@ -17,6 +17,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
+	var imageModelBig = {};	// @image
+	var containerModelBig = {};	// @container
+	var imageModelSmall = {};	// @image
 	var iconLearnMore = {};	// @icon
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
@@ -244,6 +247,24 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 
 // eventHandlers// @lock
+
+	imageModelBig.click = function imageModelBig_click (event)// @startlock
+	{// @endlock
+		widgets.containerCenteredPage.show();
+		widgets.containerModelBig.hide();
+	};// @lock
+
+	containerModelBig.click = function containerModelBig_click (event)// @startlock
+	{// @endlock
+		widgets.containerCenteredPage.show();
+		widgets.containerModelBig.hide();
+	};// @lock
+
+	imageModelSmall.click = function imageModelSmall_click (event)// @startlock
+	{// @endlock
+		widgets.containerModelBig.show();
+		widgets.containerCenteredPage.hide();
+	};// @lock
 
 	iconLearnMore.click = function iconLearnMore_click (event)// @startlock
 	{// @endlock
@@ -610,6 +631,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("imageModelBig", "click", imageModelBig.click, "WAF");
+	WAF.addListener("containerModelBig", "click", containerModelBig.click, "WAF");
+	WAF.addListener("imageModelSmall", "click", imageModelSmall.click, "WAF");
 	WAF.addListener("iconLearnMore", "click", iconLearnMore.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
 	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
