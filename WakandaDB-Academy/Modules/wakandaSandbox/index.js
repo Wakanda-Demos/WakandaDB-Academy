@@ -117,7 +117,20 @@ function SandboxedEntity(sandboxedDataclass, entity) {
         function sandboxedEntityAttibuteAccess(attributeName) {
             properties[attributeName] = {
                 get: function getter_attributeValue() {
-                    return entity[attributeName];
+                	var
+                	    value;
+                	value = entity[attributeName];
+                	if (value !== null && typeof value === "object") {
+                	    // Entity or Collection from navigation attribute
+                	    if (typeof value.getKey === 'function') {
+                	    	// Entity
+                	    	value = new SandboxedEntity(sandboxedDataclass, value);
+                	    } else {
+                	    	// Collection
+                	    	value = new SandboxedCollection(sandboxedDataclass, value);
+                	    }
+                	}
+                    return value;
                 },
                 enumerable: true
             };
@@ -209,10 +222,29 @@ function SandboxedCollection(sandboxedDataclass, collection) {
     function addArrayIndexedPropertyToSandboxedCollection(localIndex) {
         // properties object accessed from closure scope
         properties[localIndex] = {
-            get: function getter_Entity() {
-                return new SandboxedEntity(collection[localIndex]);
+            get: function getter_collectionArrayIndexedEntity() {
+            	//debugger;
+                return new SandboxedEntity(sandboxedDataclass, collection[localIndex]);
             },
             enumerable: true
+        };
+    }
+
+    function addAttributePropertyToSandboxedCollection(attributeName) {
+        properties[attributeName] = {
+            get: function getter_collectionAttribute() {
+                var
+                    result;
+
+                result = collection[attributeName];
+                if (result && (typeof result === "object") && result.distinctValues) {
+                    result = new SandboxedCollection(sandboxedDataclass, result);
+                } else {
+                    result = null;
+                }
+                return result;
+            },
+            enumerable: false
         };
     }
 
@@ -236,7 +268,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
             get: function getter_length() {
                 return collection.length;
             }
-        },
+        }/*,
         queryPath: {
             get: function getter_queryPath() {
                 return collection.queryPath;
@@ -246,35 +278,19 @@ function SandboxedCollection(sandboxedDataclass, collection) {
             get: function getter_queryPlan() {
                 return collection.queryPlan;
             }
-        }
+        }*/
     };
 
     // access to entities by index
     max = Math.min(collection.length, MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS);
+    //debugger;
     for (index = 0; index < max; index += 1) {
         addArrayIndexedPropertyToSandboxedCollection(index);
     }
+    //debugger;
 
     // collection of attribute values
-    Object.keys(collection).forEach(
-        function (attributeName) {
-            properties[attributeName] = {
-                get: function getter() {
-                    var
-                        result;
-
-                    result = collection[attributeName];
-                    if (result && (typeof result === "object") && result.distinctValues) {
-                        result = new SandboxedCollection(sandboxedDataclass, result);
-                    } else {
-                        result = null;
-                    }
-                    return result;
-                },
-                enumerable: true
-            };
-        }
-    );
+    Object.getOwnPropertyNames(sandboxedDataclass.attributes).forEach(addAttributePropertyToSandboxedCollection);
 
     Object.defineProperties(this, properties);
 
