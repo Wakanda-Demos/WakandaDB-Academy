@@ -13,7 +13,7 @@ guidedModel =// @startlock
                 "use strict";
 
                 var // "const" doesn't work in strict mode
-                    TIMEOUT = 8000,
+                    TIMEOUT = 4000,
                     ALLOWED_PROPERTIES = {
                         // HTML5 properties
                         'name': true,
@@ -27,7 +27,7 @@ guidedModel =// @startlock
                         'ds': true,
                         'generateUUID': true,
                         'getURLQuery': true,
-                        //'guidedModel': true,
+                        'guidedModel': true,
                         'isoToDate': true,
                         'os': true,
                         'pattern': true,
@@ -79,6 +79,7 @@ guidedModel =// @startlock
                 sandboxWorker.onmessage = function onSandboxWorkerRunMessage(message) {
 
                     waiting = false;
+                    //debugger;
                     sandboxWorker.terminate();
 
                     // WARNING: message can't yet transport entities or collections

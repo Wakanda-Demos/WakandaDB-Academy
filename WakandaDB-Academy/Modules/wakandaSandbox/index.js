@@ -8,7 +8,7 @@
 var
     MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS,
     sandoxedDatastore,
-    sandoxedDataClasses,
+    sandboxedDataClasses,
     nativeObjects,
     sandboxedObjects,
     Sandbox;
@@ -67,7 +67,7 @@ function SandboxedAttribute(sandboxedDataclass, attribute) {
     this.indexed = attribute.indexed;
     this.indexType = attribute.indexType;
     this.fullTextIndexed = attribute.fullTextIndexed;
-    this.relatedDataclass = attribute.relatedDataclass && sandoxedDataClasses[attribute.relatedDataclass.getName()];
+    this.relatedDataclass = attribute.relatedDataclass && sandboxedDataClasses[attribute.relatedDataclass.getName()];
     this.dataclass = sandboxedDataclass;
 
     // METHODS
@@ -118,10 +118,14 @@ function SandboxedEntity(sandboxedDataclass, entity) {
             properties[attributeName] = {
                 get: function getter_attributeValue() {
                 	var
-                	    value;
+                	    value,
+                	    sandBoxedDataclass;
+
+                	//debugger;
                 	value = entity[attributeName];
                 	if (value !== null && typeof value === "object") {
                 	    // Entity or Collection from navigation attribute
+                	    sandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
                 	    if (typeof value.getKey === 'function') {
                 	    	// Entity
                 	    	value = new SandboxedEntity(sandboxedDataclass, value);
@@ -234,15 +238,19 @@ function SandboxedCollection(sandboxedDataclass, collection) {
         properties[attributeName] = {
             get: function getter_collectionAttribute() {
                 var
-                    result;
+                    value,
+                    sandboxedDataclass;
 
-                result = collection[attributeName];
-                if (result && (typeof result === "object") && result.distinctValues) {
-                    result = new SandboxedCollection(sandboxedDataclass, result);
-                } else {
-                    result = null;
+                value = collection[attributeName];
+                	
+                if (value && typeof value === "object") {
+                	if (value.distinctValues) {
+                		// Collection
+                        sandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
+                        value = new SandboxedCollection(sandboxedDataclass, result);
+                    }
                 }
-                return result;
+                return value;
             },
             enumerable: false
         };
@@ -473,11 +481,11 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
     dataclassName = dataclass.getName();
 
-    if (sandoxedDataClasses.hasOwnProperty(dataclassName)) {
-        return sandoxedDataClasses[dataclassName];
+    if (sandboxedDataClasses.hasOwnProperty(dataclassName)) {
+        return sandboxedDataClasses[dataclassName];
     }
 
-    sandoxedDataClasses[dataclassName] = sandboxedDataclass;
+    sandboxedDataClasses[dataclassName] = sandboxedDataclass;
 
     properties = {};
     cachedAttributes = {};
@@ -814,7 +822,7 @@ function WakandaSandbox(allowedProperties) {
 MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS = 40;
 
 sandoxedDatastore = {};
-sandoxedDataClasses = [];
+sandboxedDataClasses = [];
 nativeObjects = [];
 sandboxedObjects = [];
 Sandbox = require('jsSandbox/index').Sandbox;

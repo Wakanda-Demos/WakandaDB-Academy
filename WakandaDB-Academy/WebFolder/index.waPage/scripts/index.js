@@ -17,6 +17,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
+	var dataGridEmployeeStaff = {};	// @dataGrid
+	var dataGridCountryCompanies = {};	// @dataGrid
+	var dataGridCompanyEmployees = {};	// @dataGrid
+	var dataGridEmployee = {};	// @dataGrid
+	var dataGridCountry = {};	// @dataGrid
+	var dataGridCompany = {};	// @dataGrid
 	var imageModelBig = {};	// @image
 	var containerModelBig = {};	// @container
 	var imageModelSmall = {};	// @image
@@ -180,6 +186,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Employee.query('age < :1', 25)", tip:"Get the employees who are older than 20"},
         {icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
         {icon: "", code: "ds.Employee.age"},
+        {icon: "", code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')"},
         {icon: "", code: "ds.Employee.all()[0]"},
         {icon: "", code: "ds.Employee.all().first()"},
         {icon: "", code: "ds.Employee.first()"},
@@ -189,13 +196,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Employee(5).company.country"},
         {icon: "", code: "ds.Employee(5).company.country.name"},
         {icon: "", code: "ds.Employee(5).company.countryName"},
-        //{icon: "", code: "ds.Employee(5).company.country.companies.length"},
+        {icon: "", code: "ds.Employee(5).company.country.companies.length"},
         {icon: "", code: "ds.Employee(5).company.manager"},
         {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
-        //{icon: "", code: "ds.Company(3).employees"},
-        //{icon: "", code: "ds.Company.all().manager"},
-        //{icon: "", code: "ds.Country(2).companies.employees"}
-        {}
+        {icon: "", code: "ds.Company(3).employees"},
+        {icon: "", code: "ds.Company.all().manager"},
+        {icon: "", code: "ds.Country.find('name = Brazil')"},
+        {icon: "", code: "ds.Country.find('name = Brazil').companies"}
     ];
     
        // sources
@@ -248,6 +255,42 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 
 // eventHandlers// @lock
+
+	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)// @startlock
+	{// @endlock
+		setCode('ds.Employee(' + this.source.ID + ')');
+		buttonRunSSJS.click();
+	};// @lock
+
+	dataGridCountryCompanies.onRowDblClick = function dataGridCountryCompanies_onRowDblClick (event)// @startlock
+	{// @endlock
+		setCode('ds.Company(' + this.source.ID + ')');
+		buttonRunSSJS.click();
+	};// @lock
+
+	dataGridCompanyEmployees.onRowDblClick = function dataGridCompanyEmployees_onRowDblClick (event)// @startlock
+	{// @endlock
+		setCode('ds.Employee(' + this.source.ID + ')');
+		buttonRunSSJS.click();
+	};// @lock
+
+	dataGridEmployee.onRowDblClick = function dataGridEmployee_onRowDblClick (event)// @startlock
+	{// @endlock
+		setCode('ds.Employee(' + this.source.ID + ')');
+		buttonRunSSJS.click();
+	};// @lock
+
+	dataGridCountry.onRowDblClick = function dataGridCountry_onRowDblClick (event)// @startlock
+	{// @endlock
+		setCode('ds.Country(' + this.source.ID + ')');
+		buttonRunSSJS.click();
+	};// @lock
+
+	dataGridCompany.onRowDblClick = function dataGridCompany_onRowDblClick (event)// @startlock
+	{// @endlock
+		setCode('ds.Company(' + this.source.ID + ')');
+		buttonRunSSJS.click();
+	};// @lock
 
 	imageModelBig.click = function imageModelBig_click (event)// @startlock
 	{// @endlock
@@ -402,11 +445,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				    source.setEntityCollection(collection);
 
 					if (dataclass === 'Country') {
-						googleMapCountry = result.name.getValue();
-						sourceGoogleMapCountry.sync();
+						countryLocation = result.name.getValue();
+						sourceCountryLocation.sync();
 				    } else if (dataclass === 'Company') {
-						googleMapCountry = result.countryName.getValue();
-						sourceGoogleMapCountry.sync();
+						countryLocation = result.countryName.getValue();
+						sourceCountryLocation.sync();
 				    }
 
 					currentGraphicView = widgets['container' + dataclass];
@@ -630,6 +673,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("dataGridEmployeeStaff", "onRowDblClick", dataGridEmployeeStaff.onRowDblClick, "WAF");
+	WAF.addListener("dataGridCountryCompanies", "onRowDblClick", dataGridCountryCompanies.onRowDblClick, "WAF");
+	WAF.addListener("dataGridCompanyEmployees", "onRowDblClick", dataGridCompanyEmployees.onRowDblClick, "WAF");
+	WAF.addListener("dataGridEmployee", "onRowDblClick", dataGridEmployee.onRowDblClick, "WAF");
+	WAF.addListener("dataGridCountry", "onRowDblClick", dataGridCountry.onRowDblClick, "WAF");
+	WAF.addListener("dataGridCompany", "onRowDblClick", dataGridCompany.onRowDblClick, "WAF");
 	WAF.addListener("imageModelBig", "click", imageModelBig.click, "WAF");
 	WAF.addListener("containerModelBig", "click", containerModelBig.click, "WAF");
 	WAF.addListener("imageModelSmall", "click", imageModelSmall.click, "WAF");
