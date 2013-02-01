@@ -124,15 +124,20 @@ function SandboxedEntity(sandboxedDataclass, entity) {
                 	//debugger;
                 	value = entity[attributeName];
                 	if (value !== null && typeof value === "object") {
-                	    // Entity or Collection from navigation attribute
-                	    relatedSandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
-                	    if (typeof value.getKey === 'function') {
-                	    	// Entity
-                	    	value = new SandboxedEntity(relatedSandBoxedDataclass, value);
-                	    } else {
-                	    	// Collection
-                	    	value = new SandboxedCollection(relatedSandBoxedDataclass, value);
-                	    }
+                		if (value.getDataClass) {
+	                	    // Entity Collection from navigation attribute
+	                	    relatedSandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
+	                	    if (typeof value.getKey === 'function') {
+	                	    	// Entity
+	                	    	value = new SandboxedEntity(relatedSandBoxedDataclass, value);
+	                	    } else {
+	                	    	// Collection
+	                	    	value = new SandboxedCollection(relatedSandBoxedDataclass, value);
+	                	    }
+                		} else {
+                			// Image
+                			return value;
+                		}
                 	}
                     return value;
                 },
