@@ -361,7 +361,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
         //event.preventDefault();
         
-        //widgetButtonRunSSJS.disable();
+        widgetButtonRunSSJS.disable();
         statusText = 'Executing JavaScript on the server...';
 		sourceStatusText.sync();
 		jsonView.setValue('');
@@ -530,6 +530,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                 // show JSON result
                 showJsonResult(toPrettyJSON(rawResult));
                 widgetButtonRunSSJS.enable();
+                // force refresh button state
+                $('#buttonRunSSJS').trigger('mouseout');
 			},
 
 			onError: function handleSsjsError(response) {
@@ -658,6 +660,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                 // show JSON result
                 showJsonResult(jsonResult);
                 widgetButtonRunSSJS.enable();
+				// force refresh button state
+				$('#buttonRunSSJS').trigger('mouseout');
 			}
 		}, ssjsEditor.getValue());
 		
@@ -665,7 +669,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
             // Response Timeout expired
     		statusText = 'Response Timeout expired.';
-    		widgetButtonRunSSJS.enable();
+    		widgetButtonRunSSJS.enable(); 		
+			// force refresh button state
+			$('#buttonRunSSJS').trigger('mouseout');
     		//debugger;
 			//runningMethod.xhr.abort();
 
@@ -692,12 +698,17 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
 	{// @endlock
-        buttonRunSSJS.click();
+        if (!widgetButtonRunSSJS.isDisabled()) {
+			buttonRunSSJS.click();
+		} else {
+			alert('A request is currently running. Please wait until the result is received');
+		}
+		
 	};// @lock
 
 	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
 	{// @endlock
-		if (!widgetButtonRunSSJS.enabled) {
+		if (!widgetButtonRunSSJS.isDisabled()) {
 			setCode(this.source.code);
 		} else {
 			alert('A request is currently running. Please wait until the result is received');
