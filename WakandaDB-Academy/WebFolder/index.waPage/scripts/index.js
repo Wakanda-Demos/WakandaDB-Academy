@@ -192,7 +192,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Employee.all()", tip:"Get all the entities related to a dataclass"},
         {icon: "", code: "ds.Employee.query('age < :1', 25)", tip:"Get the employees who are older than 20"},
         {icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
-        {icon: "", code: "ds.Employee.age"},
+//        {icon: "", code: "ds.Employee.age"},
         {icon: "", code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')"},
         {icon: "", code: "ds.Employee.all()[0]"},
         {icon: "", code: "ds.Employee.all().first()"},
