@@ -162,7 +162,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     // const
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
-	CLIENT_TIMEOUT = 30000;
+	CLIENT_TIMEOUT = 8000;
     KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html';
     LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand';
 
