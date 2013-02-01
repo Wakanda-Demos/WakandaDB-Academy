@@ -239,8 +239,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	ssjsEditor.setTheme("ace/theme/github");
 	ssjsEditor.getSession().setMode("ace/mode/javascript");
 	ssjsEditor.commands.addCommand({
-	    name: 'myCommand',
-	    bindKey: {win: 'Shift-Enter',  mac: 'Shift-Enter'},
+	    name: 'Run',
+	    bindKey: {win: 'Shift-Return',  mac: 'Shift-Return'},
 	    exec: buttonRunSSJS.click
 	});
 	 	    
@@ -330,6 +330,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
         //event.preventDefault();
         
+        //widgetButtonRunSSJS.disable();
         statusText = 'Executing JavaScript on the server...';
 		sourceStatusText.sync();
 		jsonView.setValue('');

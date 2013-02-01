@@ -51,9 +51,10 @@ self.onmessage = function onCallToExecute(message) {
         response.dirty = (nativeResult !== undefined);
         resultType = Object.prototype.toString.call(nativeResult);
         if (response.dirty) {
-	        response.dataClass = result.getDataClass().getName();
+	        //debugger;
+	        response.dataClass = nativeResult.getDataClass().getName();
             if (resultType === '[object Entity]') {
-	            response.entityID = result.ID;
+	            response.entityID = nativeResult.ID;
 	        }
 	    } else if ((resultType === '[object Undefined]' || resultType === '[object Image]') && result.getPath) {
 	        response.image = result.getPath();

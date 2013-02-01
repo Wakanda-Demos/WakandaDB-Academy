@@ -119,19 +119,19 @@ function SandboxedEntity(sandboxedDataclass, entity) {
                 get: function getter_attributeValue() {
                 	var
                 	    value,
-                	    sandBoxedDataclass;
+                	    relatedSandBoxedDataclass;
 
                 	//debugger;
                 	value = entity[attributeName];
                 	if (value !== null && typeof value === "object") {
                 	    // Entity or Collection from navigation attribute
-                	    sandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
+                	    relatedSandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
                 	    if (typeof value.getKey === 'function') {
                 	    	// Entity
-                	    	value = new SandboxedEntity(sandboxedDataclass, value);
+                	    	value = new SandboxedEntity(relatedSandBoxedDataclass, value);
                 	    } else {
                 	    	// Collection
-                	    	value = new SandboxedCollection(sandboxedDataclass, value);
+                	    	value = new SandboxedCollection(relatedSandBoxedDataclass, value);
                 	    }
                 	}
                     return value;
@@ -146,6 +146,7 @@ function SandboxedEntity(sandboxedDataclass, entity) {
     // METHODS
 
     this.getDataClass = function getDataClass() {
+    	//debugger;
         return sandboxedDataclass;
     };
 
