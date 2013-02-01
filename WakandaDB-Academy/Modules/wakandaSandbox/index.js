@@ -493,6 +493,10 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
     sandboxedDataClasses[dataclassName] = sandboxedDataclass;
 
+    // cache object
+    nativeObjects.push(sandboxedDataclass);
+    sandboxedObjects.push(this);
+
     properties = {};
     cachedAttributes = {};
 

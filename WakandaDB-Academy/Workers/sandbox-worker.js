@@ -38,9 +38,9 @@ self.onmessage = function onCallToExecute(message) {
 	data = message.data;
 	sandboxModule = require('wakandaSandbox/index');
 
+    //debugger
     sandbox = new sandboxModule.WakandaSandbox(data.allowedProperties);
 
-    //debugger;
     result = sandbox.run(data.jsCode, data.timeout);
 	//console.log('sandboxed result', result);
 	
@@ -50,16 +50,23 @@ self.onmessage = function onCallToExecute(message) {
         nativeResult = sandboxModule.getNativeObject(result);
         response.dirty = (nativeResult !== undefined);
         resultType = Object.prototype.toString.call(nativeResult);
+        //debugger
         if (response.dirty) {
 	        //debugger;
-	        response.dataClass = nativeResult.getDataClass().getName();
-            if (resultType === '[object Entity]') {
-	            response.entityID = nativeResult.ID;
+	        if (nativeResult.getDataClass) {
+    	        response.dataClass = nativeResult.getDataClass().getName();
+                if (resultType === '[object Entity]') {
+	                response.entityID = nativeResult.ID;
+	            }
+	        } else {
+	        	// dataclass
+        	    //debugger;
+	        	response.result = nativeResult;
 	        }
 	    } else if ((resultType === '[object Undefined]' || resultType === '[object Image]') && result.getPath) {
 	        response.image = result.getPath();
 	    } else {
-	        response.result = JSON.parse(JSON.stringify(result, safeStringify));
+            response.result = JSON.parse(JSON.stringify(result, safeStringify));
 	    }
     } else {
     	response.result = result;
