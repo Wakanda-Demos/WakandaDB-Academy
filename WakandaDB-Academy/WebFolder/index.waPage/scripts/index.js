@@ -539,6 +539,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				var
 				    xhr,
 				    error,
+				    statusCode,
+				    contentType,
 				    originalContentType,
 				    mainErrorMessage,
 				    jsonResult;
@@ -564,18 +566,32 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
                     // An exception occured on the server
 
-    				statusText = 'An Exception has been thrown on the server!';
+            		statusText = 'There was a ' + xhr.status + ' error (' + xhr.statusText + ') during the request';
                     richTextStatusText.setTextColor('red');
-                    
-			    	error = JSON.parse(xhr.responseText).__ERROR;
-			    	mainErrorMessage = error[0].message;
 
-			    	// show message in Display Error widget
-					currentGraphicView = widgets.errorDivServerException;
-					// setValue() doesn't work on the Display error widget
-					// currentWidget.setValue(mainErrorMessage);
-					currentGraphicView.$domNode.text(mainErrorMessage);
-					currentGraphicView.show();
+                    contentType = xhr.getResponseHeader('Content-Type');                    
+                    if (contenType === 'application/json') {
+    			    	error = JSON.parse(xhr.responseText);
+    			    	if (error.__ERROR) {
+            				statusText = 'An Exception has been thrown on the server!';
+    			    		error = error.__ERROR;
+    			    		mainErrorMessage = error[0].message;
+					    	// show message in Display Error widget
+							currentGraphicView = widgets.errorDivServerException;
+							// setValue() doesn't work on the Display error widget
+							// currentWidget.setValue(mainErrorMessage);
+							currentGraphicView.$domNode.text(mainErrorMessage);
+							currentGraphicView.show();
+    			    	} else {
+    			    		selectTab(3);
+		                    menuItemGraphicView.disable();
+    			    	}
+			        } else {
+			        	error = xhr.responseText;
+			        	selectTab(3);
+    		            menuItemGraphicView.disable();
+			        }
+
 					menuItemGraphicView.enable();
 
 			    	// Show the JSON result
@@ -652,7 +668,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	                    richTextStatusText.setTextColor('red');
 
                     // No Graphic view, force JSON view
-		            selectTab(2); 
+		            selectTab(3); 
 		            menuItemGraphicView.disable();
 
 			    }
