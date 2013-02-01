@@ -205,11 +205,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Employee(5).company.countryName"},
         {icon: "", code: "ds.Employee(5).company.country.companies.length"},
         {icon: "", code: "ds.Employee(5).company.manager"},
-        {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
+        {icon: "", code: "ds.Company.query('country.name == :1', 'Japan')"},
         {icon: "", code: "ds.Company(3).employees"},
-        {icon: "", code: "ds.Company.query('countryName = USA').compute('revenues')"},
-        {icon: "", code: "ds.Country.find('name = Brazil')"},
-        {icon: "", code: "ds.Country.find('name = Brazil').companies"}
+        {icon: "", code: "ds.Company.query('countryName == USA').compute('revenues')"},
+        {icon: "", code: "ds.Country.find('name == Brazil')"},
+        {icon: "", code: "ds.Country.find('name == Brazil').companies"}
     ];
     
        // sources

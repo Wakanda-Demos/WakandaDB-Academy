@@ -72,6 +72,10 @@ self.onmessage = function onCallToExecute(message) {
     	response.result = result;
     }
 
+    response.isFunction = (typeof response.result === 'function');
+    if (response.isFunction) {
+    	response.isFunction = 
+    }
     //debugger;
     //console.log('returned message', response);
     self.postMessage(response);
