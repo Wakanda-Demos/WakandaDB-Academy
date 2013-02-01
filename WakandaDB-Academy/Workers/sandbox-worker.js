@@ -66,7 +66,7 @@ self.onmessage = function onCallToExecute(message) {
 	    } else if ((resultType === '[object Undefined]' || resultType === '[object Image]') && result.getPath) {
 	        response.image = result.getPath();
 	    } else {
-            response.result = JSON.parse(JSON.stringify(result, safeStringify));
+            response.result = result;
 	    }
     } else {
     	response.result = result;
@@ -74,7 +74,14 @@ self.onmessage = function onCallToExecute(message) {
 
     response.isFunction = (typeof response.result === 'function');
     if (response.isFunction) {
-    	response.isFunction = 
+    	response.result = Object.keys(response.result).reduce(
+    	    function (outputResult, currentItem){
+    	    	outputResult[currentItem] = response.result[currentItem];
+    	    	return outputResult;
+    	    },
+    	    {}
+    	);
+    	response.result = JSON.parse(JSON.stringify(response.result, safeStringify))
     }
     //debugger;
     //console.log('returned message', response);
