@@ -17,6 +17,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
+	var iconTellUsWhatYouThink = {};	// @icon
+	var imageModelZoom = {};	// @image
+	var button5 = {};	// @button
+	var button4 = {};	// @button
 	var dataGridEmployeeStaff = {};	// @dataGrid
 	var dataGridCountryCompanies = {};	// @dataGrid
 	var dataGridCompanyEmployees = {};	// @dataGrid
@@ -158,7 +162,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     // const
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
 	CLIENT_TIMEOUT = 30000;
-    LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-command-line-introduction';
+    LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand';
 
 
     // First proposed Server-Side JavaScript Code
@@ -255,6 +259,29 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 
 // eventHandlers// @lock
+
+	iconTellUsWhatYouThink.click = function iconTellUsWhatYouThink_click (event)// @startlock
+	{// @endlock
+		widgets.dialogKeepInTouch.show();
+	};// @lock
+
+	imageModelZoom.click = function imageModelZoom_click (event)// @startlock
+	{// @endlock
+		widgets.containerCenteredPage.show();
+		widgets.containerModelBig.hide();
+	};// @lock
+
+	button5.click = function button5_click (event)// @startlock
+	{// @endlock
+		// ok button
+		widgets.dialogKeepInTouch.hide();
+	};// @lock
+
+	button4.click = function button4_click (event)// @startlock
+	{// @endlock
+		// cancel button
+		widgets.dialogKeepInTouch.show();
+	};// @lock
 
 	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)// @startlock
 	{// @endlock
@@ -674,6 +701,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("iconTellUsWhatYouThink", "click", iconTellUsWhatYouThink.click, "WAF");
+	WAF.addListener("imageModelZoom", "click", imageModelZoom.click, "WAF");
+	WAF.addListener("button5", "click", button5.click, "WAF");
+	WAF.addListener("button4", "click", button4.click, "WAF");
 	WAF.addListener("dataGridEmployeeStaff", "onRowDblClick", dataGridEmployeeStaff.onRowDblClick, "WAF");
 	WAF.addListener("dataGridCountryCompanies", "onRowDblClick", dataGridCountryCompanies.onRowDblClick, "WAF");
 	WAF.addListener("dataGridCompanyEmployees", "onRowDblClick", dataGridCompanyEmployees.onRowDblClick, "WAF");
