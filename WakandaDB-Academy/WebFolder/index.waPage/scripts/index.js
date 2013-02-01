@@ -169,7 +169,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL + location.search);
 
     // First proposed Server-Side JavaScript Code
-	jsCode = '// Discover WakandaDB your with the proposed examples\n';
+	jsCode = '// Discover WakandaDB with the proposed examples\n';
 	jsCode += '\n';
 	jsCode += '// Or write your own code using the server-side JS API\n';
 	jsCode += '// Documentation: http://doc.wakanda.org/ssjs-query';
@@ -271,8 +271,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	imageModelZoom.click = function imageModelZoom_click (event)// @startlock
 	{// @endlock
-		widgets.containerCenteredPage.show();
-		widgets.containerModelBig.hide();
+		widgets.containerCenteredPage.hide();
+		widgets.containerModelBig.show();
 	};// @lock
 
 	button5.click = function button5_click (event)// @startlock

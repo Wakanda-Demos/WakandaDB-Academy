@@ -50,20 +50,20 @@ self.onmessage = function onCallToExecute(message) {
         nativeResult = sandboxModule.getNativeObject(result);
         response.dirty = (nativeResult !== undefined);
         resultType = Object.prototype.toString.call(nativeResult);
-        //debugger
         if (response.dirty) {
-	        //debugger;
 	        if (nativeResult.getDataClass) {
+	        	// ENTITY OR COLLECTION
     	        response.dataClass = nativeResult.getDataClass().getName();
                 if (resultType === '[object Entity]') {
 	                response.entityID = nativeResult.ID;
 	            }
 	        } else {
-	        	// dataclass
-        	    //debugger;
+	        	// DATACLASS
+	        	response.dataClass = nativeResult.getName && nativeResult.getName();
 	        	response.result = nativeResult;
 	        }
 	    } else if ((resultType === '[object Undefined]' || resultType === '[object Image]') && result.getPath) {
+	        // IMAGE
 	        response.image = result.getPath();
 	    } else {
             response.result = result;
@@ -72,6 +72,8 @@ self.onmessage = function onCallToExecute(message) {
     	response.result = result;
     }
 
+    // Special handling for Functions
+    // INFO: Not yet fully managed by the Proxy method
     response.isFunction = (typeof response.result === 'function');
     if (response.isFunction) {
     	response.result = Object.keys(response.result).reduce(
@@ -81,9 +83,19 @@ self.onmessage = function onCallToExecute(message) {
     	    },
     	    {}
     	);
+    	response._prototype = Object.keys(response.result.prototype).reduce(
+    	    function (outputResult, currentItem){
+    	    	outputResult[currentItem] = response.result[currentItem];
+    	    	return outputResult;
+    	    },
+    	    {}
+    	);
+    	if (response.dataClass) {
+    	    response.result.length = nativeResult.length;
+    	}
     	response.result = JSON.parse(JSON.stringify(response.result, safeStringify))
     }
-    //debugger;
+
     //console.log('returned message', response);
     self.postMessage(response);
     //self.close();
