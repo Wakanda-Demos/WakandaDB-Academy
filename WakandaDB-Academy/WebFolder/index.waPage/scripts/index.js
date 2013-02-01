@@ -40,6 +40,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         // constants
         ISO_DATE_REGEXP,
         CLIENT_TIMEOUT,
+        KEEP_IN_TOUCH_URL,
         LEARN_MORE_URL,
         // sources
         localSources,
@@ -165,7 +166,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html';
     LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand';
 
-    $('#containerDialogKeepInTouch > iframe').attr('src') = KEEP_IN_TOUCH_URL + location.search;
+    $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL + location.search);
 
     // First proposed Server-Side JavaScript Code
 	jsCode = '// Discover WakandaDB your with the proposed examples\n';
@@ -206,7 +207,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Employee(5).company.manager"},
         {icon: "", code: "ds.Company.query('country.name = :1', 'Japan')"},
         {icon: "", code: "ds.Company(3).employees"},
-        {icon: "", code: "ds.Company.all().manager"},
+        {icon: "", code: "ds.Company.query('countryName = USA').compute('revenues')"},
         {icon: "", code: "ds.Country.find('name = Brazil')"},
         {icon: "", code: "ds.Country.find('name = Brazil').companies"}
     ];
