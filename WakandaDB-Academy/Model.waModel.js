@@ -237,7 +237,7 @@ guidedModel =// @startlock
                 } else {
 
                     upperlimit = new Date();
-                    birthYearFromAgePlusOne = upperlimit.getFullYear() - 37;
+                    birthYearFromAgePlusOne = upperlimit.getFullYear() - valueToCompare;
                     upperlimit.setFullYear(birthYearFromAgePlusOne);
 
                     lowerlimit = new Date();
