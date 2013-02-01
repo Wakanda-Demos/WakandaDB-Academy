@@ -304,6 +304,18 @@ guidedModel =// @startlock
 		},
 		fullName :
 		{
+			onQuery:function(compOperator, valueToCompare)
+			{// @endlock
+				"use strict";
+
+                return "firstName " + compOperator + valueToCompare + " || " + "lastName " + compOperator + valueToCompare;
+			},// @startlock
+			onSort:function(ascending)
+			{// @endlock
+				"use strict";
+
+                return (ascending ? "firstName, lastName" : "firstName desc, lastName desc");
+			},// @startlock
 			onGet:function()
 			{// @endlock
                 "use strict";
