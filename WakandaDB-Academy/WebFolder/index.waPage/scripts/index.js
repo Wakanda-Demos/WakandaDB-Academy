@@ -570,7 +570,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     richTextStatusText.setTextColor('red');
 
                     contentType = xhr.getResponseHeader('Content-Type');                    
-                    if (contenType === 'application/json') {
+                    if (contentType === 'application/json') {
     			    	error = JSON.parse(xhr.responseText);
     			    	if (error.__ERROR) {
             				statusText = 'An Exception has been thrown on the server!';
