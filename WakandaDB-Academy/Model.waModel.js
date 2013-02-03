@@ -8,12 +8,14 @@ guidedModel =// @startlock
 	{
 		methods :
 		{// @endlock
-            runOnServer: function (ssjs)
+            runOnServer: function (ssjs, requestID)
 			{// @lock
                 "use strict";
 
                 var // "const" doesn't work in strict mode
                     TIMEOUT = 6000,
+                    TIMEOUT_DEV = 3600000, // 1 hour 
+                    PRODUCTION_MODE = false,
                     ALLOWED_PROPERTIES = {
                         // HTML5 properties
                         'name': true,
@@ -36,6 +38,10 @@ guidedModel =// @startlock
                     };
 
                 var
+                    exceptionKey,
+                    errorObject,
+                    safecode,
+                    workerID,
                     sandboxWorker,
                     waiting,
                     data,
@@ -70,58 +76,100 @@ guidedModel =// @startlock
                     //throw new Error('code empty');	
                 }
 
-                toString = Object.prototype.toString;
+                exceptionKey = 'Exception:' + ssjs;
+                errorObject = storage.getItem(exceptionKey);
+                if (errorObject) {
+                	debugger;
+                	throw errorObject;
+                }
+	
+	            toString = Object.prototype.toString;
                 seen = [];
                 waiting = true;
+                //debugger;
+                safecode = storage.getItem('Safe:' + ssjs);
 
-                sandboxWorker = new Worker("Workers/sandbox-worker.js");
+                if (safecode === true) {
 
-                sandboxWorker.onmessage = function onSandboxWorkerRunMessage(message) {
+                    //sandboxModule = require('wakandaSandbox/index');
+                    //sandbox = new sandboxModule.WakandaSandbox(ALLOWED_PROPERTIES);
+                    //result = sandboxModule.getNativeObject(sandbox.run(ssjs));
+                    
+                    result = eval(ssjs);
 
-                    waiting = false;
-                    //debugger;
-                    sandboxWorker.terminate();
+                } else {
+                	sandboxWorker = new Worker("Workers/sandbox-worker.js");
 
-                    // WARNING: message can't yet transport entities or collections
+                    sandboxWorker.onmessage = function onSandboxWorkerRunMessage(message) {
 
-                    data = message.data;
+                        waiting = false;
 
-                    result = data.result;
-                    exitWait();
+                        sandboxWorker.terminate();
 
-                };
+                       // WARNING: message can't yet transport entities or collections
 
-                sandboxWorker.postMessage({
-                    jsCode: ssjs,
-                    timeout: (TIMEOUT - 100),
-                    allowedProperties: ALLOWED_PROPERTIES
-                });
+                       data = message.data;
 
-                wait(TIMEOUT);
+                       result = data.result;
+                       exitWait();
 
-                if (waiting) {
+                    };
 
-                    //sandboxWorker.terminate(); // TODO: call it with a force parameter once implemented
-                    throw new Error('Timeout after ' + TIMEOUT + 'ms while executing this code: \n' + ssjs);
+                    workerID = generateUUID();
 
-                } else if (data.entityID && data.dataClass) {
+                    // not sure yet if lock is mandatory
+                    storage.lock();
+                    storage.setItem('Worker:' + workerID, {type: 'worker', jsCode: ssjs, since: Date.now()});
+                    storage.unlock();
 
-                    // ENTITY
-                    result = ds[data.dataClass](data.entityID);
+                    sandboxWorker.postMessage({
+                        jsCode: ssjs,
+                        workerID: workerID,
+                        timeout: PRODUCTION_MODE ? (TIMEOUT - 100) : TIMEOUT_DEV,
+                        allowedProperties: ALLOWED_PROPERTIES
+                    });
 
-                } else if (data.image) {
+                    if (PRODUCTION_MODE) {
+                    	wait(TIMEOUT);
+                    } else {
+                    	wait();
+                    }
+                    
+                    if (waiting) {
+                        //sandboxWorker.terminate(); // TODO: call it with a force parameter once implemented
+                        throw new Error('Timeout after ' + TIMEOUT + 'ms while executing this code: \n' + ssjs);
 
-                    // IMAGE
-                    result = loadImage(data.image);
+                    } else {
+                    	
+                        if (sessionStorage.length === 0) {
+                        	// no persistent state
+                        	storage.lock();
+                            storage.setItem('Safe:' + ssjs, true);
+                            storage.unlock();
+                        }
 
-                } else if (data.dirty) {
+                    	if (data.entityID && data.dataClass) {
 
-                    // COLLECTION
-                    // as the execution time was acceptable re-execute in the main thread
-                    sandboxModule = require('wakandaSandbox/index');
-                    sandbox = new sandboxModule.WakandaSandbox(ALLOWED_PROPERTIES);
-                    result = sandboxModule.getNativeObject(sandbox.run(ssjs));
+                            // ENTITY
+                            result = ds[data.dataClass](data.entityID);
+
+                        } else if (data.image) {
+
+                            // IMAGE
+                            result = loadImage(data.image);
+
+                        } else if (data.dirty) {
+
+                            // COLLECTION
+                            // as the execution time was acceptable re-execute in the main thread
+                            sandboxModule = require('wakandaSandbox/index');
+                            sandbox = new sandboxModule.WakandaSandbox(ALLOWED_PROPERTIES);
+                            result = sandboxModule.getNativeObject(sandbox.run(ssjs));
+                        }
+                    }
                 }
+
+                
 
                 response = result;
 
@@ -142,6 +190,7 @@ guidedModel =// @startlock
                         HTTPStream: result,
                         headers: {
                             'Content-Type': 'text/plain; charset=x-user-defined',
+                            'X-Request-ID': requestID,
                             'X-Original-Content-Type': 'image/jpeg',
                             'X-Image-Data': JSON.stringify(result)
                         }
@@ -170,6 +219,7 @@ guidedModel =// @startlock
                             HTTPStream: forceHTTPStream,
                             headers: {
                                'Content-Type': 'text/plain; charset=x-user-defined',
+                                'X-Request-ID': requestID,
                                 'X-Original-Content-Type': 'application/json',
                                 'X-Original-Array-Length': result.length,
                                 // prevent exception from recursive references
@@ -197,6 +247,7 @@ guidedModel =// @startlock
                             HTTPStream: forceHTTPStream,
                             headers: {
                                'Content-Type': 'text/plain; charset=x-user-defined',
+                                'X-Request-ID': requestID,
                                 'X-Original-Content-Type': 'application/json',
                                 'X-JSON-Unsupported-JS-Value': String(result)
                             }

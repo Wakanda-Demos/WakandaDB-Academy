@@ -54,9 +54,43 @@ Sandbox = (function SandBoxScope() {
 	var
 	    ECMASCRIPT_PROPERTIES;
 
-	function accessRestricted() {
-        throw new Error("access restricted to property or method by the sandbox");
-	}
+
+    function accessRestricted(error) {
+    	var
+	        exceptionKey,
+    	    errorObject,
+	        defaultMessage;
+
+    	defaultMessage = 'access restricted to property or method by the sandbox';
+    	exceptionKey = 'Exception:' + this.getSource();
+
+    	switch (typeof error){
+    	case 'object':
+	        if (error === null) {
+                errorObject = new Error(defaultMessage);
+	        } else {
+    	    	errorObject = error;
+	        }
+	        break;
+    	case 'string':
+    	    if (error === '') {
+                errorObject = new Error(defaultMessage);
+            } else {
+    	    	errorObject = new Error(error);
+	        }
+	        break;
+    	default:
+    	    errorObject = new Error(defaultMessage);
+        }
+
+    	if (storage && storage.lock) {
+    		storage.lock();
+    		storage.setItem(exceptionKey, errorObject);
+            storage.unlock();
+        }
+
+        throw errorObject;
+    }
 
 	// a instance must be created to have "this" not bound to the global object
 	function Sandbox(globalObject, allowedProperties) {
@@ -91,7 +125,7 @@ Sandbox = (function SandBoxScope() {
 				delete propertyDescriptor.set;
 				if (!allowedProperties.hasOwnProperty(propName) && !ECMASCRIPT_PROPERTIES.hasOwnProperty(propName)) {
 					// unallowed method replaced by an invokable function
-					propertyDescriptor.value = accessRestricted;
+					propertyDescriptor.value = accessRestricted.bind(sandbox, 'Access to the "' + propName + '" method is not allowed');
 				} else if (propName[0] !== propName[0].toUpperCase()) {
 					// if not itself a constructor, it might require the original application context
 					propertyDescriptor.value = property.bind(application);
@@ -102,8 +136,8 @@ Sandbox = (function SandBoxScope() {
 					// unallowed properties replaced by one with getter and setter returning "access restricted"
 					delete propertyDescriptor.value;
 					delete propertyDescriptor.writable;
-					propertyDescriptor.get = accessRestricted;
-					propertyDescriptor.set = accessRestricted;
+					propertyDescriptor.get = accessRestricted.bind(sandbox, 'Access to the "' + propName + '" property is not allowed');
+					propertyDescriptor.set = accessRestricted.bind(sandbox, 'Access to the "' + propName + '" property is not allowed');
 				}
 			}
 			filteredProperties[propName] = propertyDescriptor;
@@ -175,17 +209,32 @@ Object.defineProperty(
 	{
 		value: function runSandboxed() {
 
+            // no variable are used to prevent from scope pollution
+			// handle specific case when try executing an empty string
 			if (arguments.length > 1) {
 				arguments.timer = setTimeout(function securedTimeout(timeout, jsCode) {
 					throw new Error('Timeout expired after ' + timeout + ' ms' + 'while executing:\n' + jsCode);
 				}, arguments[1], arguments[1], arguments[0]);
 			}
 
-            // no variable used to prevent local scope pollution
-			// handle specific case when try executing an empty string
+            Object.defineProperty(
+                this,
+                'getSource',
+                {
+                    value: (function sandbox_getJsCode(jsCode) {return jsCode;}).bind(this, arguments[0]),
+                    writable: false,
+                    configurable: false,
+                    enumerable: false
+                }
+            );
+
 			if (arguments.length === 0 || arguments[0] === '') {
 				return undefined;
 			} else {
+				//arguments[0] = arguments[0].split('\n');
+				//arguments[0].splice(arguments[0]);
+				this.arguments = undefined;
+				//arguments.result = eval('with (this) {\nfunction forceStrict(){\n"use strict";\n\n' + arguments[0] + '\n}\n}');
 				arguments.result = eval('with (this) {\n' + arguments[0] + '\n}');
 				clearTimeout(arguments.timer);
 				return arguments.result

@@ -1,9 +1,8 @@
-﻿/*jslint es5: true, todo: true, node: true, indent: 4 */
+﻿/*jslint es5: true, todo: true, indent: 4 */
 
-/*global os, process, application, solution, ds*/
+/*global os, process, application, solution, ds, storage, require, exports*/
 
-"use strict";
-
+//const MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS = 40;
 
 var
     MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS,
@@ -13,15 +12,48 @@ var
     sandboxedObjects,
     Sandbox;
 
-
-
 /**
  * UTIL FUNCTIONS
  **/
 
 
-function accessRestricted() {
-    throw new Error("access restricted to property or method by the sandbox");
+function accessRestricted(error) {
+
+    "use strict";
+
+    var
+        exceptionKey,
+        errorObject,
+        defaultMessage;
+
+    defaultMessage = 'access restricted to property or method by the sandbox';
+    debugger;
+    exceptionKey = 'Exception:' + this.getSource();
+
+    switch (typeof error) {
+    case 'object':
+        if (error === null) {
+            errorObject = new Error(defaultMessage);
+        } else {
+            errorObject = error;
+        }
+        break;
+    case 'string':
+        if (error === '') {
+            errorObject = new Error(defaultMessage);
+        } else {
+            errorObject = new Error(error);
+        }
+        break;
+    default:
+        errorObject = new Error(defaultMessage);
+    }
+
+    storage.lock();
+    storage.setItem(exceptionKey, errorObject);
+    storage.unlock();
+
+    throw errorObject;
 }
 
 function checkJS(item) {
@@ -43,54 +75,16 @@ function getNativeObject(obj) {
  **/
 
 
-
-/***
- * ATTRIBUTE
- *
- * @constructor
- * @class SandboxedAttribute
- * @param {SandboxedDataclass} sandboxedDataclass
- * @param {Attribute} attribute
- */
-function SandboxedAttribute(sandboxedDataclass, attribute) {
-
-    if (!attribute || (typeof attribute !== "object")) {
-        return null;
-    }
-
-    // PROPERTIES
-
-    this.name = attribute.name;
-    this.type = attribute.type;
-    this.kind = attribute.kind;
-    this.scope = attribute.scope;
-    this.indexed = attribute.indexed;
-    this.indexType = attribute.indexType;
-    this.fullTextIndexed = attribute.fullTextIndexed;
-    this.relatedDataclass = attribute.relatedDataclass && sandboxedDataClasses[attribute.relatedDataclass.getName()];
-    this.dataclass = sandboxedDataclass;
-
-    // METHODS
-
-    this.getName = function getName() {
-        return attribute.getName();
-    };
-
-    this.toString = function toString() {
-        return attribute.toString();
-    };
-}
-
-
 /***
  * ENTITY
  *
  * @constructor
  * @class SandboxedEntity
+ * @param {WakandaSandbox} globalSandbox
  * @param {SandboxedDataclass} sandboxedDataclass
  * @param {Entity} entity
  */
-function SandboxedEntity(sandboxedDataclass, entity) {
+function SandboxedEntity(globalSandbox, sandboxedDataclass, entity) {
 
     var
         properties,
@@ -117,28 +111,28 @@ function SandboxedEntity(sandboxedDataclass, entity) {
         function sandboxedEntityAttibuteAccess(attributeName) {
             properties[attributeName] = {
                 get: function getter_attributeValue() {
-                	var
-                	    value,
-                	    relatedSandBoxedDataclass;
+                    var
+                        value,
+                        relatedSandBoxedDataclass;
 
-                	//debugger;
-                	value = entity[attributeName];
-                	if (value !== null && typeof value === "object") {
-                		if (value.getDataClass) {
-	                	    // Entity Collection from navigation attribute
-	                	    relatedSandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
-	                	    if (typeof value.getKey === 'function') {
-	                	    	// Entity
-	                	    	value = new SandboxedEntity(relatedSandBoxedDataclass, value);
-	                	    } else {
-	                	    	// Collection
-	                	    	value = new SandboxedCollection(relatedSandBoxedDataclass, value);
-	                	    }
-                		} else {
-                			// Image
-                			return value;
-                		}
-                	}
+                    //debugger;
+                    value = entity[attributeName];
+                    if (value !== null && typeof value === "object") {
+                        if (value.getDataClass) {
+                            // Entity Collection from navigation attribute
+                            relatedSandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
+                            if (typeof value.getKey === 'function') {
+                                // Entity
+                                value = new SandboxedEntity(globalSandbox, relatedSandBoxedDataclass, value);
+                            } else {
+                                // Collection
+                                value = new SandboxedCollection(globalSandbox, relatedSandBoxedDataclass, value);
+                            }
+                        } else {
+                            // Image
+                            return value;
+                        }
+                    }
                     return value;
                 },
                 enumerable: true
@@ -151,7 +145,7 @@ function SandboxedEntity(sandboxedDataclass, entity) {
     // METHODS
 
     this.getDataClass = function getDataClass() {
-    	//debugger;
+        //debugger;
         return sandboxedDataclass;
     };
 
@@ -185,10 +179,7 @@ function SandboxedEntity(sandboxedDataclass, entity) {
     };
 
     this.next = function next() {
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            entity.next()
-        );
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, entity.next());
     };
 
     this.refresh = function refresh() {
@@ -199,9 +190,9 @@ function SandboxedEntity(sandboxedDataclass, entity) {
         return entity.release();
     };
 
-    this.remove = accessRestricted;
+    this.remove = accessRestricted.bind(globalSandbox, 'Access to the "remove" entity method is not allowed');
 
-    this.save = accessRestricted;
+    this.save = accessRestricted.bind(globalSandbox, 'Access to the "save" entity method is not allowed');
 
     this.toString = function toString() {
         return entity.toString();
@@ -218,10 +209,11 @@ function SandboxedEntity(sandboxedDataclass, entity) {
  *
  * @constructor
  * @class SandboxedCollection
+ * @param {WakandaSandbox} globalSandbox
  * @param {SandboxedDataclass} sandboxedDataclass
  * @param {EntityCollection} collection
  */
-function SandboxedCollection(sandboxedDataclass, collection) {
+function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
 
     var
         collectionCacheIndex,
@@ -233,8 +225,8 @@ function SandboxedCollection(sandboxedDataclass, collection) {
         // properties object accessed from closure scope
         properties[localIndex] = {
             get: function getter_collectionArrayIndexedEntity() {
-            	//debugger;
-                return new SandboxedEntity(sandboxedDataclass, collection[localIndex]);
+                //debugger;
+                return new SandboxedEntity(globalSandbox, sandboxedDataclass, collection[localIndex]);
             },
             enumerable: true
         };
@@ -248,12 +240,12 @@ function SandboxedCollection(sandboxedDataclass, collection) {
                     sandboxedDataclass;
 
                 value = collection[attributeName];
-                	
+
                 if (value && typeof value === "object") {
-                	if (value.distinctValues) {
-                		// Collection
-                        sandBoxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
-                        value = new SandboxedCollection(sandboxedDataclass, result);
+                    if (value.distinctValues) {
+                        // Collection
+                        sandboxedDataclass = sandboxedDataClasses[value.getDataClass().getName()];
+                        value = new SandboxedCollection(globalSandbox, sandboxedDataclass, value);
                     }
                 }
                 return value;
@@ -315,10 +307,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
     };
 
     this.and = function and(collection2) {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            collection.and(collection2)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, collection.and(collection2));
     };
 
     this.average = function average(attribute, distinct) {
@@ -334,9 +323,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
     };
 
     if (collection.hasOwnProperty('drop')) {
-        this.drop = function drop() {
-            collection.drop();
-        };
+        this.drop =  accessRestricted.bind(globalSandbox, 'Access to the "drop" dataclass method is not allowed');
     }
 
     this.distinctValues = function distinctValues(attribute) {
@@ -349,13 +336,10 @@ function SandboxedCollection(sandboxedDataclass, collection) {
 
         args = Array.prototype.slice.call(arguments);
         if (args.some(checkJS)) {
-            throw new Error('Option forbidden');
+            accessRestricted.call(globalSandbox, 'Using the filter "allowJavaScript" option is not allowed');
         }
 
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            collection.filter.apply(collection, args)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, collection.filter.apply(collection, args));
     };
 
     this.find = function find() {
@@ -364,20 +348,14 @@ function SandboxedCollection(sandboxedDataclass, collection) {
 
         args = Array.prototype.slice.call(arguments);
         if (args.some(checkJS)) {
-            throw new Error('Option forbidden');
+            accessRestricted.call(globalSandbox, 'Using the find "allowJavaScript" option is not allowed');
         }
 
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            collection.find.apply(collection, args)
-        );
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, collection.find.apply(collection, args));
     };
 
     this.first = function first() {
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            collection.first()
-        );
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, collection.first());
     };
 
     this.forEach = function forEach(callback) {
@@ -386,10 +364,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
                 // beware of the automatic save
                 // only readonly mode restrict it for now
                 callback(
-                    new SandboxedEntity(
-                        sandboxedDataclass,
-                        thisArg
-                    ),
+                    new SandboxedEntity(globalSandbox, sandboxedDataclass, thisArg),
                     iterator
                 );
             }
@@ -409,24 +384,15 @@ function SandboxedCollection(sandboxedDataclass, collection) {
     };
 
     this.minus = function minus(collection2) {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            collection.minus(collection2)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, collection.minus(collection2));
     };
 
     this.or = function or(collection2) {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            collection.or(collection2)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, collection.or(collection2));
     };
 
     this.orderBy = function orderBy(attributeList, sortOrder) {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            collection.orderBy(attributeList, sortOrder)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, collection.orderBy(attributeList, sortOrder));
     };
 
     this.query = function query() {
@@ -435,7 +401,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
 
         args = Array.prototype.slice.call(arguments);
         if (args.some(checkJS)) {
-            throw new Error('Option forbidden');
+            accessRestricted.call(globalSandbox, 'Using the query "allowJavaScript" option is not allowed');
         }
 
         return new SandboxedEntity(
@@ -444,7 +410,7 @@ function SandboxedCollection(sandboxedDataclass, collection) {
         );
     };
 
-    this.remove = accessRestricted;
+    this.remove =  accessRestricted.bind(globalSandbox, 'Access to the "remove" dataclass method is not allowed');
 
     this.sum = function sum(attribute, distinct) {
         return collection.sum(attribute, distinct);
@@ -464,15 +430,57 @@ function SandboxedCollection(sandboxedDataclass, collection) {
     };
 }
 
+
+
+
+/***
+ * ATTRIBUTE
+ *
+ * @constructor
+ * @class SandboxedAttribute
+ * @param {SandboxedDataclass} sandboxedDataclass
+ * @param {Attribute} attribute
+ */
+function SandboxedAttribute(sandboxedDataclass, attribute) {
+
+    if (!attribute || (typeof attribute !== "object")) {
+        return null;
+    }
+
+    // PROPERTIES
+
+    this.name = attribute.name;
+    this.type = attribute.type;
+    this.kind = attribute.kind;
+    this.scope = attribute.scope;
+    this.indexed = attribute.indexed;
+    this.indexType = attribute.indexType;
+    this.fullTextIndexed = attribute.fullTextIndexed;
+    this.relatedDataclass = attribute.relatedDataclass && sandboxedDataClasses[attribute.relatedDataclass.getName()];
+    this.dataclass = sandboxedDataclass;
+
+    // METHODS
+
+    this.getName = function getName() {
+        return attribute.getName();
+    };
+
+    this.toString = function toString() {
+        return attribute.toString();
+    };
+}
+
+
 /**
  * DATACLASS
  *
  * @method createSandboxedDataclass
+ * @param {WakandaSandbox} globalSandbox
  * @param {SandboxedDatastore} sandboxedDatastore
  * @param {Dataclass} dataclass
  * @returns SandboxedDataclass
  */
-function createSandboxedDataclass(sandboxedDatastore, dataclass) {
+function createSandboxedDataclass(globalSandbox, sandboxedDatastore, dataclass) {
 
     var
         dataclassName,
@@ -482,7 +490,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
     // The returned dataclass has to be a function
     function sandboxedDataclass(id) {
-        return new SandboxedEntity(sandboxedDataclass, dataclass(id));
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, dataclass(id));
     }
 
     dataclassName = dataclass.getName();
@@ -503,11 +511,11 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     // PROPERTIES
 
     Object.keys(dataclass.attributes).forEach(
-        function (attributeName) {
+        function addAttributePropertyDescriptionToSandboxedDataclass(attributeName) {
             properties[attributeName] = {
-                get: function () {
+                get: function sandboxeddataclassAttributeGetter() {
                     if (!cachedAttributes.hasOwnProperty(attributeName)) {
-                        cachedAttributes[attributeName] = new SandboxedAttribute(sandboxedDataclass, dataclass.attributes[attributeName]);
+                        cachedAttributes[attributeName] = new SandboxedAttribute(globalSandbox, sandboxedDataclass, dataclass.attributes[attributeName]);
                     }
                     return cachedAttributes[attributeName];
                 },
@@ -553,10 +561,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     // METHODS
 
     sandboxedDataclass.all = function all() {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            dataclass.all()
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, dataclass.all());
     };
 
     sandboxedDataclass.average = function average(datastoreClassAttribute, distinct) {
@@ -572,17 +577,11 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     };
 
     sandboxedDataclass.createEntity = function createEntity() {
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            dataclass.createEntity()
-        );
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, dataclass.createEntity());
     };
 
     sandboxedDataclass.createEntityCollection = function createEntityCollection() {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            dataclass.createEntityCollection()
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, dataclass.createEntityCollection());
     };
 
     sandboxedDataclass.distinctValues = function distinctValues(attribute) {
@@ -595,13 +594,10 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
         args = Array.prototype.slice(arguments, 0);
         if (args.some(checkJS)) {
-            throw new Error('Option forbidden');
+            accessRestricted.call(globalSandbox, 'Using the filter "allowJavaScript" option is not allowed');
         }
 
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            dataclass.filter.apply(dataclass, args)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, dataclass.filter.apply(dataclass, args));
     };
 
     sandboxedDataclass.find = function find() {
@@ -610,30 +606,21 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
         args = Array.prototype.slice.call(arguments);
         if (args.some(checkJS)) {
-            throw new Error('Option forbidden');
+            accessRestricted.call(globalSandbox, 'Using the find "allowJavaScript" option is not allowed');
         }
 
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            dataclass.find.apply(dataclass, args)
-        );
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, dataclass.find.apply(dataclass, args));
     };
 
     sandboxedDataclass.first = function first() {
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            dataclass.first()
-        );
+        return new SandboxedEntity(globalSandbox, sandboxedDataclass, dataclass.first());
     };
 
     sandboxedDataclass.forEach = function forEach(callbackFn) {
         dataclass.forEach(
             function datastoreForEachCallback(thisArg, iterator) {
                 callbackFn(
-                    new SandboxedEntity(
-                        sandboxedDataclass,
-                        thisArg
-                    ),
+                    new SandboxedEntity(globalSandbox, sandboxedDataclass, thisArg),
                     iterator
                 );
             }
@@ -641,9 +628,9 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     };
 
     // the datastore is in read-only mode
-    sandboxedDataclass.fromArray = accessRestricted;
+    sandboxedDataclass.fromArray = accessRestricted.bind(globalSandbox, 'Access to the "fromArray" dataclass method is not allowed');
 
-    // we might restrict access it it consume too much resources
+    // we might restrict access if it consume too much resources
     sandboxedDataclass.getFragmentation = function getFragmentation() {
         return dataclass.getFragmentation();
     };
@@ -665,10 +652,7 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
     };
 
     sandboxedDataclass.orderBy = function orderBy(attributeList, sortOrder) {
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            dataclass.orderBy(attributeList, sortOrder)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, dataclass.orderBy(attributeList, sortOrder));
     };
 
     sandboxedDataclass.query = function query() {
@@ -677,20 +661,17 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
 
         args = Array.prototype.slice.call(arguments);
         if (args.some(checkJS)) {
-            throw new Error('Option forbidden');
+            accessRestricted.call(globalSandbox, 'Using the query "allowJavaScript" option is not allowed');
         }
 
-        return new SandboxedCollection(
-            sandboxedDataclass,
-            dataclass.query.apply(dataclass, args)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, dataclass.query.apply(dataclass, args));
     };
 
     // the datastore is in read-only mode
-    sandboxedDataclass.remove = accessRestricted;
+    sandboxedDataclass.remove = accessRestricted.bind(globalSandbox, 'Access to the "remove" dataclass method is not allowed');
 
     // the datastore is in read-only mode
-    sandboxedDataclass.setAutoSequenceNumber = accessRestricted;
+    sandboxedDataclass.setAutoSequenceNumber = accessRestricted.bind(globalSandbox, 'Access to the "setAutoSequenceNumber" dataclass method is not allowed');
 
     sandboxedDataclass.sum = function sum(attribute, distinct) {
         return dataclass.sum(attribute, distinct);
@@ -719,9 +700,10 @@ function createSandboxedDataclass(sandboxedDatastore, dataclass) {
  *
  * @constructor
  * @class SandboxedDatastore
+ * @param {WakandaSandbox} globalSandbox
  * @param {Datastore} datastore
  */
-function SandboxedDatastore(datastore) {
+function SandboxedDatastore(globalSandbox, datastore) {
 
     var
         properties;
@@ -733,7 +715,7 @@ function SandboxedDatastore(datastore) {
     Object.keys(datastore.dataClasses).forEach(
         function (dataclassName) {
             properties[dataclassName] = {
-                value: createSandboxedDataclass(datastore, datastore[dataclassName])
+                value: createSandboxedDataclass(globalSandbox, datastore, datastore[dataclassName])
             };
         }
     );
@@ -742,15 +724,16 @@ function SandboxedDatastore(datastore) {
 
     // METHODS
 
-    this.close = accessRestricted;
+    this.close = accessRestricted.bind(globalSandbox, 'Access to the "close" datastore method is not allowed');
     this.flushCache = function flushCache() {
         // the datastore is in readonly, no cache to flush
     };
-    this.getDataFolder = accessRestricted;
-    this.getModelFolder = accessRestricted;
-    this.getTempFolder = accessRestricted;
+    this.getDataFolder = accessRestricted.bind(globalSandbox, 'Access to the "getDataFolder" datastore method is not allowed');
+    this.getModelFolder = accessRestricted.bind(globalSandbox, 'Access to the "getModelFolder" datastore method is not allowed');
+    this.getTempFolder = accessRestricted.bind(globalSandbox, 'Access to the "getTempFolder" datastore method is not allowed');
 
-    this.getName = function () {
+
+    this.getName = function getName() {
         return datastore.getName();
     };
 
@@ -761,13 +744,14 @@ function SandboxedDatastore(datastore) {
  * PROCESS
  *
  * @method createSandboxedProcess
+ * @param {WakandaSandbox} globalSandbox
  * @returns SandboxedProcess
  */
-function createSandboxedProcess() {
+function createSandboxedProcess(globalSandbox) {
     return {
         buildNumber: process.buildNumber,
         version: process.version,
-        userDocuments: accessRestricted
+        userDocuments: accessRestricted.bind(globalSandbox, 'Access to the "userDocuments" process property is not allowed')
     };
 }
 
@@ -775,14 +759,15 @@ function createSandboxedProcess() {
  * OS
  *
  * @method createSandboxedOs
+ * @param {WakandaSandbox} globalSandbox
  * @returns SandboxedOs
  */
-function createSandboxedOs() {
+function createSandboxedOs(globalSandbox) {
     return {
         isLinux: os.isLinux,
         isMac: os.isMac,
         isWindows: os.isWindows,
-        networkInterfaces: accessRestricted,
+        networkInterfaces: accessRestricted.bind(globalSandbox, 'Access to "networkInterfaces" os property is not allowed'),
         type: os.type
     };
 }
@@ -792,6 +777,7 @@ function createSandboxedOs() {
  * SOLUTION
  *
  * @method createSandboxedSolution
+ * @param {WakandaSandbox} globalSandbox
  * @returns SandboxedSolution
  */
 function createSandboxedSolution() {
@@ -810,16 +796,16 @@ function createSandboxedSolution() {
  */
 function WakandaSandbox(allowedProperties) {
     if (allowedProperties.hasOwnProperty('os')) {
-        allowedProperties.os = createSandboxedOs();
+        allowedProperties.os = createSandboxedOs(this);
     }
     if (allowedProperties.hasOwnProperty('process')) {
-        allowedProperties.process = createSandboxedProcess();
+        allowedProperties.process = createSandboxedProcess(this);
     }
     if (allowedProperties.hasOwnProperty('solution')) {
-        allowedProperties.process = createSandboxedProcess();
+        allowedProperties.process = createSandboxedProcess(this);
     }
     if (allowedProperties.hasOwnProperty('ds')) {
-        allowedProperties.ds = new SandboxedDatastore(ds);
+        allowedProperties.ds = new SandboxedDatastore(this, ds);
     }
     Sandbox.call(this, application, allowedProperties);
 }

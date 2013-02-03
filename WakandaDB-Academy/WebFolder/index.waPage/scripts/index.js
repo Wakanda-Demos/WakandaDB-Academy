@@ -1,10 +1,8 @@
 ﻿/*jslint es5: true, nomen: true, todo: false, vars: true, white: true, browser: true, indent: 4 */
 
+/* global WAF, ds, $, ace*/
+
 var
-    WAF,
-    ds,
-    sources,
-    ace,
     encode64,
     // local sources
     statusText, 
@@ -65,6 +63,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         // jQuery objects
         $richTextScalarResult,
         // other
+        currentRequestID,
         isISODate,
         scalarResultHandler;
 
@@ -161,8 +160,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     }
 
     // const
+    PRODUCTION_MODE = false;
+	CLIENT_TIMEOUT = 7000;
+    CLIENT_TIMEOUT_DEV = 3600000; // 1 hour 
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
-	CLIENT_TIMEOUT = 8000;
     KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html';
     LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand';
 
@@ -213,13 +214,16 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {icon: "", code: "ds.Country.find('name == Brazil').companies"}
     ];
     
-       // sources
+    // sources
 	localSources = WAF.sources;
-    sourceStatusText = WAF.sources.statusText;
+	// status
+    sourceStatusText = localSources.statusText;
 	sourceStatusText.sync();
-    sourceCountryLocation = WAF.sources.countryLocation;
+	// country location
+    sourceCountryLocation = localSources.countryLocation;
 	sourceCountryLocation.sync();
-    sources.examplesList.sync();
+	// examples
+    localSources.examplesList.sync();
 
     // widgets
 	widgets = WAF.widgets;
@@ -233,6 +237,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	errorDivServerException = widgets.errorDivServerException;
 	calendarDateResult = widgets.calendarDateResult;
 
+    // Tabs index constants
+    tabViewResults.TAB_MODEL = 1;
+    tabViewResults.TAB_GRAPHIC_VIEW = 2;
+    tabViewResults.TAB_JSON_VIEW = 3;
+    
     // jQuery objects
     $richTextScalarResult = richTextScalarResult.$domNode;
 
@@ -368,9 +377,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		currentGraphicView.hide();
 
         menuItemJsonView.enable();
-        if (tabViewResults.getSelectedTab().index === 1) {
+        if (tabViewResults.getSelectedTab().index === tabViewResults.TAB_MODEL) {
         	// tab JSON view
-            tabViewResults.selectTab(2);
+            selectTab(tabViewResults.TAB_GRAPHIC_VIEW);
         }
 
 		runningMethod = ds.Proxy.callMethod({
@@ -507,12 +516,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					if (originalLength > 40) {
 						statusText += "Showing the 40 first elements from the " + originalLength + " found.";
 					} else {
-						statusText += "Showing the " + originalLength + " found elements.";
+						statusText += "\nShowing the " + originalLength + " found elements.";
 					}
 					*/
 
 		            // No Graphic view, force JSON view
-		            selectTab(3);
+		            selectTab(tabViewResults.TAB_JSON_VIEW);
 		            menuItemGraphicView.disable();
 
 				} else {
@@ -522,7 +531,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 					statusText = 'The result is an Object.';
 
 					// No Graphic view, force JSON view
-		            selectTab(3); 
+		            selectTab(tabViewResults.TAB_JSON_VIEW); 
 		            menuItemGraphicView.disable();
 					
 				}
@@ -539,6 +548,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				var
 				    xhr,
 				    error,
+				    requestID,
 				    statusCode,
 				    contentType,
 				    originalContentType,
@@ -547,14 +557,24 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 				//debugger;
 				clearTimeout(timer);
+
+				// Binary Data are not yet natively supported by the dataprovider but can be handled via onError
+				xhr = response.XHR;
+				
+				/*
+				requestID =  xhr.getResponseHeader('X-Request-ID');
+				if (requestID !== currentRequestID) {
+					// unexpected or outdated request
+					return;
+				}
+				*/
+				
 				jsonResult = '"no response received"';
 
 				//debugger;
 				statusText = 'Analizing the server result...';
                 sourceStatusText.sync();
 
-				// Binary Data are not yet natively supported by the dataprovider but can be handled via onError
-				xhr = response.XHR;
 				originalContentType = xhr.getResponseHeader('X-Original-Content-Type');
 
                 if (xhr.status === 0) {
@@ -582,17 +602,17 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 							// currentWidget.setValue(mainErrorMessage);
 							currentGraphicView.$domNode.text(mainErrorMessage);
 							currentGraphicView.show();
+        					menuItemGraphicView.enable();
     			    	} else {
-    			    		selectTab(3);
+    			    		selectTab(tabViewResults.TAB_JSON_VIEW);
 		                    menuItemGraphicView.disable();
     			    	}
 			        } else {
 			        	error = xhr.responseText;
-			        	selectTab(3);
+			        	selectTab(tabViewResults.TAB_JSON_VIEW);
     		            menuItemGraphicView.disable();
 			        }
 
-					menuItemGraphicView.enable();
 
 			    	// Show the JSON result
 					jsonResult = toPrettyJSON(error);
@@ -616,7 +636,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 						}
 
 			            // No Graphic view, force JSON view
-			            selectTab(2);
+			            selectTab(tabViewResults.TAB_JSON_VIEW);
 			            menuItemGraphicView.disable();
 
 					    jsonResult = toPrettyJSON(error);
@@ -668,7 +688,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	                    richTextStatusText.setTextColor('red');
 
                     // No Graphic view, force JSON view
-		            selectTab(3); 
+		            selectTab(tabViewResults.TAB_JSON_VIEW); 
 		            menuItemGraphicView.disable();
 
 			    }
@@ -679,7 +699,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				// force refresh button state
 				$('#buttonRunSSJS').trigger('mouseout');
 			}
-		}, ssjsEditor.getValue());
+		}, ssjsEditor.getValue(), requestID);
 		
 		timer = setTimeout(function requestTimoutExpired() {
 
@@ -704,7 +724,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 			currentGraphicView.show();
 			menuItemGraphicView.enable();
 
-		}, CLIENT_TIMEOUT);
+		}, PRODUCTION_MODE ? CLIENT_TIMEOUT : CLIENT_DEV_TIMEOUT);
 	};// @lock
 
 	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)// @startlock
@@ -717,7 +737,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         if (!widgetButtonRunSSJS.isDisabled()) {
 			buttonRunSSJS.click();
 		} else {
-			alert('A request is currently running. Please wait until the result is received');
+			window.alert('A request is currently running. Please wait until the result is received');
 		}
 		
 	};// @lock
@@ -727,7 +747,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		if (!widgetButtonRunSSJS.isDisabled()) {
 			setCode(this.source.code);
 		} else {
-			alert('A request is currently running. Please wait until the result is received');
+			window.alert('A request is currently running. Please wait until the result is received');
 		}
 	};// @lock
 
