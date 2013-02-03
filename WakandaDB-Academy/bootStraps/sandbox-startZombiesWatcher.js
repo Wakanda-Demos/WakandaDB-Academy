@@ -1,0 +1,1 @@
+﻿var    sandboxZombiesWatcherWorker,    WATCH_ZOMBIES_MODE;// need more tests to fix metricsWATCH_ZOMBIES_MODE = false;if (WATCH_ZOMBIES_MODE) {    sandboxZombiesWatcherWorker = new SharedWorker("Workers/sandbox-zombiesWatcher-sharedWorker.js", "SandboxZombiesWatcher");}
