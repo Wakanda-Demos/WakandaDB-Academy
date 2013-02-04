@@ -1,6 +1,6 @@
 ﻿/*jslint es5: true, nomen: true, todo: false, vars: true, white: true, browser: true, indent: 4 */
 
-/* global WAF, ds, $, ace*/
+/*global WAF, ds, $, ace*/
 
 var
     encode64,
@@ -40,8 +40,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         CLIENT_TIMEOUT,
         CLIENT_TIMEOUT_DEV,
         ISO_DATE_REGEXP,
+        QUERY_STRING,
         KEEP_IN_TOUCH_URL,
         LEARN_MORE_URL,
+        POWERED_BY_WAKANDA_URL,
         // sources
         localSources,
         sourceStatusText,
@@ -166,10 +168,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	CLIENT_TIMEOUT = 7; // 7 sec
     CLIENT_TIMEOUT_DEV = 3600; // 1 hour 
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
-    KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html';
-    LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand';
-
-    $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL + location.search);
+	QUERY_STRING = window.location.search;
+    KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html' + QUERY_STRING;
+    LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand' + QUERY_STRING;
+    POWERED_BY_WAKANDA_URL = 'http://www.wakanda.org/features/server' + QUERY_STRING;
 
     // First proposed Server-Side JavaScript Code
 	jsCode = '// Discover WakandaDB with the proposed examples\n';
@@ -318,6 +320,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	ssjsEditor = ace.edit(widgets.containerSsjsEditor.id);
 	jsonView = ace.edit(widgets.containerJsonView.id);
 
+    // URLs initialisation
+    $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL);
+    widgets.imagePoweredByWakanda.setURL(POWERED_BY_WAKANDA_URL);
+
     // Editor initialisation
 	ssjsEditor.setTheme("ace/theme/github");
 	ssjsEditor.getSession().setMode("ace/mode/javascript");
@@ -418,7 +424,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	iconLearnMore.click = function iconLearnMore_click (event)// @startlock
 	{// @endlock
-		location = LEARN_MORE_URL + location.search;
+		window.location = LEARN_MORE_URL;
 	};// @lock
 
 	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
@@ -439,6 +445,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         //event.preventDefault();
         
         widgetButtonRunSSJS.disable();
+        sourceStatusText.setColor('black');
         statusText = 'Executing JavaScript on the server...';
 		sourceStatusText.sync();
 		jsonView.setValue('');
@@ -630,14 +637,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 				// Binary Data are not yet natively supported by the dataprovider but can be handled via onError
 				xhr = response.XHR;
-				
-				/*
+
 				requestID =  xhr.getResponseHeader('X-Request-ID');
 				if (requestID !== currentRequestID) {
 					// unexpected or outdated request
 					return;
 				}
-				*/
 				
 				jsonResult = '"no response received"';
 
@@ -652,7 +657,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	                sourceStatusText.sync();
                 } else switch (originalContentType) {
 
-			    case null:
+                case null:
 
                     // An exception occured on the server
 
@@ -777,7 +782,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             remainingTime -= 1;
             if (remainingTime > 0) {
             	statusText = statusText.split('\n')[0] + '\n' + remainingTime + ' sec before timeout';
-            	localSources.statusText.sync();
+            	sourceStatusText.sync();
             	return;
             }
 
