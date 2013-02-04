@@ -802,7 +802,7 @@ function WakandaSandbox(allowedProperties) {
         allowedProperties.process = createSandboxedProcess(this);
     }
     if (allowedProperties.hasOwnProperty('solution')) {
-        allowedProperties.process = createSandboxedProcess(this);
+        allowedProperties.solution = createSandboxedProcess(this);
     }
     if (allowedProperties.hasOwnProperty('ds')) {
         allowedProperties.ds = new SandboxedDatastore(this, ds);

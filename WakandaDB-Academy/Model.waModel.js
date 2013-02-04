@@ -79,8 +79,8 @@ guidedModel =// @startlock
                 exceptionKey = 'Exception:' + ssjs;
                 errorObject = storage.getItem(exceptionKey);
                 if (errorObject) {
-                	debugger;
-                	throw errorObject;
+                    //debugger;
+                    throw errorObject;
                 }
 	
 	            toString = Object.prototype.toString;

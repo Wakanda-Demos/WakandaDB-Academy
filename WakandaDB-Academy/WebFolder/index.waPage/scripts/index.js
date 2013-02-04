@@ -163,8 +163,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     // const
     PRODUCTION_MODE = true;
-	CLIENT_TIMEOUT = 7000;
-    CLIENT_TIMEOUT_DEV = 3600000; // 1 hour 
+	CLIENT_TIMEOUT = 7; // 7 sec
+    CLIENT_TIMEOUT_DEV = 3600; // 1 hour 
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
     KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html';
     LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand';
@@ -431,6 +431,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 		var
             runningMethod,
             currentRequestID,
+		    remainingTime,
             timer,
             result,
             originalLength;
@@ -769,8 +770,16 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				$('#buttonRunSSJS').trigger('mouseout');
 			}
 		}, ssjsEditor.getValue(), currentRequestID);
-		
-		timer = setTimeout(function requestTimoutExpired() {
+
+		remainingTime = PRODUCTION_MODE ? CLIENT_TIMEOUT : CLIENT_TIMEOUT_DEV;
+		timer = setInterval(function requestTimoutExpired() {
+
+            remainingTime -= 1;
+            if (remainingTime > 0) {
+            	statusText = statusText.split('\n')[0] + '\n' + remainingTime + ' sec before timeout';
+            	localSources.statusText.sync();
+            	return;
+            }
 
             // Response Timeout expired
     		statusText = 'Response Timeout expired.';
@@ -793,7 +802,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 			currentGraphicView.show();
 			menuItemGraphicView.enable();
 
-		}, PRODUCTION_MODE ? CLIENT_TIMEOUT : CLIENT_TIMEOUT_DEV);
+		}, 1000);
 	};// @lock
 
 	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)// @startlock
