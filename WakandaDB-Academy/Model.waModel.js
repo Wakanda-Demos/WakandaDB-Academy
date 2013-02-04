@@ -13,9 +13,9 @@ guidedModel =// @startlock
                 "use strict";
 
                 var // "const" doesn't work in strict mode
+                    PRODUCTION_MODE = true,
                     TIMEOUT = 6000,
-                    TIMEOUT_DEV = 3600000, // 1 hour 
-                    PRODUCTION_MODE = false,
+                    TIMEOUT_DEV = 3600000, // 1 hour
                     ALLOWED_PROPERTIES = {
                         // HTML5 properties
                         'name': true,

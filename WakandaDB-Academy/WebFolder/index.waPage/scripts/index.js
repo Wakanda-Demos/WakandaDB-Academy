@@ -36,8 +36,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     var
         // constants
-        ISO_DATE_REGEXP,
+        PRODUCTION_MODE,
         CLIENT_TIMEOUT,
+        CLIENT_TIMEOUT_DEV,
+        ISO_DATE_REGEXP,
         KEEP_IN_TOUCH_URL,
         LEARN_MORE_URL,
         // sources
@@ -160,7 +162,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     }
 
     // const
-    PRODUCTION_MODE = false;
+    PRODUCTION_MODE = true;
 	CLIENT_TIMEOUT = 7000;
     CLIENT_TIMEOUT_DEV = 3600000; // 1 hour 
 	ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
@@ -364,6 +366,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	{// @endlock
 		var
             runningMethod,
+            currentRequestID,
             timer,
             result,
             originalLength;
@@ -382,6 +385,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             selectTab(tabViewResults.TAB_GRAPHIC_VIEW);
         }
 
+		currentRequestID = Date.now();
 		runningMethod = ds.Proxy.callMethod({
 			method: 'runOnServer',
 			onSuccess: function handleSsjsSuccess(response) {
@@ -390,6 +394,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				    result,
 				    resultType,
 				    xhr,
+				    requestID,
 				    originalLength,
 				    isISODate,
 				    dataclass,
@@ -699,7 +704,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				// force refresh button state
 				$('#buttonRunSSJS').trigger('mouseout');
 			}
-		}, ssjsEditor.getValue(), requestID);
+		}, ssjsEditor.getValue(), currentRequestID);
 		
 		timer = setTimeout(function requestTimoutExpired() {
 
@@ -724,7 +729,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 			currentGraphicView.show();
 			menuItemGraphicView.enable();
 
-		}, PRODUCTION_MODE ? CLIENT_TIMEOUT : CLIENT_DEV_TIMEOUT);
+		}, PRODUCTION_MODE ? CLIENT_TIMEOUT : CLIENT_TIMEOUT_DEV);
 	};// @lock
 
 	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)// @startlock
