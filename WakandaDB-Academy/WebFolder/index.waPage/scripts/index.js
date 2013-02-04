@@ -191,29 +191,93 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	countryLocation = 'USA';
 
 	examplesList = [
-        {icon: "", code: "ds.Employee.count()", tip:"Get the number of entities related to a dataclass"},
-        {icon: "", code: "ds.Employee.all()", tip:"Get all the entities related to a dataclass"},
-        {icon: "", code: "ds.Employee.query('age < :1', 25)", tip:"Get the employees who are older than 20"},
-        {icon: "", code: "ds.Employee.query('age < :1', 20).length", tip:"Get the number of employees who are older than 20"},
-//        {icon: "", code: "ds.Employee.age"},
-        {icon: "", code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')"},
-        {icon: "", code: "ds.Employee.all()[0]"},
-        {icon: "", code: "ds.Employee.all().first()"},
-        {icon: "", code: "ds.Employee.first()"},
-        {icon: "", code: "ds.Employee.first().next()"},
-        {icon: "", code: "ds.Employee(5)"},
-        {icon: "", code: "ds.Employee(5).company"},
-        {icon: "", code: "ds.Employee(5).company.country"},
-        //{icon: "", code: "ds.Employee(5).company.country.name"},
-        {icon: "", code: "ds.Employee(5).company.countryName"},
-        {icon: "", code: "ds.Employee(5).company.country.companies.length"},
-        {icon: "", code: "ds.Employee(5).manager"},
-        {icon: "", code: "ds.Employee(5).company.manager"},
-        {icon: "", code: "ds.Company.query('country.name == :1', 'Japan')"},
-        {icon: "", code: "ds.Company(3).employees"},
-        {icon: "", code: "ds.Company.query('countryName == USA').compute('revenues')"},
-        {icon: "", code: "ds.Country.find('name == Brazil')"},
-        {icon: "", code: "ds.Country.find('name == Brazil').companies"}
+        {
+        	code: "ds.Employee.count()", 
+        	tip: "Get the number of entities related to a dataclass"
+        },
+        {
+        	code: "ds.Employee.all()", 
+        	tip: "Get all the entities related to a dataclass"
+        },
+        {
+        	code: "ds.Employee.query('age < :1', 25)", 
+        	tip: "Get the employees who are younger than 25 using a parametered query"
+        },
+        {
+        	code: "ds.Employee.query('age < :1', 25).length", 
+        	tip: "Get the number of employees who are younger than 25"
+        },
+        {
+        	code: "ds.Employee.age", 
+        	tip: "Get the description of the age employee attribute"
+        },
+        {
+        	code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')", 
+        	tip: "Get the code of the age attribute getter"
+        },
+        {
+        	code: "ds.Employee.all()[0]",
+        	tip: "Get the first entity of a collection using the array index notation"
+        },
+        {
+        	code: "ds.Employee.all().first()",
+        	tip: "Get the first entity of a collection using the first() method"
+        },
+        {
+        	code: "ds.Employee.first()",
+        	tip: "Get the first entity of a dataclass stored in the datastore using the first() method"
+        },
+        {
+        	code: "ds.Employee.first().next()"
+        },
+        {
+        	code: "ds.Employee(5)",
+        	tip: "Get an entity from its ID"
+        },
+        {
+        	code: "ds.Employee(5).company",
+        	tip: "Get a company related entitity from an employee."
+        },
+        {
+        	code: "ds.Employee(5).company.country",
+        	tip: "Get a country second level related entitity from an employee."
+        },
+        {
+        	code: "ds.Employee(5).company.countryName",
+        	tip: "Get the name of a company country using the countryName alias attribute"
+        },
+        {
+        	code: "ds.Employee(5).company.country.companies.length",
+        	tip: ""
+        },
+        {
+        	code: "ds.Employee(5).manager",
+        	tip: ""
+        },
+        {
+        	code: "ds.Employee(5).company.manager",
+        	tip: ""
+        },
+        {
+        	code: "ds.Company.query('country.name == :1', 'Japan')",
+        	tip: ""
+        },
+        {
+        	code: "ds.Company(3).employees",
+        	tip: ""
+        },
+        {
+        	code: "ds.Company.query('countryName == USA').compute('revenues')",
+        	tip: ""
+        },
+        {
+        	code: "ds.Country.find('name == Brazil')",
+        	tip: "Find a country entity from its name."
+        },
+        {
+        	code: "ds.Country.find('name == Brazil').companies",
+        	tip: "Find all the companies in Brazil"
+        }
     ];
     
     // sources
