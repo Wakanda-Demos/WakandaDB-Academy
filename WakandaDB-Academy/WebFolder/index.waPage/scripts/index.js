@@ -322,7 +322,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     // URLs initialisation
     $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL);
-    widgets.imagePoweredByWakanda.setURL(POWERED_BY_WAKANDA_URL);
+    $('#imagePoweredByWakanda > img').attr('src', POWERED_BY_WAKANDA_URL);
 
     // Editor initialisation
 	ssjsEditor.setTheme("ace/theme/github");
