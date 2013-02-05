@@ -40,7 +40,6 @@ self.onmessage = function onCallToExecute(message) {
     data = message.data;
     sandboxModule = require('wakandaSandbox/index');
 
-    //debugger
     sandbox = new sandboxModule.WakandaSandbox(data.allowedProperties);
 
     result = sandbox.run(data.jsCode, data.timeout);
@@ -78,6 +77,17 @@ self.onmessage = function onCallToExecute(message) {
     // INFO: Not yet fully managed by the Proxy method
     response.isFunction = (typeof response.result === 'function');
     if (response.isFunction) {
+        
+        if (response.result.prototype) {
+        	response.$prototype = Object.keys(response.result.prototype).reduce(
+         	   function (outputResult, currentItem){
+          	      outputResult[currentItem] = response.result[currentItem];
+           	     return outputResult;
+            	},
+            	{}
+        	);
+        }
+
         response.result = Object.keys(response.result).reduce(
               function (outputResult, currentItem){
                 outputResult[currentItem] = response.result[currentItem];
@@ -85,16 +95,11 @@ self.onmessage = function onCallToExecute(message) {
             },
             {}
         );
-        response.$prototype = Object.keys(response.result.prototype).reduce(
-            function (outputResult, currentItem){
-                outputResult[currentItem] = response.result[currentItem];
-                return outputResult;
-            },
-            {}
-        );
+
         if (response.dataClass) {
             response.result.length = nativeResult.length;
         }
+
         response.result = JSON.parse(JSON.stringify(response.result, safeStringify));
     }
 

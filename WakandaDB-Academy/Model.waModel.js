@@ -80,7 +80,7 @@ guidedModel =// @startlock
                 errorObject = storage.getItem(exceptionKey);
                 if (errorObject) {
                     //debugger;
-                    throw errorObject;
+                    throw JSON.parse(errorObject);
                 }
 	
 	            toString = Object.prototype.toString;

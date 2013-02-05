@@ -6,6 +6,7 @@
 
 var
     MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS,
+    FILENAME,
     sandoxedDatastore,
     sandboxedDataClasses,
     nativeObjects,
@@ -16,6 +17,17 @@ var
  * UTIL FUNCTIONS
  **/
 
+function AccessRestrictedError(message, lineNumber) {
+	message = message || 'Access restricted to property or method by the sandbox';
+	Error.call(this, message);
+	this.name = 'AccessRestrictedError';
+	this.message = message;
+	this.fileName = FILENAME;
+	//this.lineNumber = lineNumber;
+}
+
+AccessRestrictedError.prototype = Object.create(Error.prototype);
+AccessRestrictedError.prototype.constructor = AccessRestrictedError;
 
 function accessRestricted(error) {
 
@@ -24,40 +36,40 @@ function accessRestricted(error) {
     var
         exceptionKey,
         errorObject,
-        defaultMessage;
+        errorType,
+        defaultMessage,
+        message;
 
-    defaultMessage = 'access restricted to property or method by the sandbox';
-    debugger;
     exceptionKey = 'Exception:' + this.getSource();
 
     switch (typeof error) {
     case 'object':
         if (error === null) {
-            errorObject = new Error(defaultMessage);
+            message = defaultMessage;
+            errorObject = new AccessRestrictedError(defaultMessage);
         } else {
+            message = error.message;
             errorObject = error;
         }
         break;
     case 'string':
-        if (error === '') {
-            errorObject = new Error(defaultMessage);
-        } else {
-            errorObject = new Error(error);
-        }
+    	message = (error === '') ? defaultMessage : error;
+        errorObject = new AccessRestrictedError(message);
         break;
     default:
-        errorObject = new Error(defaultMessage);
+        message = defaultMessage;
+        errorObject = new AccessRestrictedError(defaultMessage);
     }
 
     storage.lock();
-    storage.setItem(exceptionKey, errorObject);
+    storage.setItem(exceptionKey, JSON.stringify(errorObject));
     storage.unlock();
 
     throw errorObject;
 }
 
 function checkJS(item) {
-    return item && (typeof item === 'object') && item.hasOwnProperty('allowJavaScript');
+    return item && (typeof item === 'object') && item.allowJavascript;
 }
 
 function getNativeObject(obj) {
@@ -438,12 +450,13 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
  *
  * @constructor
  * @class SandboxedAttribute
+ * @param {WakandaSandbox} globalSandbox
  * @param {SandboxedDataclass} sandboxedDataclass
  * @param {Attribute} attribute
  */
-function SandboxedAttribute(sandboxedDataclass, attribute) {
+function SandboxedAttribute(globalSandbox, sandboxedDataclass, attribute) {
 
-    if (!attribute || (typeof attribute !== "object")) {
+    if (!attribute) {
         return null;
     }
 
@@ -816,6 +829,7 @@ function WakandaSandbox(allowedProperties) {
  **/
 
 MAX_ARRAY_INDEXED_ENTITIES_IN_COLLECTIONS = 40;
+FILENAME = 'wakandaSandbox/index.js';
 
 sandoxedDatastore = {};
 sandboxedDataClasses = [];
