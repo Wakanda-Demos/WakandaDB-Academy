@@ -21,3 +21,4 @@ studio_log*
 *.waBackup
 *.breakpoints
 *nogit*
+*.waDirectory
