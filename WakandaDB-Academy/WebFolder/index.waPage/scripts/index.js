@@ -445,7 +445,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         //event.preventDefault();
         
         widgetButtonRunSSJS.disable();
-        sourceStatusText.setColor('black');
+        richTextStatusText.setTextColor('black');
         statusText = 'Executing JavaScript on the server...';
 		sourceStatusText.sync();
 		jsonView.setValue('');
@@ -477,7 +477,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 				clearTimeout(timer);
 				statusText = 'Analizing the server result...';
                 sourceStatusText.sync();
-                richTextStatusText.setTextColor('black');
 
 				isISODate = null;
 			    xhr = response.XHR;
