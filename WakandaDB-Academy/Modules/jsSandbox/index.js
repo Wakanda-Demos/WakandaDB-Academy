@@ -254,7 +254,11 @@ Object.defineProperty(
                 this,
                 'getSource',
                 {
-                    value: (function sandbox_getJsCode(jsCode) {return jsCode;}).bind(this, arguments[0]),
+                    value: (
+                        function sandbox_getJsCode(jsCode) {
+                            return jsCode;
+                        }
+                    ).bind(this, arguments[0]),
                     writable: false,
                     configurable: false,
                     enumerable: false
@@ -267,7 +271,12 @@ Object.defineProperty(
                 //arguments[0] = arguments[0].split('\n');
                 //arguments[0].splice(arguments[0]);
                 this.arguments = undefined;
-                //arguments.result = eval('with (this) {\nfunction forceStrict(){\n"use strict";\n\n' + arguments[0] + '\n}\n}');
+                /*
+                arguments.result = eval(
+                    'with (this) {\nfunction forceStrict(){\n"use strict";\n\n' +
+                    arguments[0] +
+                    '\n}\n}'
+                ) */;
                 arguments.result = eval('with (this) {\n' + arguments[0] + '\n}');
                 clearTimeout(arguments.timer);
                 return arguments.result

@@ -339,11 +339,41 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsonView.setTheme("ace/theme/github");
     jsonView.getSession().setMode("ace/mode/json");
     jsonView.setReadOnly(true);
-    
-    setCode(jsCode);
 
     widgets.containerLoading.hide();
 
+    setCode(jsCode);
+
+    widgets.dataGridExamples.$domNode.delegate(
+        '.waf-datagrid-row-inside',
+        'mouseover',
+        function showTipOnMouseOver(event) {
+            codeTip = event.target.parentElement.nextElementSibling.firstChild.innerHTML;
+            if (codeTip !== '&nbsp;') {
+                sources.codeTip.sync();
+                widgets.containerCodeTip.show();
+                widgets.containerCodeTip.move(event.pageX - 300, event.pageY - 120);
+            } else {
+                widgets.containerCodeTip.hide();
+            }
+        }
+    );
+
+    widgets.dataGridExamples.$domNode.delegate(
+        '.waf-datagrid-row-inside',
+        'mouseout',
+        function showTipOnMouseOver(event) {
+            widgets.containerCodeTip.hide();
+        }
+    );
+
+    widgets.dataGridExamples.$domNode.delegate(
+        '.waf-datagrid-row-inside',
+        'mousemove',
+        function showTipOnMouseOver(event) {
+            widgets.containerCodeTip.move(event.pageX - 300, event.pageY - 120);
+        }
+    );
 
 // eventHandlers// @lock
 
@@ -450,8 +480,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             result,
             originalLength;
 
-        //event.preventDefault();
-        
         widgetButtonRunSSJS.disable();
         richTextStatusText.setTextColor('black');
         statusText = 'Executing JavaScript on the server...';
@@ -671,7 +699,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     statusText = 'There was a ' + xhr.status + ' error (' + xhr.statusText + ') during the request';
                     richTextStatusText.setTextColor('red');
 
-                    contentType = xhr.getResponseHeader('Content-Type');                    
+                    contentType = xhr.getResponseHeader('Content-Type');
                     if (contentType === 'application/json') {
                         error = JSON.parse(xhr.responseText);
                         if (error.__ERROR) {
@@ -704,8 +732,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
                     // Result is an an unsupported JSON value or a too big Array
 
-                    currentGraphicView = widgets.richTextScalarResult;
-                    
                     jsonResult = xhr.getResponseHeader('X-Limited-Array-Value');
                     if (jsonResult) {
                         originalLength = xhr.getResponseHeader('X-Original-Array-Length') || result.length;
@@ -740,12 +766,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                             statusText = 'The result is a number.';
                         }
 
-                    }
+                        // update the graphic view
+                        currentGraphicView = widgets.richTextScalarResult;
+                        currentGraphicView.setValue(jsonResult);
+                        currentGraphicView.show();
+                        menuItemGraphicView.enable();
 
-                    // update the graphic view
-                    currentGraphicView.setValue(jsonResult);
-                    currentGraphicView.show();
-                    menuItemGraphicView.enable();
+                    }
                     break;
 
                 case 'image/jpeg':
