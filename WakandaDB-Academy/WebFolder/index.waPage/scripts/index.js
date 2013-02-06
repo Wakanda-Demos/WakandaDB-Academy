@@ -15,6 +15,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
+	var documentEvent = {};	// @document
+	var icon2 = {};	// @icon
+	var Title = {};	// @icon
 	var iconTellUsWhatYouThink = {};	// @icon
 	var imageModelZoom = {};	// @image
 	var button5 = {};	// @button
@@ -345,6 +348,22 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 
 // eventHandlers// @lock
+
+	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
+	{// @endlock
+		$('#calendarDateResult').css('width', '180px').css('height', '150px');
+
+	};// @lock
+
+	icon2.click = function icon2_click (event)// @startlock
+	{// @endlock
+        widgets.dialogKeepInTouch.show();
+	};// @lock
+
+	Title.click = function Title_click (event)// @startlock
+	{// @endlock
+        widgets.dialogKeepInTouch.show();
+	};// @lock
 
 	iconTellUsWhatYouThink.click = function iconTellUsWhatYouThink_click (event)// @startlock
 	{// @endlock
@@ -835,6 +854,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
+	WAF.addListener("icon2", "click", icon2.click, "WAF");
+	WAF.addListener("Title", "click", Title.click, "WAF");
 	WAF.addListener("iconTellUsWhatYouThink", "click", iconTellUsWhatYouThink.click, "WAF");
 	WAF.addListener("imageModelZoom", "click", imageModelZoom.click, "WAF");
 	WAF.addListener("button5", "click", button5.click, "WAF");
