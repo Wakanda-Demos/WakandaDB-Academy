@@ -15,10 +15,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
+	var documentEvent = {};	// @document
 	var iconTellUsWhatYouThink = {};	// @icon
 	var imageModelZoom = {};	// @image
-	var buttonOkDialogKeepInTouch = {};	// @button
-	var buttonCancelDialogKeepInTouch = {};	// @button
+	var button5 = {};	// @button
+	var button4 = {};	// @button
 	var dataGridEmployeeStaff = {};	// @dataGrid
 	var dataGridCountryCompanies = {};	// @dataGrid
 	var dataGridCompanyEmployees = {};	// @dataGrid
@@ -69,9 +70,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         // other
         currentRequestID,
         isISODate,
-        scalarResultHandler,
-        currentCode,
-        currentCodeTip;
+        scalarResultHandler;
 
     function prettifyJSON(json, indent) {
         indent = indent || 4;
@@ -253,27 +252,27 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         },
         {
             code: "ds.Employee(5).company.country.companies.length",
-            tip: "Get the number of companies in the country of this employee Company."
+            tip: ""
         },
         {
             code: "ds.Employee(5).manager",
-            tip: "Getting easily the manager of an employee"
+            tip: ""
         },
         {
             code: "ds.Employee(5).company.manager",
-            tip: "Getting easily the manager of an employee company"
+            tip: ""
         },
         {
             code: "ds.Company.query('country.name == :1', 'Japan')",
-            tip: "Retrieving companies which country name is Japan"
+            tip: ""
         },
         {
             code: "ds.Company(3).employees",
-            tip: "Getting all the employees of a specified company"
+            tip: ""
         },
         {
             code: "ds.Company.query('countryName == USA').compute('revenues')",
-            tip: "Gets basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
+            tip: ""
         },
         {
             code: "ds.Country.find('name == Brazil')",
@@ -349,36 +348,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         '.waf-datagrid-row-inside',
         'mouseover',
         function showTipOnMouseOver(event) {
-            var
-                colCode,
-                cellCode,
-                colTip,
-                cellTip,
-                cellTipContent;
-
-            // preview the code
-            colCode = event.target;
-            cellCode = colCode && colCode.firstChild;
-            if (cellCode) {
-                currentCode = ssjsEditor.getValue();
-                setCode(cellCode.data);
-            }
-            // show the tip
-            colTip = event.target.parentElement.nextElementSibling;
-            cellTip = colTip && colTip.firstChild;
-            if (cellTip) {
-                cellTipContent = cellTip.innerHTML;
-                if (cellTipContent !== '&nbsp;') {
-                    codeTip = cellTipContent;
-                    sources.codeTip.sync();
-                    widgets.containerCodeTip.show();
-                    widgets.containerCodeTip.move(event.pageX - 150/*300*/, event.pageY - 55/*120*/);
-                } else {
-                    // clear codeTip datasource as it might be displayed elsewhere
-                    codeTip = '';
-                    sources.codeTip.sync();
-                    widgets.containerCodeTip.hide();
-                }
+            codeTip = event.target.parentElement.nextElementSibling.firstChild.innerHTML;
+            if (codeTip !== '&nbsp;') {
+                sources.codeTip.sync();
+                widgets.containerCodeTip.show();
+                widgets.containerCodeTip.move(event.pageX - 300, event.pageY - 120);
+            } else {
+                widgets.containerCodeTip.hide();
             }
         }
     );
@@ -386,14 +362,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     widgets.dataGridExamples.$domNode.delegate(
         '.waf-datagrid-row-inside',
         'mouseout',
-        function hideTipOnMouseOut(event) {
-        	// restore current code
-        	setCode(currentCode);
-        	// TODO: should restore also cursor selection and position
-
-        	// clear code tip
-            codeTip = currentCodeTip;
-            sources.codeTip.sync();
+        function showTipOnMouseOver(event) {
             widgets.containerCodeTip.hide();
         }
     );
@@ -402,11 +371,20 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         '.waf-datagrid-row-inside',
         'mousemove',
         function showTipOnMouseOver(event) {
-            widgets.containerCodeTip.move(event.pageX + 10, event.pageY - 30);
+            widgets.containerCodeTip.move(event.pageX - 300, event.pageY - 120);
         }
     );
 
 // eventHandlers// @lock
+
+	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
+	{// @endlock
+		$('#calendarDateResult').css({
+			width: '180px',
+			height: '150px'
+		});
+
+	};// @lock
 
 	iconTellUsWhatYouThink.click = function iconTellUsWhatYouThink_click (event)// @startlock
 	{// @endlock
@@ -419,13 +397,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         widgets.containerModelBig.show();
 	};// @lock
 
-	buttonOkDialogKeepInTouch.click = function buttonOkDialogKeepInTouch_click (event)// @startlock
+	button5.click = function button5_click (event)// @startlock
 	{// @endlock
         // ok button
         widgets.dialogKeepInTouch.hide();
 	};// @lock
 
-	buttonCancelDialogKeepInTouch.click = function buttonCancelDialogKeepInTouch_click (event)// @startlock
+	button4.click = function button4_click (event)// @startlock
 	{// @endlock
         // cancel button
         widgets.dialogKeepInTouch.show();
@@ -505,8 +483,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             result,
             originalLength;
 
-        currentCodeTip = codeTip;
-        sources.codeTip.sync();
         widgetButtonRunSSJS.disable();
         richTextStatusText.setTextColor('black');
         statusText = 'Executing JavaScript on the server...';
@@ -896,10 +872,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
 	WAF.addListener("iconTellUsWhatYouThink", "click", iconTellUsWhatYouThink.click, "WAF");
 	WAF.addListener("imageModelZoom", "click", imageModelZoom.click, "WAF");
-	WAF.addListener("buttonOkDialogKeepInTouch", "click", buttonOkDialogKeepInTouch.click, "WAF");
-	WAF.addListener("buttonCancelDialogKeepInTouch", "click", buttonCancelDialogKeepInTouch.click, "WAF");
+	WAF.addListener("button5", "click", button5.click, "WAF");
+	WAF.addListener("button4", "click", button4.click, "WAF");
 	WAF.addListener("dataGridEmployeeStaff", "onRowDblClick", dataGridEmployeeStaff.onRowDblClick, "WAF");
 	WAF.addListener("dataGridCountryCompanies", "onRowDblClick", dataGridCountryCompanies.onRowDblClick, "WAF");
 	WAF.addListener("dataGridCompanyEmployees", "onRowDblClick", dataGridCompanyEmployees.onRowDblClick, "WAF");

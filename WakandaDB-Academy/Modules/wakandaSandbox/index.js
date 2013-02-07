@@ -18,12 +18,12 @@ var
  **/
 
 function AccessRestrictedError(message, lineNumber) {
-	message = message || 'Access restricted to property or method by the sandbox';
-	Error.call(this, message);
-	this.name = 'AccessRestrictedError';
-	this.message = message;
-	this.fileName = FILENAME;
-	//this.lineNumber = lineNumber;
+    message = message || 'Access restricted to property or method by the sandbox';
+    Error.call(this, message);
+    this.name = 'AccessRestrictedError';
+    this.message = message;
+    this.fileName = FILENAME;
+    //this.lineNumber = lineNumber;
 }
 
 AccessRestrictedError.prototype = Object.create(Error.prototype);
