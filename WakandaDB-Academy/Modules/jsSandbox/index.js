@@ -114,7 +114,8 @@ Sandbox = (function SandBoxScope() {
 
         var
             filteredProperties,
-            sandbox;
+            sandbox,
+            chain;
 
         function filterProperties(propName) {
             var
@@ -175,14 +176,15 @@ Sandbox = (function SandBoxScope() {
             allowedProperties = {};
         }
 
-        // set the property filter
+        // initialize the property filter
         filteredProperties = {};
 
-        Object.getOwnPropertyNames(globalObject.__proto__)
-              .forEach(filterProperties, {isPrototype: true});
-
-        Object.getOwnPropertyNames(globalObject)
-              .forEach(filterProperties);
+        chain = globalObject;
+        do {
+        	Object.getOwnPropertyNames(globalObject.__proto__)
+              .forEach(filterProperties, {isPrototype: chain !== globalObject});
+            chain = chain.__proto__;
+        } while (chain !== Object.prototype);
 
         // apply the property filter to the global object mask
         Object.defineProperties(

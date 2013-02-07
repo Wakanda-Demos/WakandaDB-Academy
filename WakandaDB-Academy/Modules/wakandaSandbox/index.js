@@ -416,10 +416,7 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
             accessRestricted.call(globalSandbox, 'Using the query "allowJavaScript" option is not allowed');
         }
 
-        return new SandboxedEntity(
-            sandboxedDataclass,
-            collection.query.apply(collection, args)
-        );
+        return new SandboxedCollection(globalSandbox, sandboxedDataclass, collection.query.apply(collection, args));
     };
 
     this.remove =  accessRestricted.bind(globalSandbox, 'Access to the "remove" dataclass method is not allowed');
