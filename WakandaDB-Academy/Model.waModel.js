@@ -117,6 +117,18 @@ guidedModel =// @startlock
 
                 };
 
+                sandboxWorker.onerror = function onSandboxWorkerRunException(errorMessage) {
+
+                    // TOCHECK: if onterminate is always called when the worker throw an exception
+
+                    waiting = false;
+
+                    throw errorMessage.data || errorMessage;
+
+                    exitWait();
+
+                };
+
                 workerID = generateUUID();
 
                 // not sure yet if lock is mandatory
