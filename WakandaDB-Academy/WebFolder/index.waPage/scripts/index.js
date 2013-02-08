@@ -71,7 +71,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         isISODate,
         scalarResultHandler,
         currentCode,
-        currentCodeTip;
+        currentCodeTip,
+        codeHistory,
+        codeHistoryIndex;
 
     function prettifyJSON(json, indent) {
         indent = indent || 4;
@@ -180,7 +182,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsCode += '\n';
     jsCode += '// Or write your own code using the server-side JS API\n';
     jsCode += '// Documentation: http://doc.wakanda.org/ssjs-query';
-    
+
+    codeHistory = [];
+    codeHistoryIndex = -1;
+
     scalarResultHandler = {
         'undefined': {prepare: prepareUndefinedResult},
         'object': {prepare: prepareNullResult},
@@ -406,6 +411,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         }
     );
 
+    window.onpopstate = function restoreState(event) {
+    	if (event.state && event.state.jsCode) {
+    		jsCode = event.state.jsCode;
+    		setCode(jsCode);
+    	}
+    }
+
 // eventHandlers// @lock
 
 	iconTellUsWhatYouThink.click = function iconTellUsWhatYouThink_click (event)// @startlock
@@ -519,6 +531,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             // tab JSON view
             selectTab(tabViewResults.TAB_GRAPHIC_VIEW);
         }
+
+        jsCode = ssjsEditor.getValue();
+        history.pushState({jsCode: jsCode}, document.title);
 
         currentRequestID = String(Date.now());
         runningMethod = ds.Proxy.callMethod({
@@ -835,7 +850,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                 // force refresh button state
                 $('#buttonRunSSJS').trigger('mouseout');
             }
-        }, ssjsEditor.getValue(), currentRequestID);
+        }, jsCode, currentRequestID);
 
         remainingTime = PRODUCTION_MODE ? CLIENT_TIMEOUT : CLIENT_TIMEOUT_DEV;
         timer = setInterval(function requestTimoutExpired() {
@@ -889,7 +904,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
 	{// @endlock
         if (!widgetButtonRunSSJS.isDisabled()) {
-            setCode(this.source.code);
+        	currentCode = this.source.code;
+            setCode(currentCode);
         } else {
             window.alert('A request is currently running. Please wait until the result is received');
         }

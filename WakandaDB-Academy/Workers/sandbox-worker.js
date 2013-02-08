@@ -40,6 +40,7 @@ self.onmessage = function onCallToExecute(message) {
     data = message.data;
     sandboxModule = require('wakandaSandbox/index');
 
+    //debugger;
     sandbox = new sandboxModule.WakandaSandbox(data.allowedProperties);
 
     result = sandbox.run(data.jsCode, data.timeout);

@@ -71,9 +71,22 @@ guidedModel =// @startlock
                     return val;
                 }
 
+                function createSpecificValueResponse(value) {
+                    forceHTTPStream = new TextStream(getFolder().path + 'forceHTTPStream');
+                    return {
+                        HTTPStream: forceHTTPStream,
+                        headers: {
+                           'Content-Type': 'text/plain; charset=x-user-defined',
+                            'X-Request-ID': requestID,
+                            'X-Original-Content-Type': 'application/json',
+                            'X-JSON-Unsupported-JS-Value': String(value)
+                        }
+                    };
+                }
+                
                 if (!ssjs) {
-                    return 'code empty';
-                    //throw new Error('code empty');	
+                	// return undefined
+                	return createSpecificValueResponse(undefined);
                 }
 
                 exceptionKey = 'Exception:' + ssjs;
@@ -222,16 +235,7 @@ guidedModel =// @startlock
                     if (((typeof result === 'number') && isNaN(result)) || [undefined, Infinity, -Infinity].indexOf(result) > -1) {
                         // specific hanfling for values not supported by JSON
                         // the HTTPStream value has to be an image or a stream to specify HTTP headers
-                        forceHTTPStream = new TextStream(getFolder().path + 'forceHTTPStream');
-                        response = {
-                            HTTPStream: forceHTTPStream,
-                            headers: {
-                               'Content-Type': 'text/plain; charset=x-user-defined',
-                                'X-Request-ID': requestID,
-                                'X-Original-Content-Type': 'application/json',
-                                'X-JSON-Unsupported-JS-Value': String(result)
-                            }
-                        };
+                    	response = createSpecificValueResponse(response);
                     }
                 }
 

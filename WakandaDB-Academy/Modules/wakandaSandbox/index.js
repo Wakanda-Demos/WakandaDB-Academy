@@ -805,6 +805,7 @@ function createSandboxedSolution() {
  * @params {Object} allowedProperties
  */
 function WakandaSandbox(allowedProperties) {
+	//debugger;
     if (allowedProperties.hasOwnProperty('os')) {
         allowedProperties.os = createSandboxedOs(this);
     }

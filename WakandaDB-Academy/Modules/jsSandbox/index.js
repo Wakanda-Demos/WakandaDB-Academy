@@ -179,10 +179,13 @@ Sandbox = (function SandBoxScope() {
         // initialize the property filter
         filteredProperties = {};
 
+        // mask access to all the prototype chain properties and methods
         chain = globalObject;
         do {
-        	Object.getOwnPropertyNames(globalObject.__proto__)
-              .forEach(filterProperties, {isPrototype: chain !== globalObject});
+        	Object.getOwnPropertyNames(chain).forEach(
+        	    filterProperties, 
+        	    {isPrototype: chain !== globalObject}
+        	);
             chain = chain.__proto__;
         } while (chain !== Object.prototype);
 
