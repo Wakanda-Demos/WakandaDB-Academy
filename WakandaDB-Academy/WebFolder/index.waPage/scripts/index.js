@@ -72,8 +72,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         scalarResultHandler,
         currentCode,
         currentCodeTip,
-        codeHistory,
-        codeHistoryIndex;
+        editorSatus;
 
     function prettifyJSON(json, indent) {
         indent = indent || 4;
@@ -85,10 +84,20 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         return JSON.stringify(value, null, indent);
     }
 
-    function setCode(jsCode) {
+    function setCode(jsCode, options) {
+        options = options || {};
         ssjsEditor.setValue(jsCode, 0);
-        ssjsEditor.clearSelection();
-        ssjsEditor.focus();    
+        if (options.selection) {
+        	ssjsEditor.setSelection(options.selection);
+        } else {
+            ssjsEditor.clearSelection();
+        }
+        if (options.position) {
+        	ssjsEditor.navigateTo(options.position.line, options.position.column);
+        }
+        if (options.focus !== false) {
+            ssjsEditor.focus();
+        }
     }
     
     function showJsonResult(jsonResult) {
@@ -166,6 +175,22 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     function selectTab(index) {
         tabViewResults.selectTab(index);
     }
+    
+    function getEditorSatus(editor) {
+    	return {
+    	    cursor: editor.getCursorPosition(),
+    	    selectionRange: getSelectionRange(),
+    	    lineRange: editor.getLineRange(),
+    	    range: editor.getRange(),
+    	    selectionAnchor: editor.getSelectionAnchor(),
+    	    selectionLead: editor.getSelectionLead()
+    	};
+    }
+
+    function restoreEditorStatus(editor, editorStatus) {
+    	editor.setCursorPosition(editorStatus.cursor);
+    	//editor.setCursorPosition(editorStatus.cursor);
+    }
 
     // const
     PRODUCTION_MODE = true;
@@ -182,9 +207,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsCode += '\n';
     jsCode += '// Or write your own code using the server-side JS API\n';
     jsCode += '// Documentation: http://doc.wakanda.org/ssjs-query';
-
-    codeHistory = [];
-    codeHistoryIndex = -1;
 
     scalarResultHandler = {
         'undefined': {prepare: prepareUndefinedResult},
@@ -340,6 +362,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         bindKey: {win: 'Shift-Return',  mac: 'Shift-Return'},
         exec: buttonRunSSJS.click
     });
+    editorSatus = {};
              
     // JSON View initialisation
     jsonView.setTheme("ace/theme/github");
@@ -366,7 +389,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             cellCode = colCode && colCode.firstChild;
             if (cellCode) {
                 currentCode = ssjsEditor.getValue();
-                setCode(cellCode.data);
+                //editorSatus
+                setCode(cellCode.data, {focus:false});
             }
             // show the tip
             colTip = event.target.parentElement.nextElementSibling;
@@ -377,7 +401,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     codeTip = cellTipContent;
                     sources.codeTip.sync();
                     widgets.containerCodeTip.show();
-                    widgets.containerCodeTip.move(event.pageX - 150/*300*/, event.pageY - 55/*120*/);
+                    widgets.containerCodeTip.move(event.pageX - 150, event.pageY - 55);
                 } else {
                     // clear codeTip datasource as it might be displayed elsewhere
                     codeTip = '';
@@ -393,7 +417,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         'mouseout',
         function hideTipOnMouseOut(event) {
         	// restore current code
-        	setCode(currentCode);
+        	setCode(currentCode, editorSatus);
         	// TODO: should restore also cursor selection and position
 
         	// clear code tip
