@@ -54,7 +54,9 @@ guidedModel =// @startlock
                     entity,
                     result,
                     toString,
-                    forceHTTPStream;
+                    forceHTTPStream,
+                    stats,
+                    client;
 
                 function safeStringify(key, val) {
                     if (typeof val === "object" && val !== null) {
@@ -83,16 +85,38 @@ guidedModel =// @startlock
                         }
                     };
                 }
-                
+
+                function logRequest() {
+                    var
+                        sharedWorker;
+
+	                client = sessionStorage.client;
+	                if (!client) {
+	                	client = generateUUID();
+	                	sessionStorage.client = client;
+	                }
+                    stats.client = client;
+
+                    sharedWorker = new SharedWorker('Workers/statslog-sharedworker.js', 'LOG_REQUESTS');
+                    sharedWorker.postMessage(stats);
+                }
+
                 if (!ssjs) {
                 	// return undefined
                 	return createSpecificValueResponse(undefined);
                 }
 
+                stats = {
+                	begin: Date.now(),
+                	code: ssjs
+                };
                 exceptionKey = 'Exception:' + ssjs;
                 errorObject = storage.getItem(exceptionKey);
                 if (errorObject) {
                     //debugger;
+                    stats.error = errorObject;
+                    stats.end = Date.now();
+                    logRequest();
                     throw JSON.parse(errorObject);
                 }
 	
@@ -118,12 +142,19 @@ guidedModel =// @startlock
                 };
 
                 sandboxWorker.onerror = function onSandboxWorkerRunException(errorMessage) {
+                	
+                	var
+                	    errorObject;
 
                     // TOCHECK: if onterminate is always called when the worker throw an exception
 
                     waiting = false;
+                    errorObject =  errorMessage.data || errorMessage;
 
-                    throw errorMessage.data || errorMessage;
+                    stats.error = errorObject;
+                    stats.end = Date.now();
+                    logRequest();
+                    throw errorObject;
 
                     exitWait();
 
@@ -151,8 +182,12 @@ guidedModel =// @startlock
 
                 if (waiting) {
 
+                    stats.error = new Error('Timeout after ' + TIMEOUT + 'ms while executing this code: \n' + ssjs);
+                    stats.end = Date.now();
+                    logRequest();
+
                     //sandboxWorker.terminate(); // TODO: call it with a force parameter once implemented
-                    throw new Error('Timeout after ' + TIMEOUT + 'ms while executing this code: \n' + ssjs);
+                    throw stats.error;
 
                 } else {
 
@@ -250,6 +285,9 @@ guidedModel =// @startlock
                     	response = createSpecificValueResponse(response);
                     }
                 }
+
+                stats.end = Date.now();
+                logRequest();
 
                 return response;
 			}// @startlock
