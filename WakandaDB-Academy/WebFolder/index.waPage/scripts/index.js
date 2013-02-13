@@ -1,4 +1,4 @@
-﻿/*jslint es5: true, nomen: true, todo: false, vars: true, white: true, browser: true, indent: 4 */
+/*jslint es5: true, nomen: true, todo: false, vars: true, white: true, browser: true, indent: 4 */
 
 /*global WAF, ds, $, ace*/
 
@@ -17,6 +17,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 // @region namespaceDeclaration// @startlock
 	var iconKeepInTouch = {};	// @icon
+	var documentEvent = {};	// @document
+	var monitoring = {};	// @button
+	var iconTellUsWhatYouThink = {};	// @icon
 	var imageModelZoom = {};	// @image
 	var buttonOkDialogKeepInTouch = {};	// @button
 	var buttonCancelDialogKeepInTouch = {};	// @button
@@ -468,6 +471,16 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	{// @endlock
         widgets.dialogKeepInTouch.show();
 	};// @lock
+	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
+	{// @endlock
+
+	};// @lock
+
+	monitoring.click = function monitoring_click (event)// @startlock
+	{// @endlock
+		$('#chart').css('top', 357).toggle();
+	};// @lock
+
 
 	imageModelZoom.click = function imageModelZoom_click (event)// @startlock
 	{// @endlock
@@ -984,6 +997,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 // @region eventManager// @startlock
 	WAF.addListener("examplesList", "onCollectionChange", examplesListEvent.onCollectionChange, "WAF");
 	WAF.addListener("iconKeepInTouch", "click", iconKeepInTouch.click, "WAF");
+	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
+	WAF.addListener("monitoring", "click", monitoring.click, "WAF");
+	WAF.addListener("iconTellUsWhatYouThink", "click", iconTellUsWhatYouThink.click, "WAF");
 	WAF.addListener("imageModelZoom", "click", imageModelZoom.click, "WAF");
 	WAF.addListener("buttonOkDialogKeepInTouch", "click", buttonOkDialogKeepInTouch.click, "WAF");
 	WAF.addListener("buttonCancelDialogKeepInTouch", "click", buttonCancelDialogKeepInTouch.click, "WAF");
