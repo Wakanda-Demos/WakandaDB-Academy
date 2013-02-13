@@ -3,6 +3,7 @@
 /*global WAF, ds, $, ace*/
 
 var
+    // external function
     encode64,
     // local sources
     statusText, 
@@ -15,9 +16,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
-	var documentEvent = {};	// @document
-	var monitoring = {};	// @button
-	var iconTellUsWhatYouThink = {};	// @icon
+	var iconKeepInTouch = {};	// @icon
 	var imageModelZoom = {};	// @image
 	var buttonOkDialogKeepInTouch = {};	// @button
 	var buttonCancelDialogKeepInTouch = {};	// @button
@@ -38,14 +37,14 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     var
         // constants
-        PRODUCTION_MODE,
-        CLIENT_TIMEOUT,
-        CLIENT_TIMEOUT_DEV,
-        ISO_DATE_REGEXP,
-        QUERY_STRING,
-        KEEP_IN_TOUCH_URL,
-        LEARN_MORE_URL,
-        POWERED_BY_WAKANDA_URL,
+        PRODUCTION_MODE = true,
+        CLIENT_TIMEOUT = 7, // 7 sec
+        CLIENT_TIMEOUT_DEV = 3600, // 1 mn
+        ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/,
+        QUERY_STRING = window.location.search,
+        KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html' + QUERY_STRING,
+        LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand' + QUERY_STRING,
+        POWERED_BY_WAKANDA_URL = 'http://www.wakanda.org/features/server' + QUERY_STRING,
         // sources
         localSources,
         sourceStatusText,
@@ -194,15 +193,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     	//editor.setCursorPosition(editorStatus.cursor);
     }
 
-    // const
-    PRODUCTION_MODE = true;
-    CLIENT_TIMEOUT = 7; // 7 sec
-    CLIENT_TIMEOUT_DEV = 3600; // 1 hour 
-    ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
-    QUERY_STRING = window.location.search;
-    KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html' + QUERY_STRING;
-    LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand' + QUERY_STRING;
-    POWERED_BY_WAKANDA_URL = 'http://www.wakanda.org/features/server' + QUERY_STRING;
+    if (location.hash === '#techdays') {
+    	WAF.widgets.imageAmazonPartner.hide();
+    }
 
     // First proposed Server-Side JavaScript Code
     jsCode = '// Discover WakandaDB with the proposed examples\n';
@@ -225,14 +218,17 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     examplesList = [
         {
+            id: 1,
             code: "ds.Employee.count()", 
             tip: "Get the number of entities related to a dataclass"
         },
         {
+            id: 2,
             code: "ds.Employee.all()", 
             tip: "Get all the entities related to a dataclass"
         },
         {
+            id: 3,
             code: "ds.Employee.query('age < :1', 25)", 
             tip: "Get the employees who are younger than 25 using a parametered query"
         },
@@ -245,70 +241,92 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             tip: "Get the description of the age employee attribute"
         },*/
         {
+            id: 4,
             code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')", 
             tip: "Get the code of the age attribute getter"
         },
         {
+            id: 5,
             code: "ds.Employee.all()[0]",
             tip: "Get the first entity of a collection using the array index notation"
         },
         {
+            id: 6,
             code: "ds.Employee.all().first()",
             tip: "Get the first entity of a collection using the first() method"
         },
         {
+            id: 7,
             code: "ds.Employee.first()",
             tip: "Get the first entity of a dataclass stored in the datastore using the first() method"
         },
         {
+            id: 8,
             code: "ds.Employee.first().next()",
             tip: "Get the next entity from an entity while managing a list of entities"
         },
         {
+            id: 9,
             code: "ds.Employee(5)",
             tip: "Get an entity from its ID"
         },
         {
+            id: 10,
             code: "ds.Employee(5).company",
             tip: "Get a company related entitity from an employee."
         },
         {
+            id: 11,
             code: "ds.Employee(5).company.country",
             tip: "Get a country second level related entitity from an employee."
         },
         {
+            id: 12,
             code: "ds.Employee(5).company.countryName",
             tip: "Get the name of a company country using the countryName alias attribute"
         },
         {
+            id: 13,
             code: "ds.Employee(5).company.country.companies.length",
             tip: "Get the number of companies in the country of this employee Company."
         },
         {
+            id: 14,
             code: "ds.Employee(5).manager",
             tip: "Getting easily the manager of an employee"
         },
         {
+            id: 15,
             code: "ds.Employee(5).company.manager",
             tip: "Getting easily the manager of an employee company"
         },
         {
+            id: 16,
             code: "ds.Company.query('country.name == :1', 'Japan')",
             tip: "Retrieving companies which country name is Japan"
         },
         {
+            id: 17,
+            code: "ds.Company.query('country.name == :1', 'Japan').manager",
+            tip: "Retrieving managers of Japanese companies"
+        },
+        {
+            id: 18,
             code: "ds.Company(3).employees",
             tip: "Getting all the employees of a specified company"
         },
         {
+            id: 19,
             code: "ds.Company.query('countryName == USA').compute('revenues')",
             tip: "Gets basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
         },
         {
+            id: 20,
             code: "ds.Country.find('name == Brazil')",
             tip: "Find a country entity from its name."
         },
         {
+            id: 21,
             code: "ds.Country.find('name == Brazil').companies",
             tip: "Find all the companies in Brazil"
         }
@@ -446,17 +464,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 // eventHandlers// @lock
 
-	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
-	{// @endlock
-
-	};// @lock
-
-	monitoring.click = function monitoring_click (event)// @startlock
-	{// @endlock
-		$('#chart').css('top', 357).toggle();
-	};// @lock
-
-	iconTellUsWhatYouThink.click = function iconTellUsWhatYouThink_click (event)// @startlock
+	iconKeepInTouch.click = function iconKeepInTouch_click (event)// @startlock
 	{// @endlock
         widgets.dialogKeepInTouch.show();
 	};// @lock
@@ -536,6 +544,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	iconLearnMore.click = function iconLearnMore_click (event)// @startlock
 	{// @endlock
         window.location = LEARN_MORE_URL;
+	};// @lock
+
+	examplesListEvent.onCollectionChange = function examplesListEvent_onCollectionChange (event)// @startlock
+	{// @endlock
+		widgets.dataGridExamples.$domNode.css('overflow-x', 'hidden');
 	};// @lock
 
 	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
@@ -808,7 +821,28 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
                 case 'application/json':
 
-                    // Result is an an unsupported JSON value or a too big Array
+                    // Exception
+
+                    jsonResult = xhr.getResponseHeader('X-Exception');
+                    if (jsonResult) {
+                    	error = JSON.parse(jsonResult);
+                        statusText = 'There was a "' + error.name + '" Exception during the request';
+                    	richTextStatusText.setTextColor('red');
+                    	mainErrorMessage = error.message;
+                        currentGraphicView = widgets.errorDivServerException;
+                        // setValue() doesn't work on the Display error widget
+                        // currentWidget.setValue(mainErrorMessage);
+                        currentGraphicView.$domNode.text(mainErrorMessage);
+                        currentGraphicView.show();
+                        menuItemGraphicView.enable();
+                        // Show the JSON result
+                    	jsonResult = toPrettyJSON(error);
+
+                    	break;
+
+                    }
+
+                    // Result is a too big Array
 
                     jsonResult = xhr.getResponseHeader('X-Limited-Array-Value');
                     if (jsonResult) {
@@ -826,31 +860,31 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                         menuItemGraphicView.disable();
 
                         jsonResult = toPrettyJSON(error);
-
-                    } else {
-
-                        jsonResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
-
-                        if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
-                            // unexpected value
-                            statusText = 'The result is in an unknown format.';
-                            richTextStatusText.setTextColor('red');
-                            jsonResult = '';
-                        } else if (jsonResult === 'undefined') {
-                            // undefined
-                            statusText = 'The result is "undefined".';
-                        } else {
-                            // NaN, Infinity, or -Infinity
-                            statusText = 'The result is a number.';
-                        }
-
-                        // update the graphic view
-                        currentGraphicView = widgets.richTextScalarResult;
-                        currentGraphicView.setValue(jsonResult);
-                        currentGraphicView.show();
-                        menuItemGraphicView.enable();
-
+                    	break;
                     }
+                    
+                    // Result is a value unsupported by JSON 
+
+                    jsonResult = xhr.getResponseHeader('X-JSON-Unsupported-JS-Value');
+
+                    if (['NaN', 'undefined', 'Infinity', '-Infinity'].indexOf(jsonResult) === -1) {
+                        // unexpected value
+                        statusText = 'The result is in an unknown format.';
+                        richTextStatusText.setTextColor('red');
+                        jsonResult = '';
+                    } else if (jsonResult === 'undefined') {
+                        // undefined
+                        statusText = 'The result is "undefined".';
+                    } else {
+                        // NaN, Infinity, or -Infinity
+                        statusText = 'The result is a number.';
+                    }
+
+                    // update the graphic view
+                    currentGraphicView = widgets.richTextScalarResult;
+                    currentGraphicView.setValue(jsonResult);
+                    currentGraphicView.show();
+                    menuItemGraphicView.enable();
                     break;
 
                 case 'image/jpeg':
@@ -948,9 +982,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
-	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
-	WAF.addListener("monitoring", "click", monitoring.click, "WAF");
-	WAF.addListener("iconTellUsWhatYouThink", "click", iconTellUsWhatYouThink.click, "WAF");
+	WAF.addListener("examplesList", "onCollectionChange", examplesListEvent.onCollectionChange, "WAF");
+	WAF.addListener("iconKeepInTouch", "click", iconKeepInTouch.click, "WAF");
 	WAF.addListener("imageModelZoom", "click", imageModelZoom.click, "WAF");
 	WAF.addListener("buttonOkDialogKeepInTouch", "click", buttonOkDialogKeepInTouch.click, "WAF");
 	WAF.addListener("buttonCancelDialogKeepInTouch", "click", buttonCancelDialogKeepInTouch.click, "WAF");

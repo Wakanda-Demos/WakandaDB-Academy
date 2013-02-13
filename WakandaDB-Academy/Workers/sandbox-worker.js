@@ -42,11 +42,23 @@ self.onmessage = function onCallToExecute(message) {
 
     //debugger;
     sandbox = new sandboxModule.WakandaSandbox(data.allowedProperties);
-
-    result = sandbox.run(data.jsCode, data.timeout);
-    //console.log('sandboxed result', result);
-
     response = {};
+
+    try {
+    	result = sandbox.run(data.jsCode, data.timeout);
+    } catch (error) {
+    	response = {
+    		name: error.name,
+    		message: error.message,
+    		messages: error.messages,
+    		line: error.line,
+    		sourceId: error.sourceId,
+    		sourceURL: error.sourceURL,
+    		isError: true,
+    		error: error
+    	};
+    }
+
 
     if (result !== null && typeof result === 'object') {
         nativeResult = sandboxModule.getNativeObject(result);
