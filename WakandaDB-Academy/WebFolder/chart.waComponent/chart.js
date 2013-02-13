@@ -32,7 +32,7 @@ function constructor (id) {
 			}
 
 			  graph = Flotr.draw(document.getElementById("chart_container"), [ 
-			      { data : d1, label : 'y = 4 + x^(1.5)', lines : { show : true }, points : { show : true } }, 
+			      { data : d1, label : 'Requests Count', lines : { show : true }, points : { show : true } }, 
 			    ], {
 			      xaxis : {
 			      	mode			: 'time',
@@ -55,8 +55,8 @@ function constructor (id) {
 			      legend : {
 			        position : 'nw'
 			      },
-			      title : 'Basic Axis example',
-			      subtitle : 'This is a subtitle'
+			      title : 'Number of requests sent to the sever',
+			      subtitle : ''
 			  });
 		  }
 		});	
