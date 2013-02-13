@@ -15,6 +15,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
+	var documentEvent = {};	// @document
+	var monitoring = {};	// @button
 	var iconTellUsWhatYouThink = {};	// @icon
 	var imageModelZoom = {};	// @image
 	var buttonOkDialogKeepInTouch = {};	// @button
@@ -443,6 +445,16 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     }
 
 // eventHandlers// @lock
+
+	documentEvent.onLoad = function documentEvent_onLoad (event)// @startlock
+	{// @endlock
+
+	};// @lock
+
+	monitoring.click = function monitoring_click (event)// @startlock
+	{// @endlock
+		$('#chart').css('top', 357).toggle();
+	};// @lock
 
 	iconTellUsWhatYouThink.click = function iconTellUsWhatYouThink_click (event)// @startlock
 	{// @endlock
@@ -936,6 +948,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
+	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
+	WAF.addListener("monitoring", "click", monitoring.click, "WAF");
 	WAF.addListener("iconTellUsWhatYouThink", "click", iconTellUsWhatYouThink.click, "WAF");
 	WAF.addListener("imageModelZoom", "click", imageModelZoom.click, "WAF");
 	WAF.addListener("buttonOkDialogKeepInTouch", "click", buttonOkDialogKeepInTouch.click, "WAF");
