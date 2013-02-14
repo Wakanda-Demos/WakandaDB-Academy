@@ -6,5 +6,5 @@ Japan	jp	3
 India	in	1
 Australia	au	1
 Algeria	dz	1
-Kenia	ke	1
+Kenya	ke	1
 China	cn	3
