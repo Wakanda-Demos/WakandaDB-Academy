@@ -244,22 +244,22 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {
             id: 4,
             code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')", 
-            tip: "Get the code of the age attribute getter"
+            tip: "Get the code of for the age attribute getter"
         },
         {
             id: 5,
             code: "ds.Employee.all()[0]",
-            tip: "Get the first entity of a collection using the array index notation"
+            tip: "Get the first entity in a collection using the array index notation"
         },
         {
             id: 6,
             code: "ds.Employee.all().first()",
-            tip: "Get the first entity of a collection using the first() method"
+            tip: "Get the first entity in a collection using the first() method"
         },
         {
             id: 7,
             code: "ds.Employee.first()",
-            tip: "Get the first entity of a dataclass stored in the datastore using the first() method"
+            tip: "Get the first entity from a dataclass stored in the datastore using the first() method"
         },
         {
             id: 8,
@@ -274,37 +274,37 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {
             id: 10,
             code: "ds.Employee(5).company",
-            tip: "Get a company related entitity from an employee."
+            tip: "Get a company's related entity from an employee."
         },
         {
             id: 11,
             code: "ds.Employee(5).company.country",
-            tip: "Get a country second level related entitity from an employee."
+            tip: "Get a country's second level related entity from an employee."
         },
         {
             id: 12,
             code: "ds.Employee(5).company.countryName",
-            tip: "Get the name of a company country using the countryName alias attribute"
+            tip: "Get the name of a company's country using the countryName alias attribute"
         },
         {
             id: 13,
             code: "ds.Employee(5).company.country.companies.length",
-            tip: "Get the number of companies in the country of this employee Company."
+            tip: "Get the number of companies in the country of this employee's Company."
         },
         {
             id: 14,
             code: "ds.Employee(5).manager",
-            tip: "Getting easily the manager of an employee"
+            tip: "Easily get an employee's manager"
         },
         {
             id: 15,
             code: "ds.Employee(5).company.manager",
-            tip: "Getting easily the manager of an employee company"
+            tip: "Easily get the manager of an employee's company"
         },
         {
             id: 16,
             code: "ds.Company.query('country.name == :1', 'Japan')",
-            tip: "Retrieving companies which country name is Japan"
+            tip: "Retrieve companies whose country name is Japan"
         },
         {
             id: 17,
@@ -314,12 +314,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {
             id: 18,
             code: "ds.Company(3).employees",
-            tip: "Getting all the employees of a specified company"
+            tip: "Get all the employees of a specified company"
         },
         {
             id: 19,
             code: "ds.Company.query('countryName == USA').compute('revenues')",
-            tip: "Gets basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
+            tip: "Get basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
         },
         {
             id: 20,
