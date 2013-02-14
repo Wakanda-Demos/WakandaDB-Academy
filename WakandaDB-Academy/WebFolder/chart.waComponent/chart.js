@@ -31,7 +31,7 @@ function constructor (id) {
 				if (parseInt(d1[i][1]) > max) max = parseInt(d1[i][1])+10;
 			}
 
-			  graph = Flotr.draw(document.getElementById("chart_container"), [ 
+			  graph = Flotr.draw(document.getElementById("containerChart_container"), [ 
 			      { data : d1, label : 'Requests Count', lines : { show : true }, points : { show : true } }, 
 			    ], {
 			      xaxis : {

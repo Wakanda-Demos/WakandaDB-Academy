@@ -467,17 +467,17 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	image1.click = function image1_click (event)// @startlock
 	{// @endlock
-		if ($('#containerChart_container').html() != '') {
+//		if ($('#containerChart_container').html() != '') {
 			$('#containerChart').css('top', 357).show();
-		} else {
-			$.gritter.add({
-				title: 'The server stats are not available right now',
-				text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
-				image: '/images/info.png',
-				sticky: false,
-				time: '10000'
-			});
-		}
+//		} else {
+//			$.gritter.add({
+//				title: 'The server stats are not available right now',
+//				text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
+//				image: '/images/info.png',
+//				sticky: false,
+//				time: '10000'
+//			});
+//		}
 	};// @lock
 
 	containerChart.click = function containerChart_click (event)// @startlock
