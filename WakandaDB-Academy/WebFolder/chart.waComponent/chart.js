@@ -37,9 +37,7 @@ function constructor (id) {
 			      xaxis : {
 			      	mode			: 'time',
 			      	timeFormat		: '%d/%m %H:%M',
-			      	noTicks			: 20,
-			      	minorTickFreq	: 20,
-					labelsAngle		: 45
+			      	noTicks			: 20
 			      },
 			      yaxis : {
 			        max : max
@@ -55,9 +53,15 @@ function constructor (id) {
 			      legend : {
 			        position : 'nw'
 			      },
+			      mouse : {
+			        track : true,
+			        relative : true
+			      },			      
 			      title : 'Number of requests sent to the sever',
 			      subtitle : ''
 			  });
+		  },
+		  error: function(error) {  			  	
 		  }
 		});	
 	
