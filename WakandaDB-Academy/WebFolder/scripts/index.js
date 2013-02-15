@@ -220,6 +220,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     examplesList = [
         {
+            id: 0,
+            code: "<Custom Code>",
+            tip: "Write your own custom code"
+        },
+        {
             id: 1,
             code: "ds.Employee.count()", 
             tip: "Get the number of entities related to a dataclass"
@@ -383,6 +388,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         bindKey: {win: 'Shift-Return',  mac: 'Shift-Return'},
         exec: buttonRunSSJS.click
     });
+    ssjsEditor.getSession().on(
+        'change',
+        function onCodeChange() {
+            //localSources.examplesList.select(0);
+        }
+    );
     editorSatus = {};
              
     // JSON View initialisation
@@ -392,6 +403,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     $('.waf-textField').attr('readonly', 'true');
     $('#textFieldEmail').removeAttr('readonly');
+    
 
     widgets.containerLoading.hide();
 
@@ -577,7 +589,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	examplesListEvent.onCollectionChange = function examplesListEvent_onCollectionChange (event)// @startlock
 	{// @endlock
-		widgets.dataGridExamples.$domNode.css('overflow-x', 'hidden');
+
 	};// @lock
 
 	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
@@ -993,7 +1005,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
 	{// @endlock
         if (!widgetButtonRunSSJS.isDisabled()) {
-            buttonRunSSJS.click();
+        	if (this.getSelectedRows()[0] > 0) {
+                buttonRunSSJS.click();
+            }
         } else {
             window.alert('A request is currently running. Please wait until the result is received');
         }
@@ -1003,8 +1017,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
 	{// @endlock
         if (!widgetButtonRunSSJS.isDisabled()) {
-        	currentCode = this.source.code;
-            setCode(currentCode);
+        	if (this.getSelectedRows()[0] > 0) {
+        		currentCode = this.source.code;
+                setCode(currentCode);
+            }
         } else {
             window.alert('A request is currently running. Please wait until the result is received');
         }

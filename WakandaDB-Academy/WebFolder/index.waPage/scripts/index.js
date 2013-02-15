@@ -11,11 +11,11 @@ var
     jsCode,
     examplesList;
 
-WAF.onAfterInit = function onAfterInit() {// @lock
+WAF.onAfterInit = function onAfterInit() {
 
     "use strict";
 
-// @region namespaceDeclaration// @startlock
+// @region namespaceDeclaration
 	var richTextStats = {};	// @richText
 	var iconSubmitEmail = {};	// @icon
 	var containerChart = {};	// @component
@@ -35,7 +35,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
 	var dataGridExamples = {};	// @dataGrid
-// @endregion// @endlock
+// @endregion
 
     var
         // constants
@@ -220,6 +220,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     examplesList = [
         {
+            id: 0,
+            code: "<Custom Code>",
+            tip: "Write your own custom code"
+        },
+        {
             id: 1,
             code: "ds.Employee.count()", 
             tip: "Get the number of entities related to a dataclass"
@@ -383,6 +388,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         bindKey: {win: 'Shift-Return',  mac: 'Shift-Return'},
         exec: buttonRunSSJS.click
     });
+    ssjsEditor.getSession().on(
+        'change',
+        function onCodeChange() {
+            //localSources.examplesList.select(0);
+        }
+    );
     editorSatus = {};
              
     // JSON View initialisation
@@ -392,6 +403,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
     $('.waf-textField').attr('readonly', 'true');
     $('#textFieldEmail').removeAttr('readonly');
+    
 
     widgets.containerLoading.hide();
 
@@ -466,10 +478,10 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     	}
     }
 
-// eventHandlers// @lock
+// eventHandlers
 
-	richTextStats.click = function richTextStats_click (event)// @startlock
-	{// @endlock
+	richTextStats.click = function richTextStats_click (event)
+	{
 		var 
 		    widgetcontainerChart;
 
@@ -488,103 +500,105 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         	});
         }
 		
-	};// @lock
+		
+	};
 
-	iconSubmitEmail.click = function iconSubmitEmail_click (event)// @startlock
-	{// @endlock
+	iconSubmitEmail.click = function iconSubmitEmail_click (event)
+	{
 		newsletter.submitEmail(widgets.textFieldEmail.getValue());
 		widgets.textFieldEmail.hide();
 		widgets.iconSubmitEmail.hide();
 		widgets.richTextWelcome.show();
-	};// @lock
+	};
 
-	containerChart.click = function containerChart_click (event)// @startlock
-	{// @endlock
-		widgets.containerChart.hide();
-	};// @startlock
+	containerChart.click = function containerChart_click (event)
+	{
+		$('#containerChart').hide();
+
+	};
 	documentEvent.onLoad = function documentEvent_onLoad (event)
-	{// @endlock
+	{
 
-	};// @lock
+	};
 
 
-	imageModelZoom.click = function imageModelZoom_click (event)// @startlock
-	{// @endlock
+	imageModelZoom.click = function imageModelZoom_click (event)
+	{
         widgets.containerCenteredPage.hide();
         widgets.containerModelBig.show();
-	};// @lock
+	};
 
-	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)
+	{
         setCode('ds.Employee(' + this.source.ID + ')');
         buttonRunSSJS.click();
-	};// @lock
+	};
 
-	dataGridCountryCompanies.onRowDblClick = function dataGridCountryCompanies_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridCountryCompanies.onRowDblClick = function dataGridCountryCompanies_onRowDblClick (event)
+	{
         setCode('ds.Company(' + this.source.ID + ')');
         buttonRunSSJS.click();
-	};// @lock
+	};
 
-	dataGridCompanyEmployees.onRowDblClick = function dataGridCompanyEmployees_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridCompanyEmployees.onRowDblClick = function dataGridCompanyEmployees_onRowDblClick (event)
+	{
         setCode('ds.Employee(' + this.source.ID + ')');
         buttonRunSSJS.click();
-	};// @lock
+	};
 
-	dataGridEmployee.onRowDblClick = function dataGridEmployee_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridEmployee.onRowDblClick = function dataGridEmployee_onRowDblClick (event)
+	{
         setCode('ds.Employee(' + this.source.ID + ')');
         buttonRunSSJS.click();
-	};// @lock
+	};
 
-	dataGridCountry.onRowDblClick = function dataGridCountry_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridCountry.onRowDblClick = function dataGridCountry_onRowDblClick (event)
+	{
         setCode('ds.Country(' + this.source.ID + ')');
         buttonRunSSJS.click();
-	};// @lock
+	};
 
-	dataGridCompany.onRowDblClick = function dataGridCompany_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridCompany.onRowDblClick = function dataGridCompany_onRowDblClick (event)
+	{
         setCode('ds.Company(' + this.source.ID + ')');
         buttonRunSSJS.click();
-	};// @lock
+	};
 
-	imageModelBig.click = function imageModelBig_click (event)// @startlock
-	{// @endlock
+	imageModelBig.click = function imageModelBig_click (event)
+	{
         widgets.containerCenteredPage.show();
         widgets.containerModelBig.hide();
-	};// @lock
+	};
 
-	containerModelBig.click = function containerModelBig_click (event)// @startlock
-	{// @endlock
+	containerModelBig.click = function containerModelBig_click (event)
+	{
         widgets.containerCenteredPage.show();
         widgets.containerModelBig.hide();
-	};// @lock
+	};
 
-	imageModelSmall.click = function imageModelSmall_click (event)// @startlock
-	{// @endlock
+	imageModelSmall.click = function imageModelSmall_click (event)
+	{
         widgets.containerModelBig.show();
         widgets.containerCenteredPage.hide();
-	};// @lock
+	};
 
-	iconDownloadButton.click = function iconDownloadButton_click (event)// @startlock
-	{// @endlock
+	iconDownloadButton.click = function iconDownloadButton_click (event)
+	{
         window.location = DOWNLOAD_URL;
-	};// @lock
+	};
 
-	examplesListEvent.onCollectionChange = function examplesListEvent_onCollectionChange (event)// @startlock
-	{// @endlock
-		widgets.dataGridExamples.$domNode.css('overflow-x', 'hidden');
-	};// @lock
+	examplesListEvent.onCollectionChange = function examplesListEvent_onCollectionChange (event)
+	{
 
-	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)// @startlock
-	{// @endlock
+	};
+
+	examplesListEvent.onCurrentElementChange = function examplesListEvent_onCurrentElementChange (event)
+	{
         //setCode(this.code);
-	};// @lock
+	};
 
-	buttonRunSSJS.click = function buttonRunSSJS_click (event)// @startlock
-	{// @endlock
+	buttonRunSSJS.click = function buttonRunSSJS_click (event)
+	{
         var
             runningMethod,
             currentRequestID,
@@ -981,34 +995,38 @@ WAF.onAfterInit = function onAfterInit() {// @lock
             menuItemGraphicView.enable();
 
         }, 1000);
-	};// @lock
+	};
 
-	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)// @startlock
-	{// @endlock
+	dataGridExamples.onRowDraw = function dataGridExamples_onRowDraw (event)
+	{
         // Add your code here
-	};// @lock
+	};
 
-	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)// @startlock
-	{// @endlock
+	dataGridExamples.onRowDblClick = function dataGridExamples_onRowDblClick (event)
+	{
         if (!widgetButtonRunSSJS.isDisabled()) {
-            buttonRunSSJS.click();
+        	if (this.getSelectedRows()[0] > 0) {
+                buttonRunSSJS.click();
+            }
         } else {
             window.alert('A request is currently running. Please wait until the result is received');
         }
         
-	};// @lock
+	};
 
-	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)// @startlock
-	{// @endlock
+	dataGridExamples.onRowClick = function dataGridExamples_onRowClick (event)
+	{
         if (!widgetButtonRunSSJS.isDisabled()) {
-        	currentCode = this.source.code;
-            setCode(currentCode);
+        	if (this.getSelectedRows()[0] > 0) {
+        		currentCode = this.source.code;
+                setCode(currentCode);
+            }
         } else {
             window.alert('A request is currently running. Please wait until the result is received');
         }
-	};// @lock
+	};
 
-// @region eventManager// @startlock
+// @region eventManager
 	WAF.addListener("richTextStats", "click", richTextStats.click, "WAF");
 	WAF.addListener("iconSubmitEmail", "click", iconSubmitEmail.click, "WAF");
 	WAF.addListener("containerChart", "click", containerChart.click, "WAF");
@@ -1032,4 +1050,4 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	WAF.addListener("dataGridExamples", "onRowDblClick", dataGridExamples.onRowDblClick, "WAF");
 	WAF.addListener("dataGridExamples", "onRowClick", dataGridExamples.onRowClick, "WAF");
 // @endregion
-};// @endlock
+};
