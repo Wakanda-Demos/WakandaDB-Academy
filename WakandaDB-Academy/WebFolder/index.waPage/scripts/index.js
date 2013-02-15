@@ -30,7 +30,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	var imageModelBig = {};	// @image
 	var containerModelBig = {};	// @container
 	var imageModelSmall = {};	// @image
-	var iconLearnMore = {};	// @icon
+	var iconDownloadButton = {};	// @icon
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
 	var dataGridExamples = {};	// @dataGrid
@@ -44,7 +44,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/,
         QUERY_STRING = window.location.search,
         KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html' + QUERY_STRING,
-        LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand' + QUERY_STRING,
+        DOWNLOAD_URL = 'http://go.4d.com/WakandaDB-Academy.html' + QUERY_STRING,
         POWERED_BY_WAKANDA_URL = 'http://www.wakanda.org/features/server' + QUERY_STRING,
         // sources
         localSources,
@@ -390,6 +390,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsonView.getSession().setMode("ace/mode/json");
     jsonView.setReadOnly(true);
 
+    $('.waf-textField').disable();
     widgets.containerLoading.hide();
 
     setCode(jsCode);
@@ -467,6 +468,13 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	image1.click = function image1_click (event)// @startlock
 	{// @endlock
+		var
+		    widgetContainerChart,
+		    innerContainer;
+
+		widgetContainerChart = widgets.containerChart;
+		innerContainer = widgetContainerChart.widgets.container;
+		debugger;
 		if ($('#containerChart_container').html() != '') {
 			$('#containerChart').css('top', 357).show();
 		} else {
@@ -551,9 +559,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         widgets.containerCenteredPage.hide();
 	};// @lock
 
-	iconLearnMore.click = function iconLearnMore_click (event)// @startlock
+	iconDownloadButton.click = function iconDownloadButton_click (event)// @startlock
 	{// @endlock
-        window.location = LEARN_MORE_URL;
+        window.location = DOWNLOAD_URL;
 	};// @lock
 
 	examplesListEvent.onCollectionChange = function examplesListEvent_onCollectionChange (event)// @startlock
@@ -665,7 +673,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     dataclass = result.getDataClass().getName();
                     source = localSources[dataclass.toLowerCase()];
 
-                    statusText = 'The result is an ' + dataclass + ' Entity Collection. ';
+                    statusText = 'The result is a collection of ' + dataclass + ' Entities. ';
 
                     if (rawResult.__COUNT > rawResult.__SENT) {
                         statusText += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
@@ -1007,7 +1015,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	WAF.addListener("imageModelBig", "click", imageModelBig.click, "WAF");
 	WAF.addListener("containerModelBig", "click", containerModelBig.click, "WAF");
 	WAF.addListener("imageModelSmall", "click", imageModelSmall.click, "WAF");
-	WAF.addListener("iconLearnMore", "click", iconLearnMore.click, "WAF");
+	WAF.addListener("iconDownloadButton", "click", iconDownloadButton.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
 	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
 	WAF.addListener("buttonRunSSJS", "click", buttonRunSSJS.click, "WAF");
