@@ -220,124 +220,110 @@ WAF.onAfterInit = function onAfterInit() {
 
     examplesList = [
         {
-            id: 0,
             code: "<Custom Code>",
             tip: "Write your own custom code"
         },
         {
-            id: 1,
             code: "ds.Employee.count()", 
             tip: "Get the number of entities related to a dataclass"
         },
         {
-            id: 2,
             code: "ds.Employee.all()", 
             tip: "Get all the entities related to a dataclass"
         },
         {
-            id: 3,
             code: "ds.Employee.query('age < :1', 25)", 
             tip: "Get the employees who are younger than 25 using a parametered query"
         },
         {
             code: "ds.Employee.query('age < :1', 25).length", 
             tip: "Get the number of employees who are younger than 25"
-        },/*
+        },
         {
             code: "ds.Employee.age", 
             tip: "Get the description of the age employee attribute"
-        },*/
+        },
         {
-            id: 4,
-            code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')", 
+            code: "handler = guidedModel.Employee.age.onGet;\n"
+                + "// retrieved the age calculated attribute getter\n"
+                + "// split its source as array to make it readable\n"
+                + "handler.toString().split('\\r\\n')", 
             tip: "Get the code of for the age attribute getter"
         },
         {
-            id: 5,
             code: "ds.Employee.all()[0]",
             tip: "Get the first entity in a collection using the array index notation"
         },
         {
-            id: 6,
             code: "ds.Employee.all().first()",
             tip: "Get the first entity in a collection using the first() method"
         },
         {
-            id: 7,
             code: "ds.Employee.first()",
             tip: "Get the first entity from a dataclass stored in the datastore using the first() method"
         },
         {
-            id: 8,
             code: "ds.Employee.first().next()",
             tip: "Get the next entity from an entity while managing a list of entities"
         },
         {
-            id: 9,
             code: "ds.Employee(5)",
             tip: "Get an entity from its ID"
         },
         {
-            id: 10,
             code: "ds.Employee(5).company",
             tip: "Get a company's related entity from an employee."
         },
         {
-            id: 11,
             code: "ds.Employee(5).company.country",
             tip: "Get a country's second level related entity from an employee."
         },
         {
-            id: 12,
             code: "ds.Employee(5).company.countryName",
             tip: "Get the name of a company's country using the countryName alias attribute"
         },
         {
-            id: 13,
             code: "ds.Employee(5).company.country.companies.length",
             tip: "Get the number of companies in the country of this employee's Company."
         },
         {
-            id: 14,
             code: "ds.Employee(5).manager",
             tip: "Easily get an employee's manager"
         },
         {
-            id: 15,
             code: "ds.Employee(5).company.manager",
             tip: "Easily get the manager of an employee's company"
         },
         {
-            id: 16,
             code: "ds.Company.query('country.name == :1', 'Japan')",
             tip: "Retrieve companies whose country name is Japan"
         },
         {
-            id: 17,
             code: "ds.Company.query('country.name == :1', 'Japan').manager",
             tip: "Retrieving managers of Japanese companies"
         },
         {
-            id: 18,
             code: "ds.Company(3).employees",
             tip: "Get all the employees of a specified company"
         },
         {
-            id: 19,
             code: "ds.Company.query('countryName == USA').compute('revenues')",
             tip: "Get basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
         },
         {
-            id: 20,
             code: "ds.Country.find('name == Brazil')",
             tip: "Find a country entity from its name."
         },
         {
-            id: 21,
             code: "ds.Country.find('name == Brazil').companies",
             tip: "Find all the companies in Brazil"
         }
     ];
+    examplesList.forEach(
+        function generateExampleListIds(example, index) {
+            example.id = index;
+        }
+    );
     
     // sources
     localSources = WAF.sources;
