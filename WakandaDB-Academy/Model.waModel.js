@@ -3,7 +3,6 @@
 /*global Worker, wait, exitWait*/
 
 const
-    PRODUCTION_MODE = true,
     TIMEOUT = 6000, // 6 sec
     TIMEOUT_DEV = 60, // 1 hour
     REMOTE_LOG_MODE = true,
@@ -201,11 +200,11 @@ guidedModel =// @startlock
                     sandboxWorker.postMessage({
                         jsCode: ssjs,
                         workerID: workerID,
-                        timeout: PRODUCTION_MODE ? (TIMEOUT - 100) : TIMEOUT_DEV,
+                        timeout: storage.PRODUCTION_MODE ? (TIMEOUT - 100) : TIMEOUT_DEV,
                         allowedProperties: ALLOWED_PROPERTIES
                     });
 
-                    if (PRODUCTION_MODE) {
+                    if (storage.PRODUCTION_MODE) {
                    	    wait(TIMEOUT);
                     } else {
                         wait();

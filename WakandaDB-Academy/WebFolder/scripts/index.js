@@ -16,7 +16,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
-	var image1 = {};	// @image
+	var richTextStats = {};	// @richText
+	var iconSubmitEmail = {};	// @icon
 	var containerChart = {};	// @component
 	var documentEvent = {};	// @document
 	var iconTellUsWhatYouThink = {};	// @icon
@@ -30,7 +31,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	var imageModelBig = {};	// @image
 	var containerModelBig = {};	// @container
 	var imageModelSmall = {};	// @image
-	var iconLearnMore = {};	// @icon
+	var iconDownloadButton = {};	// @icon
 	var examplesListEvent = {};	// @dataSource
 	var buttonRunSSJS = {};	// @image
 	var dataGridExamples = {};	// @dataGrid
@@ -44,7 +45,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         ISO_DATE_REGEXP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/,
         QUERY_STRING = window.location.search,
         KEEP_IN_TOUCH_URL = 'http://go.4d.com/wak-app-lead-form.html' + QUERY_STRING,
-        LEARN_MORE_URL = 'http://www.wakanda.org/blog/wakanda-server-coding-hand' + QUERY_STRING,
+        DOWNLOAD_URL = 'http://go.4d.com/WakandaDB-Academy.html' + QUERY_STRING,
         POWERED_BY_WAKANDA_URL = 'http://www.wakanda.org/features/server' + QUERY_STRING,
         // sources
         localSources,
@@ -244,22 +245,22 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {
             id: 4,
             code: "handler = guidedModel.Employee.age.onGet;\n// retrieved the age calculated attribute getter\n// split its source as array to make it readable\nhandler.toString().split('\\r\\n')", 
-            tip: "Get the code of the age attribute getter"
+            tip: "Get the code of for the age attribute getter"
         },
         {
             id: 5,
             code: "ds.Employee.all()[0]",
-            tip: "Get the first entity of a collection using the array index notation"
+            tip: "Get the first entity in a collection using the array index notation"
         },
         {
             id: 6,
             code: "ds.Employee.all().first()",
-            tip: "Get the first entity of a collection using the first() method"
+            tip: "Get the first entity in a collection using the first() method"
         },
         {
             id: 7,
             code: "ds.Employee.first()",
-            tip: "Get the first entity of a dataclass stored in the datastore using the first() method"
+            tip: "Get the first entity from a dataclass stored in the datastore using the first() method"
         },
         {
             id: 8,
@@ -274,37 +275,37 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {
             id: 10,
             code: "ds.Employee(5).company",
-            tip: "Get a company related entitity from an employee."
+            tip: "Get a company's related entity from an employee."
         },
         {
             id: 11,
             code: "ds.Employee(5).company.country",
-            tip: "Get a country second level related entitity from an employee."
+            tip: "Get a country's second level related entity from an employee."
         },
         {
             id: 12,
             code: "ds.Employee(5).company.countryName",
-            tip: "Get the name of a company country using the countryName alias attribute"
+            tip: "Get the name of a company's country using the countryName alias attribute"
         },
         {
             id: 13,
             code: "ds.Employee(5).company.country.companies.length",
-            tip: "Get the number of companies in the country of this employee Company."
+            tip: "Get the number of companies in the country of this employee's Company."
         },
         {
             id: 14,
             code: "ds.Employee(5).manager",
-            tip: "Getting easily the manager of an employee"
+            tip: "Easily get an employee's manager"
         },
         {
             id: 15,
             code: "ds.Employee(5).company.manager",
-            tip: "Getting easily the manager of an employee company"
+            tip: "Easily get the manager of an employee's company"
         },
         {
             id: 16,
             code: "ds.Company.query('country.name == :1', 'Japan')",
-            tip: "Retrieving companies which country name is Japan"
+            tip: "Retrieve companies whose country name is Japan"
         },
         {
             id: 17,
@@ -314,12 +315,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         {
             id: 18,
             code: "ds.Company(3).employees",
-            tip: "Getting all the employees of a specified company"
+            tip: "Get all the employees of a specified company"
         },
         {
             id: 19,
             code: "ds.Company.query('countryName == USA').compute('revenues')",
-            tip: "Gets basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
+            tip: "Get basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
         },
         {
             id: 20,
@@ -372,7 +373,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsonView = ace.edit(widgets.containerJsonView.id);
 
     // URLs initialisation
-    $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL);
     $('#imagePoweredByWakanda > img').attr('src', POWERED_BY_WAKANDA_URL);
 
     // Editor initialisation
@@ -389,6 +389,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsonView.setTheme("ace/theme/github");
     jsonView.getSession().setMode("ace/mode/json");
     jsonView.setReadOnly(true);
+
+    $('.waf-textField').attr('readonly', 'true');
+    $('#textFieldEmail').removeAttr('readonly');
 
     widgets.containerLoading.hide();
 
@@ -465,19 +468,35 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 // eventHandlers// @lock
 
-	image1.click = function image1_click (event)// @startlock
+	richTextStats.click = function richTextStats_click (event)// @startlock
 	{// @endlock
-//		if ($('#containerChart_container').html() != '') {
-			$('#containerChart').css('top', 357).show();
-//		} else {
-//			$.gritter.add({
-//				title: 'The server stats are not available right now',
-//				text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
-//				image: '/images/info.png',
-//				sticky: false,
-//				time: '10000'
-//			});
-//		}
+		var 
+		    widgetcontainerChart;
+
+		widgetcontainerChart = widgets.containerChart;
+
+		if (widgetcontainerChart.$domNode.html() !== '') {
+    		widgetcontainerChart.$domNode.css('top', 327);
+    		widgetcontainerChart.widgets.container.show();
+        } else {
+        	$.gritter.add({
+        		title: 'The server stats are not available right now',
+        		text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
+        		image: '/images/info.png',
+        		sticky: false,
+        		time: '10000'
+        	});
+        }
+		
+		
+	};// @lock
+
+	iconSubmitEmail.click = function iconSubmitEmail_click (event)// @startlock
+	{// @endlock
+		newsletter.submitEmail(widgets.textFieldEmail.getValue());
+		widgets.textFieldEmail.hide();
+		widgets.iconSubmitEmail.hide();
+		widgets.richTextWelcome.show();
 	};// @lock
 
 	containerChart.click = function containerChart_click (event)// @startlock
@@ -551,9 +570,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
         widgets.containerCenteredPage.hide();
 	};// @lock
 
-	iconLearnMore.click = function iconLearnMore_click (event)// @startlock
+	iconDownloadButton.click = function iconDownloadButton_click (event)// @startlock
 	{// @endlock
-        window.location = LEARN_MORE_URL;
+        window.location = DOWNLOAD_URL;
 	};// @lock
 
 	examplesListEvent.onCollectionChange = function examplesListEvent_onCollectionChange (event)// @startlock
@@ -612,7 +631,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
                 //debugger;
                 clearInterval(timer);
-                statusText = 'Analizing the server result...';
+                statusText = 'Analyzing the server result...';
                 sourceStatusText.sync();
 
                 isISODate = null;
@@ -665,12 +684,12 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     dataclass = result.getDataClass().getName();
                     source = localSources[dataclass.toLowerCase()];
 
-                    statusText = 'The result is an ' + dataclass + ' Entity Collection. ';
+                    statusText = 'The result is a collection of ' + dataclass + ' Entities. ';
 
                     if (rawResult.__COUNT > rawResult.__SENT) {
-                        statusText += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
+                        statusText += "The first " + rawResult.__SENT + " of the " + rawResult.__COUNT + " entities are shown.";
                     } else {
-                        statusText += "\nShowing the " + rawResult.__COUNT + " found entities.";
+                        statusText += "\nAll the " + rawResult.__COUNT + " entities are shown.";
                     }
 
                     collection = ds[dataclass].newCollection();
@@ -692,7 +711,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     dataclass = result.getDataClass().getName();
                     source = localSources[dataclass.toLowerCase()];
 
-                    statusText = 'The result is an ' + dataclass + ' Entity.';
+                    statusText = 'The result is a(n) ' + dataclass + ' entity.';
                     
                     collection = ds[dataclass].newCollection();
                     collection.add(response.result);
@@ -992,7 +1011,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
-	WAF.addListener("image1", "click", image1.click, "WAF");
+	WAF.addListener("richTextStats", "click", richTextStats.click, "WAF");
+	WAF.addListener("iconSubmitEmail", "click", iconSubmitEmail.click, "WAF");
 	WAF.addListener("containerChart", "click", containerChart.click, "WAF");
 	WAF.addListener("examplesList", "onCollectionChange", examplesListEvent.onCollectionChange, "WAF");
 	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
@@ -1007,7 +1027,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	WAF.addListener("imageModelBig", "click", imageModelBig.click, "WAF");
 	WAF.addListener("containerModelBig", "click", containerModelBig.click, "WAF");
 	WAF.addListener("imageModelSmall", "click", imageModelSmall.click, "WAF");
-	WAF.addListener("iconLearnMore", "click", iconLearnMore.click, "WAF");
+	WAF.addListener("iconDownloadButton", "click", iconDownloadButton.click, "WAF");
 	WAF.addListener("dataGridExamples", "onRowDraw", dataGridExamples.onRowDraw, "WAF");
 	WAF.addListener("examplesList", "onCurrentElementChange", examplesListEvent.onCurrentElementChange, "WAF");
 	WAF.addListener("buttonRunSSJS", "click", buttonRunSSJS.click, "WAF");

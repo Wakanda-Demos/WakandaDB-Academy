@@ -16,7 +16,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     "use strict";
 
 // @region namespaceDeclaration// @startlock
-	var image1 = {};	// @image
+	var richTextStats = {};	// @richText
+	var iconSubmitEmail = {};	// @icon
 	var containerChart = {};	// @component
 	var documentEvent = {};	// @document
 	var iconTellUsWhatYouThink = {};	// @icon
@@ -372,7 +373,6 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsonView = ace.edit(widgets.containerJsonView.id);
 
     // URLs initialisation
-    $('#containerDialogKeepInTouch > iframe').attr('src', KEEP_IN_TOUCH_URL);
     $('#imagePoweredByWakanda > img').attr('src', POWERED_BY_WAKANDA_URL);
 
     // Editor initialisation
@@ -390,7 +390,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
     jsonView.getSession().setMode("ace/mode/json");
     jsonView.setReadOnly(true);
 
-    $('.waf-textField').disable();
+    $('.waf-textField').attr('readonly', 'true');
+    $('#textFieldEmail').removeAttr('readonly');
+
     widgets.containerLoading.hide();
 
     setCode(jsCode);
@@ -466,32 +468,39 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 // eventHandlers// @lock
 
-	image1.click = function image1_click (event)// @startlock
+	richTextStats.click = function richTextStats_click (event)// @startlock
 	{// @endlock
-		var
-		    widgetContainerChart,
-		    innerContainer;
+		var 
+		    widgetcontainerChart;
 
-		widgetContainerChart = widgets.containerChart;
-		innerContainer = widgetContainerChart.widgets.container;
-		debugger;
-		if ($('#containerChart_container').html() != '') {
-			$('#containerChart').css('top', 357).show();
-		} else {
-			$.gritter.add({
-				title: 'The server stats are not available right now',
-				text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
-				image: '/images/info.png',
-				sticky: false,
-				time: '10000'
-			});
-		}
+		widgetcontainerChart = widgets.containerChart;
+
+		if (widgetcontainerChart.$domNode.html() !== '') {
+    		widgetcontainerChart.$domNode.css('top', 327);
+    		widgetcontainerChart.widgets.container.show();
+        } else {
+        	$.gritter.add({
+        		title: 'The server stats are not available right now',
+        		text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
+        		image: '/images/info.png',
+        		sticky: false,
+        		time: '10000'
+        	});
+        }
+		
+	};// @lock
+
+	iconSubmitEmail.click = function iconSubmitEmail_click (event)// @startlock
+	{// @endlock
+		newsletter.submitEmail(widgets.textFieldEmail.getValue());
+		widgets.textFieldEmail.hide();
+		widgets.iconSubmitEmail.hide();
+		widgets.richTextWelcome.show();
 	};// @lock
 
 	containerChart.click = function containerChart_click (event)// @startlock
 	{// @endlock
-		$('#containerChart').hide();
-
+		widgets.containerChart.hide();
 	};// @startlock
 	documentEvent.onLoad = function documentEvent_onLoad (event)
 	{// @endlock
@@ -620,7 +629,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
                 //debugger;
                 clearInterval(timer);
-                statusText = 'Analizing the server result...';
+                statusText = 'Analyzing the server result...';
                 sourceStatusText.sync();
 
                 isISODate = null;
@@ -676,9 +685,9 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     statusText = 'The result is a collection of ' + dataclass + ' Entities. ';
 
                     if (rawResult.__COUNT > rawResult.__SENT) {
-                        statusText += "Showing " + rawResult.__SENT + " first entities from the " + rawResult.__COUNT + " found.";
+                        statusText += "The first " + rawResult.__SENT + " of the " + rawResult.__COUNT + " entities are shown.";
                     } else {
-                        statusText += "\nShowing the " + rawResult.__COUNT + " found entities.";
+                        statusText += "\nAll the " + rawResult.__COUNT + " entities are shown.";
                     }
 
                     collection = ds[dataclass].newCollection();
@@ -700,7 +709,7 @@ WAF.onAfterInit = function onAfterInit() {// @lock
                     dataclass = result.getDataClass().getName();
                     source = localSources[dataclass.toLowerCase()];
 
-                    statusText = 'The result is an ' + dataclass + ' Entity.';
+                    statusText = 'The result is a(n) ' + dataclass + ' entity.';
                     
                     collection = ds[dataclass].newCollection();
                     collection.add(response.result);
@@ -1000,7 +1009,8 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 	};// @lock
 
 // @region eventManager// @startlock
-	WAF.addListener("image1", "click", image1.click, "WAF");
+	WAF.addListener("richTextStats", "click", richTextStats.click, "WAF");
+	WAF.addListener("iconSubmitEmail", "click", iconSubmitEmail.click, "WAF");
 	WAF.addListener("containerChart", "click", containerChart.click, "WAF");
 	WAF.addListener("examplesList", "onCollectionChange", examplesListEvent.onCollectionChange, "WAF");
 	WAF.addListener("document", "onLoad", documentEvent.onLoad, "WAF");
