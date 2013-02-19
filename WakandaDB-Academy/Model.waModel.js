@@ -167,7 +167,7 @@ guidedModel =// @startlock
                     waiting = false;
                     errorObject =  errorMessage.data || errorMessage;
 
-                    stats.error = errorObject;
+                    stats.error = JSON.stringify(errorObject);
                     stats.end = Date.now();
                     logRequest();
                     //throw errorObject;
