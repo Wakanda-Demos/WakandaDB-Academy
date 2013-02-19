@@ -92,9 +92,11 @@ guidedModel =// @startlock
 
                 function logRequest() {
                     var
+                        privateSettingsFile,
                         sharedWorker;
 
-	                if (!REMOTE_LOG_MODE) {
+                    privateSettingsFile = File(getFolder().path + 'PRIVATE-SETTING-nogit.js');
+	                if (!REMOTE_LOG_MODE || !privateSettingsFile.exists) {
 	                	return;
 	                }
 	                client = sessionStorage.client;
