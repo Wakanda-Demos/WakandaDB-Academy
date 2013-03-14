@@ -244,7 +244,7 @@ WAF.onAfterInit = function onAfterInit() {
             tip: "Get the description of the age employee attribute"
         },
         {
-            code: "handler = guidedModel.Employee.age.onGet;\n"
+            code: "handler = model.Employee.age.onGet;\n"
                 + "// retrieved the age calculated attribute getter\n"
                 + "// split its source as array to make it readable\n"
                 + "handler.toString().split('\\r\\n')", 
