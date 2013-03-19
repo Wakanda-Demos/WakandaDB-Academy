@@ -199,6 +199,10 @@ WAF.onAfterInit = function onAfterInit() {
     	WAF.widgets.imageAmazonPartner.hide();
     }
 
+    if (navigator.onLine !== false) {
+    	WAF.widgets.componentSocialShareButtons.loadComponent();
+    }
+
     // First proposed Server-Side JavaScript Code
     jsCode = '// Discover WakandaDB with the proposed examples\n';
     jsCode += '\n';
