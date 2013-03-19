@@ -202,7 +202,10 @@ The "ds" global variable is how Wakanda refers to its datastore.</div>
             document.write(unescape("%3Cscript src='" + document.location.protocol + "//munchkin.marketo.net/munchkin.js' type='text/javascript'%3E%3C/script%3E"));
         </script>
         <script>
-            Munchkin.init('531-MRT-468');
+            var Munchkin;
+            if (Munchkin) {
+                Munchkin.init('531-MRT-468');
+            }
         </script>
 		<script type="text/javascript" src="/waLib/WAF/Loader.js"></script>
 	</body>
