@@ -12,21 +12,23 @@ The default *'admin'* user has for password *'admin'*
 
 **You must personalize it before putting a version in production**
 
-###2. Fake data###
-The project include a fakeData generator module
-A tool script can be used to generate the amount of fake employees you want.
+###2. Launch the project###
 
+The main Web page will provide you a short presentation followed by a Server-Side JavaScript console to play with.
+
+Some code examples are proposed to discover the API of the WakandaDB NoSQL engine.
+
+###3. Fake data###
+The project include a fakeData generator module.
+A tool script can be used to generate the amount of fake employees you want. **It is called by default on startup of the project by the "initApp" shared worker and creates approximatively 20,000 employees if no data exist in the database**.
+
+To create 1 million, more or less fake data you can:
 
 1. Goto the 'Tools' folder of the *'WakandaDB-Academy'* project
 2. Open *'createFakeData.js'*
 3. Set the *'COUNT_EMPLOYEES_TO_CREATE'* value
 4. Run the script
 
-###3. Launch the project###
-
-The main Web page will provide you a short presentation followed by a Server-Side JavaScript console to play with.
-
-Some code examples are proposed to discover the API of the WakandaDB NoSQL engine.
 
 
 ## License (MIT License) ##
