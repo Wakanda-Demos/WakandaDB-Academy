@@ -1,4 +1,4 @@
-﻿var toto;
+﻿/*global $, Flotr*/
 
 (function Component (id) {// @lock
 
@@ -17,60 +17,91 @@ function constructor (id) {
 	// @endregion// @endlock
 
 	// eventHandlers// @lock
-		
-		$.ajax({
-		  url: "/getRequestCount",
-		  success: function ( d1 ) {
-
-			var graph;
-			d1 = JSON.parse(d1)
-
-			var max = 0;
-			for (var i=0; i<d1.length ; i++){
-				d1[i][0] = new Date(d1[i][0]);
-				if (parseInt(d1[i][1]) > max) max = parseInt(d1[i][1])+10;
-			}
-
-			  graph = Flotr.draw(document.getElementById("containerChart_container"), [ 
-			      { data : d1, label : 'Requests Count', lines : { show : true }, points : { show : true } }, 
-			    ], {
-			      xaxis : {
-			      	mode			: 'time',
-			      	timeFormat		: '%d/%m %H:%M',
-			      	noTicks			: 20
-			      },
-			      yaxis : {
-			        max : max
-			      },
-			      grid : {
-			        verticalLines : false,
-			        backgroundColor : {
-			          colors : [[0,'#fff'], [1,'#ccc']],
-			          start : 'top',
-			          end : 'bottom'
-			        }
-			      },
-			      legend : {
-			        position : 'nw'
-			      },
-			      mouse : {
-			        track : true,
-			        relative : true
-			      },			      
-			      title : 'Number of requests sent to the sever',
-			      subtitle : ''
-			  });
-		  },
-		  error: function(error) {  			  	
-		  }
-		});	
-	
-
 
 	// @region eventManager// @startlock
 	// @endregion// @endlock
 
 	};// @lock
+
+    this.loadStats = function chartLoadStats(callback) {
+        $.ajax({
+            url: "/getRequestCount",
+
+            error: function onRequestCountFailed(error) {
+                console.warn('request count unvailable', error);
+                if (typeof callback === 'function') {
+                    callback(false);
+                }
+            },
+
+            success: function onRequestCountLoaded(data) {
+
+                var
+                    graph,
+                    yAxisMax;
+
+                data = JSON.parse(data);
+                yAxisMax = data.reduce(
+                    function initDataDatesAndGetMax(max, current) {
+                        var
+                            value;
+
+                        current[0] = new Date(current[0]);
+                        value = parseInt(current[1], 10);
+                        if (value > max) {
+                            max = value + 10;
+                        }
+                        return max;
+                    },
+                    0
+                );
+
+                graph = Flotr.draw(
+                    document.getElementById($comp.widgets.container.id),
+                    [
+                        {
+                            data : data,
+                            label : 'Requests Count',
+                            lines : { show : true },
+                            points : { show : true }
+                        }
+                    ],
+                    {
+                        xaxis: {
+                              mode: 'time',
+                              timeFormat: '%d/%m %H:%M',
+                              noTicks: 20
+                        },
+                        yaxis: {
+                            max: yAxisMax
+                        },
+                        grid: {
+                            verticalLines: false,
+                            backgroundColor: {
+                                colors: [[0, '#fff'], [1, '#ccc']],
+                                start: 'top',
+                                end: 'bottom'
+                            }
+                        },
+                        legend: {
+                            position : 'nw'
+                        },
+                        mouse: {
+                            track: true,
+                            relative: true
+                        },     
+                        title: 'Number of requests sent to the sever',
+                        subtitle: ''
+                    }
+                );
+                
+                if (typeof callback === 'function') {
+                    callback(true);
+                }
+
+            }
+        });    
+    };
 
 
 }// @startlock

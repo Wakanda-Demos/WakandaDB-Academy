@@ -473,10 +473,24 @@ WAF.onAfterInit = function onAfterInit() {
 
 		widgetcontainerChart = widgets.containerChart;
 
-       if ($('#containerChart_container').html() != '') {
-       		$('#containerChart').css('top', 327);
-    		widgetcontainerChart.widgets.container.show();
-    		widgetcontainerChart.show();
+        if ($('#containerChart_container').html() != '') {
+            widgetcontainerChart.loadStats(
+                function loadStatsCallback(ok) {
+           		    if (ok) {
+           		        $('#containerChart').css('top', 327);
+                		widgetcontainerChart.widgets.container.show();
+    		            widgetcontainerChart.show();
+    		        } else {
+                    	$.gritter.add({
+                    		title: 'Statistics are unvailable',
+                    		text: 'AWS module or Internet connection might be missing',
+                    		image: '/images/info.png',
+                    		sticky: false,
+                    		time: '10000'
+                    	});
+    		        }
+    		    }
+    		);
         } else {
         	$.gritter.add({
         		title: 'The server stats are not available right now',
