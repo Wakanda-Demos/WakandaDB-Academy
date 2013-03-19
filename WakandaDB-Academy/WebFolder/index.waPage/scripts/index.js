@@ -242,7 +242,7 @@ WAF.onAfterInit = function onAfterInit() {
         {
             code: "ds.Employee.query('age < :1', 25).length", 
             tip: "Get the number of employees who are younger than 25"
-        },
+        },/*
         {
             code: "ds.Employee.age", 
             tip: "Get the description of the age employee attribute"
@@ -253,7 +253,7 @@ WAF.onAfterInit = function onAfterInit() {
                 + "// split its source as array to make it readable\n"
                 + "handler.toString().split('\\r\\n')", 
             tip: "Get the code of for the age attribute getter"
-        },
+        },*/
         {
             code: "ds.Employee.all()[0]",
             tip: "Get the first entity in a collection using the array index notation"
