@@ -149,7 +149,7 @@ WAF.onAfterInit = function onAfterInit() {
         return result;
     }
     
-    function prepareDateResult(result) {
+    function prepareDateResult(isISODate) {
         statusText = 'The result is a Date object.';
         result = new Date(Date.UTC(+isISODate[1], +isISODate[2] - 1, +isISODate[3], +isISODate[4], +isISODate[5], +isISODate[6]));
         //richTextDateResult.setValue(result.getHours() + ':' + result.getMinutes())
@@ -162,7 +162,7 @@ WAF.onAfterInit = function onAfterInit() {
         isISODate = ISO_DATE_REGEXP.exec(result);
         if (isISODate !== null) {
             // Date
-            result = prepareDateResult(result);
+            result = prepareDateResult(isISODate);
         } else {
             // String
             result = prepareStringResult(result);
