@@ -477,7 +477,7 @@ WAF.onAfterInit = function onAfterInit() {
 
 		widgetcontainerChart = widgets.containerChart;
 
-        if ($('#containerChart_container').html() != '') {
+
             widgetcontainerChart.loadStats(
                 function loadStatsCallback(ok) {
            		    if (ok) {
@@ -495,15 +495,6 @@ WAF.onAfterInit = function onAfterInit() {
     		        }
     		    }
     		);
-        } else {
-        	$.gritter.add({
-        		title: 'The server stats are not available right now',
-        		text: 'Please, come back later to see the amount of requests sent to the server and other stats...',
-        		image: '/images/info.png',
-        		sticky: false,
-        		time: '10000'
-        	});
-        }
 		
 		
 	};
