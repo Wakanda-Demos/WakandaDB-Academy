@@ -1,1 +1,1 @@
-﻿{"name":"chart","html":"chart.html","scripts":["chart.js","/scripts/flotr2.min.js"],"styles":["chart.css"]}
+﻿{"name":"chart","html":"chart.html","scripts":["chart.js","/lib/flotr2.min.js"],"styles":["chart.css"]}
