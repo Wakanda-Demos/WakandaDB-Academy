@@ -457,6 +457,9 @@ function SandboxedAttribute(globalSandbox, sandboxedDataclass, attribute) {
         return null;
     }
 
+    nativeObjects.push(attribute);
+    sandboxedObjects.push(this);
+
     // PROPERTIES
 
     this.name = attribute.name;
@@ -512,8 +515,8 @@ function createSandboxedDataclass(globalSandbox, sandboxedDatastore, dataclass) 
     sandboxedDataClasses[dataclassName] = sandboxedDataclass;
 
     // cache object
-    nativeObjects.push(sandboxedDataclass);
-    sandboxedObjects.push(this);
+    nativeObjects.push(dataclass);
+    sandboxedObjects.push(sandboxedDataclass);
 
     properties = {};
     cachedAttributes = {};
@@ -720,6 +723,9 @@ function SandboxedDatastore(globalSandbox, datastore) {
 
     // PROPERTIES
 
+    nativeObjects.push(datastore);
+    sandboxedObjects.push(this);
+
     properties = {};
 
     Object.keys(datastore.dataClasses).forEach(
@@ -757,12 +763,19 @@ function SandboxedDatastore(globalSandbox, datastore) {
  * @param {WakandaSandbox} globalSandbox
  * @returns SandboxedProcess
  */
-function createSandboxedProcess(globalSandbox) {
-    return {
+function createSandboxedProcess(globalSandbox) {var
+        sbProcess;
+    
+    sbProcess = {
         buildNumber: process.buildNumber,
         version: process.version,
         userDocuments: accessRestricted.bind(globalSandbox, 'Access to the "userDocuments" process property is not allowed')
     };
+
+    nativeObjects.push(process);
+    sandboxedObjects.push(sbProcess);
+
+    return sbProcess;
 }
 
 /**
@@ -773,13 +786,21 @@ function createSandboxedProcess(globalSandbox) {
  * @returns SandboxedOs
  */
 function createSandboxedOs(globalSandbox) {
-    return {
+    var
+        sbOs;
+    
+    sbOs = {
         isLinux: os.isLinux,
         isMac: os.isMac,
         isWindows: os.isWindows,
         networkInterfaces: accessRestricted.bind(globalSandbox, 'Access to "networkInterfaces" os property is not allowed'),
         type: os.type
     };
+
+    nativeObjects.push(os);
+    sandboxedObjects.push(sbOs);
+
+    return sbOs;
 }
 
 
@@ -791,9 +812,17 @@ function createSandboxedOs(globalSandbox) {
  * @returns SandboxedSolution
  */
 function createSandboxedSolution() {
-    return {
+    var
+        sbSolution;
+
+    sbSolution = {
         name: solution.name
     };
+
+    nativeObjects.push(solution);
+    sandboxedObjects.push(sbSolution);
+
+    return sbSolution;
 }
 
 
@@ -805,7 +834,10 @@ function createSandboxedSolution() {
  * @params {Object} allowedProperties
  */
 function WakandaSandbox(allowedProperties) {
-	//debugger;
+    
+    nativeObjects.push(application);
+    sandboxedObjects.push(this);
+
     if (allowedProperties.hasOwnProperty('os')) {
         allowedProperties.os = createSandboxedOs(this);
     }
