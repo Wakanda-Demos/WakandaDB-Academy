@@ -228,6 +228,7 @@ function SandboxedEntity(globalSandbox, sandboxedDataclass, entity) {
 function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
 
     var
+        arraySlice,
         collectionCacheIndex,
         properties,
         index,
@@ -269,6 +270,9 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
     if (!collection || !(typeof collection === "object") || !collection.distinctValues) {
         return null;
     }
+
+    // mostly used to pass arguments as an array
+    arraySlice = Array.prototype.slice;
 
     collectionCacheIndex = nativeObjects.indexOf(collection);
     if (collectionCacheIndex > -1) {
@@ -315,7 +319,7 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
     // METHODS
 
     this.add = function add(toAdd, atTheEnd) {
-        collection.add.apply(collection, Array.prototype.slice.call(arguments));
+        collection.add.apply(collection, arraySlice.call(arguments));
     };
 
     this.and = function and(collection2) {
@@ -323,15 +327,15 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
     };
 
     this.average = function average(attribute, distinct) {
-        return collection.average.apply(collection, Array.prototype.slice.call(arguments));
+        return collection.average.apply(collection, arraySlice.call(arguments));
     };
 
     this.compute = function compute(attribute, distinct) {
-        return collection.compute.apply(collection, Array.prototype.slice.call(arguments));
+        return collection.compute.apply(collection, arraySlice.call(arguments));
     };
 
     this.count = function count(attribute, distinct) {
-        return collection.count.apply(collection, Array.prototype.slice.call(arguments));
+        return collection.count.apply(collection, arraySlice.call(arguments));
     };
 
     if (collection.hasOwnProperty('drop')) {
@@ -339,7 +343,7 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
     }
 
     this.distinctValues = function distinctValues(attribute) {
-        return collection.distinctValues.apply(collection, Array.prototype.slice.call(arguments));
+        return collection.distinctValues.apply(collection, arraySlice.call(arguments));
     };
 
     this.filter = function filter() {
@@ -411,7 +415,7 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
         var
             args;
 
-        args = Array.prototype.slice.call(arguments);
+        args = arraySlice.call(arguments);
         if (args.some(checkJS)) {
             accessRestricted.call(globalSandbox, 'Using the query "allowJavaScript" option is not allowed');
         }
@@ -429,7 +433,7 @@ function SandboxedCollection(globalSandbox, sandboxedDataclass, collection) {
         var
             args;
 
-        args = Array.prototype.slice.call(arguments);
+        args = arraySlice.call(arguments);
 
         return collection.toArray.apply(collection, args);
     };
