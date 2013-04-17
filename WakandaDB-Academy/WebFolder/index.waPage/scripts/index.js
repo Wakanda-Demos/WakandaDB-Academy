@@ -201,6 +201,7 @@ WAF.onAfterInit = function onAfterInit() {
 
     if (navigator.onLine !== false) {
     	WAF.widgets.componentSocialShareButtons.loadComponent();
+    	WAF.widgets.containerChart.loadComponent();
     }
 
     // First proposed Server-Side JavaScript Code
@@ -477,24 +478,23 @@ WAF.onAfterInit = function onAfterInit() {
 
 		widgetcontainerChart = widgets.containerChart;
 
-
-            widgetcontainerChart.loadStats(
-                function loadStatsCallback(ok) {
-           		    if (ok) {
-           		        $('#containerChart').css('top', 327);
-                		widgetcontainerChart.widgets.container.show();
-    		            widgetcontainerChart.show();
-    		        } else {
-                    	$.gritter.add({
-                    		title: 'Statistics are unvailable',
-                    		text: 'AWS module or Internet connection might be missing',
-                    		image: '/images/info.png',
-                    		sticky: false,
-                    		time: '10000'
-                    	});
-    		        }
-    		    }
-    		);
+        widgetcontainerChart.loadStats(
+            function loadStatsCallback(ok) {
+       		    if (ok) {
+       		        $('#containerChart').css('top', 327);
+            		widgetcontainerChart.widgets.container.show();
+		            widgetcontainerChart.show();
+		        } else {
+                	$.gritter.add({
+                		title: 'Statistics are unvailable',
+                		text: 'AWS module or Internet connection might be missing',
+                		image: '/images/info.png',
+                		sticky: false,
+                		time: '10000'
+                	});
+		        }
+		    }
+		);
 		
 		
 	};
