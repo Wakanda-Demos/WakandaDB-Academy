@@ -50,8 +50,6 @@ WAF.onAfterInit = function onAfterInit() {
         // sources
         localSources,
         sourceStatusText,
-        sourceCountryLocation,
-        sourceGoogleMapCountry,
         // widgets
         widgets,
         tabViewResults,
@@ -63,7 +61,6 @@ WAF.onAfterInit = function onAfterInit() {
         richTextScalarResult,
         errorDivServerException,
         calendarDateResult,
-        googleMapCountry,
         // ACE objects
         ssjsEditor,
         jsonView,
@@ -335,9 +332,6 @@ WAF.onAfterInit = function onAfterInit() {
     // status
     sourceStatusText = localSources.statusText;
     sourceStatusText.sync();
-    // country location
-    sourceCountryLocation = localSources.countryLocation;
-    sourceCountryLocation.sync();
     // examples
     localSources.examplesList.sync();
 
@@ -724,14 +718,6 @@ WAF.onAfterInit = function onAfterInit() {
                     collection = ds[dataclass].newCollection();
                     collection.add(response.result);
                     source.setEntityCollection(collection);
-
-                    if (dataclass === 'Country') {
-                        countryLocation = result.name.getValue();
-                        sourceCountryLocation.sync();
-                    } else if (dataclass === 'Company') {
-                        countryLocation = result.countryName.getValue();
-                        sourceCountryLocation.sync();
-                    }
 
                     currentGraphicView = widgets['container' + dataclass];
                     currentGraphicView.show();
