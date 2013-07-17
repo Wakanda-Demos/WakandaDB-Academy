@@ -464,15 +464,13 @@ WAF.onAfterInit = function onAfterInit() {
     }
 
 // eventHandlers
-
-	richTextStats.click = function richTextStats_click (event)
-	{
+	function loadStats() {
 		var 
 		    widgetcontainerChart;
 
 		widgetcontainerChart = widgets.containerChart;
-
-        widgetcontainerChart.loadStats(
+		
+		widgetcontainerChart.loadStats(
             function loadStatsCallback(ok) {
        		    if (ok) {
        		        $('#containerChart').css('top', 327);
@@ -480,7 +478,7 @@ WAF.onAfterInit = function onAfterInit() {
 		            widgetcontainerChart.show();
 		        } else {
                 	$.gritter.add({
-                		title: 'Statistics are unvailable',
+                		title: 'Statistics are unavailable',
                 		text: 'AWS module or Internet connection might be missing',
                 		image: '/images/info.png',
                 		sticky: false,
@@ -489,6 +487,20 @@ WAF.onAfterInit = function onAfterInit() {
 		        }
 		    }
 		);
+	}
+
+	richTextStats.click = function richTextStats_click (event)
+	{
+		var 
+		    widgetcontainerChart;
+
+		widgetcontainerChart = widgets.containerChart;
+
+        if (widgetcontainerChart.loadStats) {
+        	loadStats();
+        } else {
+        	widgetcontainerChart.loadComponent({onSuccess: loadStats});
+        }
 		
 		
 	};
