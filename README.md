@@ -2,8 +2,7 @@
 
 A Wakanda Server learning platform with server-side JavaScript execution sandbox
 
-**This WAK6 branch is the ongoing version to replace the WAK5 version
-in production on http://play.wakanda.org it has been updated to run with Wakanda 6**
+**This WAK6 branch is the ongoing version run with Wakanda 6**
 
 ## Getting Started ##
 
