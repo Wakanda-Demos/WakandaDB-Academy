@@ -3,10 +3,12 @@ var
 
     // CONSTANTS
     C = Object.create(null, {
+
         TIMEOUT: {value: 6000, writable: false}, // 6 sec
         TIMEOUT_DEV: {value: 60, writable: false},// 1 hour
         REMOTE_LOG_MODE: {value: true, writable: false},
         SANDBOXED_MODE: {value: true, writable: false}
+
     }),
 
     // variables

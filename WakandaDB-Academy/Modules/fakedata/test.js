@@ -1,1 +1,7 @@
-//exports.foo = 'bar';generator = require("fakedata/generator");generator;
+
+//exports.foo = 'bar';
+
+
+generator = require("fakedata/generator");
+
+generator;
