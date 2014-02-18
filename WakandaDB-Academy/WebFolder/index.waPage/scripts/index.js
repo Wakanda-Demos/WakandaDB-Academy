@@ -11,6 +11,9 @@ var
     jsCode,
     examplesList;
 
+// allow cross-origin resource sharing between subdomains
+domain = location.hostname.split('.').slice(-2).join('.');
+
 WAF.onAfterInit = function onAfterInit() {
 
     "use strict";
@@ -175,7 +178,7 @@ WAF.onAfterInit = function onAfterInit() {
     function selectTab(index) {
         tabViewResults.selectTab(index);
     }
-    
+
     function getEditorSatus(editor) {
     	return {
     	    cursor: editor.getCursorPosition(),
@@ -223,28 +226,28 @@ WAF.onAfterInit = function onAfterInit() {
     examplesList = [
         {
             code: "<Custom Code>",
-            tip: "Write your own custom code"
+            tip: "Write your own custom code."
         },
         {
             code: "ds.Employee.count()", 
-            tip: "Get the number of entities related to a dataclass"
+            tip: "Get the number of entities related to a dataclass."
         },
         {
             code: "ds.Employee.all()", 
-            tip: "Get all the entities related to a dataclass"
+            tip: "Get all the entities related to a dataclass."
         },
         {
             code: "ds.Employee.query('age < :1', 25)", 
-            tip: "Get the employees who are younger than 25 using a parametered query"
+            tip: "Get the employees who are younger than 25 using a parametered query."
         },
         {
             code: "ds.Employee.query('age < :1', 25).length", 
-            tip: "Get the number of employees who are younger than 25"
-        },/*
+            tip: "Get the number of employees who are younger than 25."
+        },
         {
             code: "ds.Employee.age", 
-            tip: "Get the description of the age employee attribute"
-        },
+            tip: "Get the description of the age employee attribute."
+        },/*
         {
             code: "handler = model.Employee.age.onGet;\n"
                 + "// retrieved the age calculated attribute getter\n"
@@ -254,23 +257,23 @@ WAF.onAfterInit = function onAfterInit() {
         },*/
         {
             code: "ds.Employee.all()[0]",
-            tip: "Get the first entity in a collection using the array index notation"
+            tip: "Get the first entity in a collection using the array index notation."
         },
         {
             code: "ds.Employee.all().first()",
-            tip: "Get the first entity in a collection using the first() method"
+            tip: "Get the first entity in a collection using the first() method."
         },
         {
             code: "ds.Employee.first()",
-            tip: "Get the first entity from a dataclass stored in the datastore using the first() method"
+            tip: "Get the first entity from a dataclass stored in the datastore using the first() method."
         },
         {
             code: "ds.Employee.first().next()",
-            tip: "Get the next entity from an entity while managing a list of entities"
+            tip: "Get the next entity from an entity while managing a list of entities."
         },
         {
             code: "ds.Employee(5)",
-            tip: "Get an entity from its ID"
+            tip: "Get an entity from its ID."
         },
         {
             code: "ds.Employee(5).company",
@@ -282,7 +285,7 @@ WAF.onAfterInit = function onAfterInit() {
         },
         {
             code: "ds.Employee(5).company.countryName",
-            tip: "Get the name of a company's country using the countryName alias attribute"
+            tip: "Get the name of a company's country using the countryName alias attribute."
         },
         {
             code: "ds.Employee(5).company.country.companies.length",
@@ -294,7 +297,7 @@ WAF.onAfterInit = function onAfterInit() {
         },
         {
             code: "ds.Employee(5).company.manager",
-            tip: "Easily get the manager of an employee's company"
+            tip: "Easily get the manager of an employee's company."
         },
         {
             code: "ds.Company.query('country.name == :1', 'Japan')",
@@ -302,15 +305,15 @@ WAF.onAfterInit = function onAfterInit() {
         },
         {
             code: "ds.Company.query('country.name == :1', 'Japan').manager",
-            tip: "Retrieving managers of Japanese companies"
+            tip: "Retrieving managers of Japanese companies."
         },
         {
             code: "ds.Company(3).employees",
-            tip: "Get all the employees of a specified company"
+            tip: "Get all the employees of a specified company."
         },
         {
             code: "ds.Company.query('countryName == USA').compute('revenues')",
-            tip: "Get basic stats (average, max, min, count) about US companies (note the use of the countryName alias attribute)"
+            tip: "Get basic stats (average, max, min, count) about US companies.\nNote the use of the countryName alias attribute."
         },
         {
             code: "ds.Country.find('name == Brazil')",
@@ -318,7 +321,7 @@ WAF.onAfterInit = function onAfterInit() {
         },
         {
             code: "ds.Country.find('name == Brazil').companies",
-            tip: "Find all the companies in Brazil"
+            tip: "Find all the companies in Brazil."
         }
     ];
     examplesList.forEach(
@@ -516,8 +519,8 @@ WAF.onAfterInit = function onAfterInit() {
 	containerChart.click = function containerChart_click (event)
 	{
 		$('#containerChart').hide();
-
 	};
+
 	documentEvent.onLoad = function documentEvent_onLoad (event)
 	{
 
@@ -532,19 +535,19 @@ WAF.onAfterInit = function onAfterInit() {
 
 	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)
 	{
-        setCode('ds.Employee(' + this.source.ID + ')');
+        setCode('ds.Employee(' + sources.employee.ID + ').staff[' + event.data.rowNumber + ']');
         buttonRunSSJS.click();
 	};
 
 	dataGridCountryCompanies.onRowDblClick = function dataGridCountryCompanies_onRowDblClick (event)
 	{
-        setCode('ds.Company(' + this.source.ID + ')');
+        setCode('ds.Country(' + sources.country.ID + ').companies[' + event.data.rowNumber + ']');
         buttonRunSSJS.click();
 	};
 
 	dataGridCompanyEmployees.onRowDblClick = function dataGridCompanyEmployees_onRowDblClick (event)
 	{
-        setCode('ds.Employee(' + this.source.ID + ')');
+        setCode('ds.Company(' + sources.company.ID + ').employees[' + event.data.rowNumber + ']');
         buttonRunSSJS.click();
 	};
 
