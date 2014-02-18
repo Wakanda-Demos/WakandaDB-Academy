@@ -1,4 +1,3 @@
-
 model = {};
 
 model.Employee = require('Model/Employee');

@@ -17,7 +17,9 @@ Country.ID = {
 Country.name = {
     kind: "storage",
     type: "string",
-    indexKind: "cluster"
+    indexKind: "cluster",
+    unique: true,
+    identifying: true
 };
 
 Country.code2Chars = {
