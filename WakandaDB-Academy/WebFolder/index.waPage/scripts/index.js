@@ -243,11 +243,11 @@ WAF.onAfterInit = function onAfterInit() {
         {
             code: "ds.Employee.query('age < :1', 25).length", 
             tip: "Get the number of employees who are younger than 25."
-        },
+        },/*
         {
             code: "ds.Employee.age", 
             tip: "Get the description of the age employee attribute."
-        },/*
+        },
         {
             code: "handler = model.Employee.age.onGet;\n"
                 + "// retrieved the age calculated attribute getter\n"
@@ -362,6 +362,7 @@ WAF.onAfterInit = function onAfterInit() {
     menuItemJsonView.disable(); 
 
     // ace objects accessible by components via WDB_ACADEMY namespace
+    ace.require("ace/ext/language_tools");
     ssjsEditor = ace.edit(widgets.containerSsjsEditor.id);
     jsonView = ace.edit(widgets.containerJsonView.id);
 
@@ -371,6 +372,9 @@ WAF.onAfterInit = function onAfterInit() {
     // Editor initialisation
     ssjsEditor.setTheme("ace/theme/github");
     ssjsEditor.getSession().setMode("ace/mode/javascript");
+    ssjsEditor.setOptions({
+        enableBasicAutocompletion: true
+    });
     ssjsEditor.commands.addCommand({
         name: 'Run',
         bindKey: {win: 'Shift-Return',  mac: 'Shift-Return'},
