@@ -539,19 +539,19 @@ WAF.onAfterInit = function onAfterInit() {
 
 	dataGridEmployeeStaff.onRowDblClick = function dataGridEmployeeStaff_onRowDblClick (event)
 	{
-        setCode('ds.Employee(' + sources.employee.ID + ').staff[' + event.data.rowNumber + ']');
+        setCode('ds.Employee(' + sources.employee.ID + ').staff[' + event.data.row.rowNumber + ']');
         buttonRunSSJS.click();
 	};
 
 	dataGridCountryCompanies.onRowDblClick = function dataGridCountryCompanies_onRowDblClick (event)
 	{
-        setCode('ds.Country(' + sources.country.ID + ').companies[' + event.data.rowNumber + ']');
+        setCode('ds.Country(' + sources.country.ID + ').companies[' + event.data.row.rowNumber + ']');
         buttonRunSSJS.click();
 	};
 
 	dataGridCompanyEmployees.onRowDblClick = function dataGridCompanyEmployees_onRowDblClick (event)
 	{
-        setCode('ds.Company(' + sources.company.ID + ').employees[' + event.data.rowNumber + ']');
+        setCode('ds.Company(' + sources.company.ID + ').employees[' + event.data.row.rowNumber + ']');
         buttonRunSSJS.click();
 	};
 
