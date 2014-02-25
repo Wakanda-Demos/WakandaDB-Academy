@@ -2,7 +2,7 @@
 
 A Wakanda Server learning platform with server-side JavaScript execution sandbox
 
-**This WAK7 branch is the ongoing version to run with Wakanda 7**
+**This WAK7 branch is the version actually running in production on http://play.wakanda.org**
 
 ## Getting Started ##
 
