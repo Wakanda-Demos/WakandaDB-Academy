@@ -1,0 +1,30 @@
+<!doctype html>
+<html ng-app="playCountryAngular">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>angular-wakanda-front</title>
+
+  <script src="angular.js"></script>
+  <script src="angular-wakanda.js"></script>
+  <script src="country.js"></script>
+</head>
+
+<body ng-controller="PlayCountryController">
+
+  <h1>Angular-Wakanda - Country (alpha 1)</h1>
+
+  <hr>
+
+  <section>
+    <h2>Countries</h2>
+    <p>{{countries.length}} found</p>
+    <ul>
+      <li ng-repeat="country in countries">{{country.name}} ({{country.code2Chars}})</li>
+    </ul>
+  </section>
+
+</body>
+
+</html>
