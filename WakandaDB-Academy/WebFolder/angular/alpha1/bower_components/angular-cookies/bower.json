@@ -1,0 +1,17 @@
+{
+  "name": "angular-cookies",
+  "version": "1.2.6",
+  "main": "./angular-cookies.js",
+  "dependencies": {
+    "angular": "1.2.6"
+  },
+  "gitHead": "460db53b7fea906fc55f9a52f544f122995dc4e6",
+  "readme": "# bower-angular-cookies\n\nThis repo is for distribution on `bower`. The source for this module is in the\n[main AngularJS repo](https://github.com/angular/angular.js/tree/master/src/ngCookies).\nPlease file issues and pull requests against that repo.\n\n## Install\n\nInstall with `bower`:\n\n```shell\nbower install angular-cookies\n```\n\nAdd a `<script>` to your `index.html`:\n\n```html\n<script src=\"/bower_components/angular-cookies/angular-cookies.js\"></script>\n```\n\nAnd add `ngCookies` as a dependency for your app:\n\n```javascript\nangular.module('myApp', ['ngCookies']);\n```\n\n## Documentation\n\nDocumentation is available on the\n[AngularJS docs site](http://docs.angularjs.org/api/ngCookies).\n\n## License\n\nThe MIT License\n\nCopyright (c) 2010-2012 Google, Inc. http://angularjs.org\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n",
+  "readmeFilename": "README.md",
+  "_id": "angular-cookies@1.2.6",
+  "description": "This repo is for distribution on `bower`. The source for this module is in the [main AngularJS repo](https://github.com/angular/angular.js/tree/master/src/ngCookies). Please file issues and pull requests against that repo.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/angular/bower-angular-cookies.git"
+  }
+}

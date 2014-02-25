@@ -1,0 +1,55 @@
+<!doctype html>
+<html ng-app="playCountryAngular">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>angular-wakanda</title>
+
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="./bootstrap-3.1.1-dist/css/bootstrap.css">
+</head>
+
+<body ng-controller="PlayCountryController">
+
+  <header class="container">
+    <h1>Angular-Wakanda - Country (alpha 1)</h1>
+  </header>
+
+  <hr>
+
+  <section class="container">
+    <h2>Countries</h2>
+    <p>All</p>
+    <p>{{countries.length}} found</p>
+    <table class="table table-striped table-hover">
+      <tr>
+        <th>Name</th><th>Code</th>
+      </tr>
+      <tbody>
+        <tr ng-repeat="country in countries">
+          <td>{{country.name}}</td>
+          <td>{{country.code2Chars}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+
+  <script src="./scripts/jquery-2.1.0.min.js"></script>
+  <script src="./bootstrap-3.1.1-dist/js/bootstrap.js"></script>
+
+  <script src="./bower_components/angular/angular.js"></script>
+
+  <script src="./scripts/services/angular-wakanda-connector/WAF/extra-init.js"></script>
+  <script src="./scripts/services/angular-wakanda-connector/WAF/Rest.js"></script>
+  <script src="./scripts/services/angular-wakanda-connector/WAF/Data-Provider.js"></script>
+  <script src="./scripts/services/angular-wakanda-connector/WAF/extra-extends.js"></script>
+  <script src="./scripts/services/angular-wakanda-connector/angular-wakanda-connector.js"></script>
+  <script src="country.js"></script>
+</body>
+
+</html>
