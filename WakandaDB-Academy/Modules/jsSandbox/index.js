@@ -52,59 +52,10 @@ Sandbox = (function SandBoxScope() {
     // it prevents from closure scope pollution 
 
     var
-        ECMASCRIPT_PROPERTIES,
-        FILENAME;
+        ECMASCRIPT_PROPERTIES;
 
-
-    function AccessRestrictedError(message, lineNumber) {
-        message = message || 'Access restricted to property or method by the sandbox';
-        Error.call(this, message);
-        this.name = 'AccessRestrictedError';
-        this.message = message;
-        this.fileName = FILENAME;
-        //this.lineNumber = lineNumber;
-    }
-
-    AccessRestrictedError.prototype = Object.create(Error.prototype);
-    AccessRestrictedError.prototype.constructor = AccessRestrictedError;
-
-    function accessRestricted(error) {
-
-        "use strict";
-
-        var
-            exceptionKey,
-            errorObject,
-            errorType,
-            defaultMessage,
-            message;
-
-        exceptionKey = 'Exception:' + this.getSource();
-
-        switch (typeof error) {
-        case 'object':
-            if (error === null) {
-            message = defaultMessage;
-                errorObject = new AccessRestrictedError(defaultMessage);
-            } else {
-                message = error.message;
-                errorObject = error;
-            }
-            break;
-        case 'string':
-            message = (error === '') ? defaultMessage : error;
-            errorObject = new AccessRestrictedError(message);
-            break;
-        default:
-            message = defaultMessage;
-            errorObject = new AccessRestrictedError(defaultMessage);
-        }
-
-        storage.lock();
-        storage.setItem(exceptionKey, JSON.stringify(errorObject));
-        storage.unlock();
-
-        throw errorObject;
+    function accessRestricted() {
+        return new Error('Access Restricted');
     }
 
     // a instance must be created to have "this" not bound to the global object
@@ -114,24 +65,15 @@ Sandbox = (function SandBoxScope() {
 
         var
             filteredProperties,
-            sandbox,
-            chain;
+            sandbox;
 
         function filterProperties(propName) {
             var
                 property,
-                propertyType,
                 propertyDescriptor;
 
             property = globalObject[propName];
-            propertyType = typeof property;
             propertyDescriptor = Object.getOwnPropertyDescriptor(globalObject, propName);
-            if (!propertyDescriptor) {
-                propertyDescriptor = {
-                    value: property,
-                    enumerable: (propertyType !== 'function') && !this.isPrototype
-                };
-            }
 
             if (property === globalObject) {
                 // global object reccursive reference
@@ -149,7 +91,7 @@ Sandbox = (function SandBoxScope() {
                 delete propertyDescriptor.set;
                 if (!allowedProperties.hasOwnProperty(propName) && !ECMASCRIPT_PROPERTIES.hasOwnProperty(propName)) {
                     // unallowed method replaced by an invokable function
-                    propertyDescriptor.value = accessRestricted.bind(sandbox, 'Access to the "' + propName + '" method is not allowed');
+                    propertyDescriptor.value = accessRestricted;
                 } else if (propName[0] !== propName[0].toUpperCase()) {
                     // if not itself a constructor, it might require the original application context
                     propertyDescriptor.value = property.bind(application);
@@ -160,8 +102,8 @@ Sandbox = (function SandBoxScope() {
                     // unallowed properties replaced by one with getter and setter returning "access restricted"
                     delete propertyDescriptor.value;
                     delete propertyDescriptor.writable;
-                    propertyDescriptor.get = accessRestricted.bind(sandbox, 'Access to the "' + propName + '" property is not allowed');
-                    propertyDescriptor.set = accessRestricted.bind(sandbox, 'Access to the "' + propName + '" property is not allowed');
+                    propertyDescriptor.get = accessRestricted;
+                    propertyDescriptor.set = accessRestricted;
                 }
             }
             filteredProperties[propName] = propertyDescriptor;
@@ -170,24 +112,15 @@ Sandbox = (function SandBoxScope() {
 
         // this object that will replace the orriginal global application object
         sandbox = this;
-        //debugger;
 
         if (typeof allowedProperties === "undefined") {
             allowedProperties = {};
         }
 
-        // initialize the property filter
+        // set the property filter
         filteredProperties = {};
-
-        // mask access to all the prototype chain properties and methods
-        chain = globalObject;
-        do {
-        	Object.getOwnPropertyNames(chain).forEach(
-        	    filterProperties, 
-        	    {isPrototype: chain !== globalObject}
-        	);
-            chain = chain.__proto__;
-        } while (chain !== Object.prototype);
+        Object.getOwnPropertyNames(globalObject)
+              .forEach(filterProperties);
 
         // apply the property filter to the global object mask
         Object.defineProperties(
@@ -232,8 +165,6 @@ Sandbox = (function SandBoxScope() {
         'unescape': true
     };
 
-    FILENAME = 'jsSandbox/index';
-
     return Sandbox;
 
 }());
@@ -244,15 +175,24 @@ Object.defineProperty(
     {
         value: function runSandboxed() {
 
-            // no variable are used to prevent from scope pollution
+            // no local variable are used to prevent from scope pollution
+
             // handle specific case when try executing an empty string
-            if (arguments.length > 1) {
-                arguments.timer = setTimeout(
-                    function securedTimeout(timeout, jsCode) {
-                        throw new Error('Timeout expired after ' + timeout + ' ms' + 'while executing:\n' + jsCode);
-                    }, 
-                    arguments[1], arguments[1], arguments[0]
-                );
+            if (arguments.length === 0 || arguments[0] === '') {
+                return undefined;
+            }
+
+            arguments.timer = setTimeout(
+                function securedTimeout(timeout, jsCode) {
+                    throw new Error('Timeout expired after ' + timeout + ' ms' + 'while executing:\n\n' + jsCode);
+                }, 
+                arguments[1], // timeout
+                arguments[1], // timeout
+                arguments[0]  // submitted jsCode
+            );
+
+            if (/^[ \t\r\n\v\f]*}/.test(arguments[0])) {
+                throw new Error('JS Injection attempt detected in:\n\n' + arguments[0]);
             }
 
             Object.defineProperty(
@@ -270,22 +210,27 @@ Object.defineProperty(
                 }
             );
 
-            if (arguments.length === 0 || arguments[0] === '') {
-                return undefined;
-            } else {
-                //arguments[0] = arguments[0].split('\n');
-                //arguments[0].splice(arguments[0]);
-                this.arguments = undefined;
-                /*
-                arguments.result = eval(
-                    'with (this) {\nfunction forceStrict(){\n"use strict";\n\n' +
-                    arguments[0] +
-                    '\n}\n}'
-                ) */;
-                arguments.result = eval('with (this) {\n' + arguments[0] + '\n}');
-                clearTimeout(arguments.timer);
-                return arguments.result
-            }
+            this.arguments = undefined;
+
+            /*
+            arguments.result = (new Function([
+                'with (this) {',  // where this is the sandbox instance
+                    'return (function () {',
+                        '"use strict";',
+                        'return ' + arguments[0],
+                    '}());',
+                '}',
+            ].join('\n')))();
+            */
+
+            arguments.result = eval([
+                'with (this) {', // where this is the sandbox instance
+                    arguments[0],
+                '}'
+            ].join('\n'));
+
+            clearTimeout(arguments.timer);
+            return arguments.result;
 
         },
         writable: false,
