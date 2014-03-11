@@ -1,7 +1,7 @@
 {
     "name": "jsSandbox",
     "description": "An ECMAScript execution sandbox",
-    "version": "0.1",
+    "version": "0.2",
     "author": "Alexandre Morgaut (http://github.com/AMorgaut)",
     "repository": {
         "type": "git",
