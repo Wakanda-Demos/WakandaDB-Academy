@@ -30,3 +30,7 @@ WakandaDB-Academy Solution/sessionID.json
 WakandaDB-Academy/DO-NOT-PUBLISH-ON-GITHUB.js
 WakandaDB-Academy/WebFolder/styles/*
 WakandaDB-Academy/WebFolder/scripts/*
+
+#chrome app
+*.pem
+*.crx
